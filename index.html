@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CCPNC database</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.0/css/bulma.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="academicons/css/academicons.min.css"/>
+    <link rel="stylesheet" href="stylesheet.css">
+
+    <script src="http://code.jquery.com/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+
+    <script src="js/navigate.js" async defer></script>
+
+    <script src="js/login.js"></script>
+    <script src="js/main.js" async defer></script>
+
+</head>
+<body ng-app="ccpncDatabaseApp">
+
+<nav class="navbar">
+    <div class="navbar-brand">
+        <a class="nabvar-item has-text-centered">
+            <span id="ccpnc-logo" class="is-size-1">CCP-NC</span>
+        </a>
+        <div class="navbar-burger burger is-size-2" data-target="navBarCCPNC">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+    </div>
+
+    <div id="navBarCCPNC" class="navbar-menu is-size-5">
+        <div class="navbar-start">
+            <a class="navbar-item" data-target="div-home">
+                Home
+                &nbsp;
+                <i class="fa fa-home" aria-hidden="true"></i>
+            </a>
+            <a class="navbar-item" data-target="div-upload">
+                Upload
+                &nbsp;
+                <i class="fa fa-upload" aria-hidden="true"></i>
+            </a>
+            <a class="navbar-item" data-target="div-yourfiles">
+                Your files
+                &nbsp;
+                <i class="fa fa-file-text" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <!-- Here the important Login logic happens! A dedicated Angular controller -->        
+        <div class="navbar-end" ng-controller="LoginController" ng-cloak>
+            <a class="navbar-item" ng-if="!logged_in" ng-click="login()">
+                Login
+                &nbsp;
+                <i class="ai ai-orcid" aria-hidden="true"></i>
+            </a>
+            <a class="navbar-item" ng-if="logged_in" ng-click="logout()">
+                Logout
+                &nbsp;
+                <i class="fa fa-sign-out" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+
+</nav>
+
+<div id="div-home" class="section main-section">
+    <div class="container">
+        This is a database. It datas the bases. Sometimes, it's based on data.
+        <br><br>
+        Usually it just sort of exists.
+    </div>
+</div>
+
+<div id="div-upload" class="section main-section">
+        
+    <div class="container has-text-centered">
+        <table id="upload-form" class="table is-fullwidth">
+            <tr>
+                <td colspan="" rowspan="" headers="">
+                    Chemical name
+                </td>
+                <td colspan="" rowspan="" headers="">
+                    <input class="input width-3" type="text" placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="" rowspan="" headers="">
+                    doi
+                </td>
+                <td colspan="" rowspan="" headers="">
+                    <input class="input width-3" type="text" placeholder="doi pointing to the paper for which this calculation has been used">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="" rowspan="" headers="">
+                    Notes
+                </td>
+                <td colspan="" rowspan="" headers="">
+                    <textarea class="textarea" placeholder="Useful details about calculation type, suggestion for reproducibility etc." 
+                    rows="10"></textarea>
+                </td>
+            </tr>
+        </table>        
+        <span class="separator-2"></span>
+        <div class="drag-drop-file">
+            <span>
+                <i class="fa fa-upload" aria-hidden="true"></i>
+                &nbsp;
+                Drop .magres file here
+            </span>
+        </div>
+        <span class="separator-2"></span>
+        <a class="button is-primary is-large" onclick="alert('TBD')">Upload</a>
+    </div>
+</div>
+
+<div id="div-yourfiles" class="section main-section">
+    <div class="container">
+    None at all.
+    </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>
+        The <strong>CCP-NC database</strong> is funded by EPSRC and supported by STFC.
+      </p>
+       <p>
+        Code written by
+        <a href="simone.sturniolo@stfc.ac.uk">Simone Sturniolo</a> and <a href="albert.bartok-partay@stfc.ac.uk">Albert Bartok-Partay</a>.
+        <br>
+        The source code is licensed
+        <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+        is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC ANS 4.0</a>.
+      </p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
