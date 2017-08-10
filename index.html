@@ -54,12 +54,15 @@
 
         <!-- Here the important Login logic happens! A dedicated Angular controller -->        
         <div class="navbar-end" ng-controller="LoginController" ng-cloak>
-            <a class="navbar-item" ng-if="!logged_in" ng-click="login()">
+            <div class="navbar-item is-size-6" ng-if="details">
+                Logged in as&nbsp;<span class="has-text-primary">{{details.name}}</span>
+            </div>
+            <a class="navbar-item" ng-if="!details" ng-click="login()">
                 Login
                 &nbsp;
                 <i class="ai ai-orcid" aria-hidden="true"></i>
             </a>
-            <a class="navbar-item" ng-if="logged_in" ng-click="logout()">
+            <a class="navbar-item" ng-if="details" ng-click="logout()">
                 Logout
                 &nbsp;
                 <i class="fa fa-sign-out" aria-hidden="true"></i>
