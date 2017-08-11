@@ -1,6 +1,5 @@
 from requests import post
 from requests.exceptions import ConnectionError
-from flask import session
 
 
 class OrcidConnection:
@@ -12,7 +11,7 @@ class OrcidConnection:
         self._details = details
         self._url = orcid_url
 
-    def retrieve_tokens(self, code):
+    def retrieve_tokens(self,session, code):
         # Get tokens from ORCID given a request code
         headers = {'Accept': 'application/json'}
         payload = dict(self._details)
@@ -27,24 +26,29 @@ class OrcidConnection:
         except ConnectionError:
             return None
 
-        # Save them
-        session['login_details'] = r.json()
+        # Save them (if no error has occurred)
+        rjson = r.json()
+        if 'error' not in rjson:
+            print rjson
+            session['login_details'] = rjson
+            print session['login_details']
 
         return r.json()
 
-    def get_tokens(self, code=None):
+    def get_tokens(self, session, code=None):
         # Retrieve existing tokens, or ask for new ones
         if 'login_details' in session and code is None:
+            print session['login_details']
             return session['login_details']
         elif code is not None:
             # Retrieve them
-            return self.retrieve_tokens(code)
+            return self.retrieve_tokens(session, code)
         else:
             # Something went wrong
             return None
 
-    def delete_tokens(self):
+    def delete_tokens(self, session):
         try:
-            del session['login_details']
+            session.pop('login_details', None)
         except KeyError:
             pass

@@ -16,19 +16,25 @@
     <script src="/js/navigate.js" async defer></script>
 
     <script src="/js/login.js"></script>
+    <script src="/js/upload.js"></script>
+    <script src="/js/cookielaw.js"></script>
     <script src="/js/main.js" async defer></script>
 
 </head>
 <body>
 
-<div class="modal">
-  <div class="modal-background"></div>
-  <div class="modal-content">
-    <div class="box">
-    Using cookies
+<div ng-controller="CookieLawController">
+    <div class="modal {{approved? '' : 'is-active'}}">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <div class="box has-text-centered">
+            <p>This site uses cookies in order to store and keep track of your login information. If you keep using this site,
+            we will assume you accept this as a necessary part of the service.</p>
+            <br>
+            <a class="button is-primary" ng-click="approve()">I accept</a>
+        </div>
+      </div>
     </div>
-  </div>
-  <button class="modal-close is-large"></button>
 </div>
 
 <nav class="navbar">
@@ -64,15 +70,15 @@
 
         <!-- Here the important Login logic happens! A dedicated Angular controller -->        
         <div class="navbar-end" ng-controller="LoginController" ng-cloak>
-            <div class="navbar-item is-size-6" ng-if="details">
-                Logged in as&nbsp;<span class="has-text-primary">{{details.name}}</span>
+            <div class="navbar-item is-size-6" ng-if="logged_in">
+                Logged in as&nbsp;<span class="has-text-primary">{{username}}</span>
             </div>
-            <a class="navbar-item" ng-if="!details" ng-click="login()">
+            <a class="navbar-item" ng-if="!logged_in" ng-click="login()">
                 Login
                 &nbsp;
                 <i class="ai ai-orcid" aria-hidden="true"></i>
             </a>
-            <a class="navbar-item" ng-if="details" ng-click="logout()">
+            <a class="navbar-item" ng-if="logged_in" ng-click="logout()">
                 Logout
                 &nbsp;
                 <i class="fa fa-sign-out" aria-hidden="true"></i>
@@ -90,7 +96,7 @@
     </div>
 </div>
 
-<div id="div-upload" class="section main-section">
+<div id="div-upload" class="section main-section" ng-controller="UploadController">
         
     <div class="container has-text-centered">
         <table id="upload-form" class="table is-fullwidth">
@@ -129,7 +135,7 @@
             </span>
         </div>
         <span class="separator-2"></span>
-        <a class="button is-primary is-large" onclick="alert('TBD')">Upload</a>
+        <a class="button is-primary is-large" ng-click="upload()">Upload</a>
     </div>
 </div>
 
