@@ -29,7 +29,10 @@ LoginStatus.prototype = {
 
         url = this.login_server_app + '/gettokens/';
         if (code != null)
+        {
+            console.log('Requesting tokens for code ' + code);
             url += code;
+        }
         $.ajax({
             url: url,
             type: "GET",
@@ -104,10 +107,10 @@ LoginStatus.prototype = {
 function addLoginController(ngApp) {
 
     // Change this depending on where the orcid login is
-    login_orcid = 'https://sandbox.orcid.org/';
+    login_orcid = 'https://orcid.org/';
     // Public app data
     app_data = {
-        'client_id': 'APP-6E61LI8HDS1P897J',
+        'client_id': 'APP-KV1OV8U12GT9FTQR',
         'response_type': 'code',
         'scope': '/authenticate',
         'redirect_uri': 'http://localhost:8000'

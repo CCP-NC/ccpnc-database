@@ -16,12 +16,12 @@ app.secret_key = open(os.path.join(filepath,
 
 orcid_details = json.load(open(os.path.join(filepath,
                                             'orcid_details.json')))
-orcid_link = OrcidConnection(orcid_details, 'https://sandbox.orcid.org/')
+orcid_link = OrcidConnection(orcid_details, 'https://orcid.org/')
 
 
 @app.route('/gettokens/', defaults={'code': None})
 @app.route('/gettokens/<code>')
-def get_tokens(code):
+def get_tokens(code):    
     tk = orcid_link.get_tokens(session, code)
     # If they are None, return null
     if tk is None:
@@ -43,4 +43,4 @@ if __name__ == '__main__':
     CORS(app)
 
     app.config['SERVER_NAME'] = 'localhost:8080'
-    app.run(port=8080)
+    app.run(port=8080, threaded=True)

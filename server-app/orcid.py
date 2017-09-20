@@ -29,14 +29,13 @@ class OrcidConnection:
         # Save them (if no error has occurred)
         rjson = r.json()
         if 'error' not in rjson:
-            print rjson
             session['login_details'] = rjson
-            print session['login_details']
 
         return r.json()
 
     def get_tokens(self, session, code=None):
         # Retrieve existing tokens, or ask for new ones
+        print session
         if 'login_details' in session and code is None:
             print session['login_details']
             return session['login_details']
