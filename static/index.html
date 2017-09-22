@@ -99,6 +99,7 @@
                     <p>
                         Success! You are now logged in with ORCID
                         <span class="orcid-green">{{orcid}}</span>
+                        and name {{username}}.
                     </p>
                     <br>
                     <a class="button is-primary" ng-click="confirm()">Ok</a>
@@ -128,7 +129,9 @@
                     Chemical name
                 </td>
                 <td colspan="" rowspan="" headers="">
-                    <input class="input width-3" type="text" placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)">
+                    <div class="control">
+                        <input class="input width-3" id="chemname" type="text" placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)">
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -136,7 +139,9 @@
                     doi
                 </td>
                 <td colspan="" rowspan="" headers="">
-                    <input class="input width-3" type="text" placeholder="doi pointing to the paper for which this calculation has been used">
+                    <div class="control">
+                        <input class="input width-3" id="doi" type="text" placeholder="doi pointing to the paper for which this calculation has been used">
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -144,8 +149,10 @@
                     Notes
                 </td>
                 <td colspan="" rowspan="" headers="">
-                    <textarea class="textarea" placeholder="Useful details about calculation type, suggestion for reproducibility etc." 
-                    rows="10"></textarea>
+                    <div class="control">
+                        <textarea class="textarea" id="notes" placeholder="Useful details about calculation type, suggestion for reproducibility etc." 
+                        rows="10"></textarea>
+                    </div>
                 </td>
             </tr>
         </table>        
@@ -188,6 +195,12 @@
         The source code is licensed
         <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
         is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC ANS 4.0</a>.
+        <br>
+        Uses the <a href="https://orcid.org" target="_blank">
+            <i class="ai ai-orcid orcid-green is-size-4" aria-hidden="true"></i> ORCID
+        </a>
+        Public API v2.0 for authentication.
+
       </p>
     </div>
   </div>  

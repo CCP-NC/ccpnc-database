@@ -3,6 +3,9 @@ function addUploadController(ngApp) {
 
         $scope.magres_file = null; // Contents of the last uploaded file
 
+        // Form data
+        $scope.chemname = '';
+
         // Status message
         $scope.status = '';
         $scope.status_err = false; // Is the status an error?
@@ -13,7 +16,27 @@ function addUploadController(ngApp) {
                 $scope.status_err = true;
             }
             loginStatus.verify_token(function() {
-                console.log('YAY!');
+                console.log($scope.chemname);
+                // Package all the data
+                details = loginStatus.get_details()
+                data = {
+                        'magres': $scope.magres_file,
+                        'chemname': $('#upload-form #chemname').val(),
+                        'doi': $('#upload-form #doi').val(),
+                        'notes': $('#upload-form #notes').val(),
+                        'access_token': details['access_token'],
+                        'orcid': details['orcid']
+                    };
+                    // Send an Ajax request
+                var r = $.ajax({
+                    url: '/upload',
+                    type: 'POST',
+                    crossDomain: true,
+                    data: data
+                });
+            }, function() {
+                $scope.status = 'Could not authenticate ORCID details; please log in'
+                $scope.status_err = true;
             });
         }
 
@@ -23,8 +46,7 @@ function addUploadController(ngApp) {
                 $scope.status = 'Only one file can be uploaded at a time';
                 $scope.status_err = true;
                 return;
-            }
-            else {
+            } else {
                 var file = files[0];
                 $scope.status = '';
                 $scope.status_err = false;
@@ -35,14 +57,13 @@ function addUploadController(ngApp) {
                     if (validateMagres(file.name, mtext)) {
                         $scope.magres_file = mtext;
                         $scope.status_err = false;
-                        $scope.status = file.name;                        
-                    }
-                    else {
+                        $scope.status = file.name;
+                    } else {
                         $scope.status_err = true;
-                        $scope.status = 'The file is not in the Magres format';                                                
+                        $scope.status = 'The file is not in the Magres format';
                     }
                 });
-                reader.readAsText(file);                
+                reader.readAsText(file);
             }
         }
 
@@ -52,8 +73,7 @@ function addUploadController(ngApp) {
 
             if (msg == null) {
                 ue.addClass('is-hidden');
-            }
-            else if (!is_err) {
+            } else if (!is_err) {
                 ue.html(msg);
                 ue.removeClass('has-text-danger');
                 ue.addClass('has-text-success');

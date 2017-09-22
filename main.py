@@ -7,7 +7,7 @@ to CCP-NC database, main file
 import os
 import json
 from orcid import OrcidConnection
-from flask import Flask, session
+from flask import Flask, session, request
 filepath = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask('ccpnc-database', static_url_path='')
@@ -42,6 +42,12 @@ def delete_tokens():
 def getinfo():
     return json.dumps(orcid_link.retrieve_info(session))
 
+@app.route('/upload', methods=['POST'])
+def upload():
+    print request.form    
+    print request.files
+    return json.dumps(request.form)
+
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!
 
@@ -51,3 +57,4 @@ if __name__ == '__main__':
 
     app.config['SERVER_NAME'] = 'localhost:8000'
     app.run(port=8000, threaded=True)
+
