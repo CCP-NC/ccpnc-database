@@ -38,6 +38,10 @@ def delete_tokens():
     orcid_link.delete_tokens(session)
     return 'Logged out'
 
+@app.route('/getinfo')
+def getinfo():
+    return json.dumps(orcid_link.retrieve_info(session))
+
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!
 

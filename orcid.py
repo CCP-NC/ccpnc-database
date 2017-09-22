@@ -1,4 +1,4 @@
-from requests import post
+import requests
 from requests.exceptions import ConnectionError
 
 
@@ -6,12 +6,14 @@ class OrcidConnection:
     """ Provides an interface to connect with
     ORCID, given the relevant app data."""
 
-    def __init__(self, details, orcid_url='https://orcid.org/'):
+    def __init__(self, details, login_url='https://orcid.org/',
+                 api_url='https://pub.orcid.org/v2.0/'):
 
         self._details = details
-        self._url = orcid_url
+        self._login_url = login_url
+        self._api_url = api_url
 
-    def retrieve_tokens(self,session, code):
+    def retrieve_tokens(self, session, code):
         # Get tokens from ORCID given a request code
         headers = {'Accept': 'application/json'}
         payload = dict(self._details)
@@ -21,8 +23,8 @@ class OrcidConnection:
         })
 
         try:
-            r = post(self._url + 'oauth/token',
-                     data=payload, headers=headers)
+            r = requests.post(self._login_url + 'oauth/token',
+                              data=payload, headers=headers)
         except ConnectionError:
             return None
 
@@ -35,9 +37,7 @@ class OrcidConnection:
 
     def get_tokens(self, session, code=None):
         # Retrieve existing tokens, or ask for new ones
-        print session
         if 'login_details' in session and code is None:
-            print session['login_details']
             return session['login_details']
         elif code is not None:
             # Retrieve them
@@ -51,3 +51,21 @@ class OrcidConnection:
             session.pop('login_details', None)
         except KeyError:
             pass
+
+    def retrieve_info(self, session):
+
+        tk = self.get_tokens(session)
+
+        if tk is None:
+            return None
+
+        # Prepare a get request
+        headers = {
+            'Accept': 'application/json',
+            'Authorization type': 'Bearer',
+            'Access token': tk['access_token']
+        }
+        r = requests.get(self._api_url + tk['orcid'] + '/record',
+                         headers=headers)
+
+        return r.json()

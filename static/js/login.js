@@ -121,11 +121,13 @@ function addLoginController(ngApp) {
 
             $scope.logged_in = false;
             $scope.username = '';
+            $scope.orcid = '';
 
             function update_details(details) {
 
                 $scope.logged_in = (details != null);
                 $scope.username = ($scope.logged_in ? details.name : '');
+                $scope.orcid = ($scope.logged_in ? details.orcid : '');
                 $scope.$applyAsync();
 
                 if (details != null) {
