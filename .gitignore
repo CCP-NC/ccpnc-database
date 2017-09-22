@@ -1,3 +1,3 @@
-server-app/secret.key
-server-app/orcid_details.json
+secret/secret.key
+secret/orcid_details.json
 *.pyc
