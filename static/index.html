@@ -90,6 +90,22 @@
                 &nbsp;
                 <i class="fa fa-sign-out" aria-hidden="true"></i>
             </a>
+
+            <!-- Welcome message (as required by ORCID standards) -->
+            <div class="modal {{just_logged_in? 'is-active' : ''}}">
+              <div class="modal-background"></div>
+              <div class="modal-content">
+                <div class="box has-text-centered">
+                    <p>
+                        Success! You are now logged in with ORCID
+                        <span class="orcid-green">{{orcid}}</span>
+                    </p>
+                    <br>
+                    <a class="button is-primary" ng-click="confirm()">Ok</a>
+                </div>
+              </div>
+            </div>  
+
         </div>
     </div>
 
