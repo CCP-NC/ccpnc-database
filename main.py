@@ -38,15 +38,39 @@ def delete_tokens():
     orcid_link.delete_tokens(session)
     return 'Logged out'
 
-@app.route('/getinfo')
-def getinfo():
-    return json.dumps(orcid_link.retrieve_info(session))
-
 @app.route('/upload', methods=['POST'])
 def upload():
-    print request.form    
-    print request.files
-    return json.dumps(request.form)
+
+    # First, check that the details are valid
+    tk = orcid_link.get_tokens(session)
+    client_at = request.values.get('access_token')
+    client_id = request.values.get('orcid')
+
+    if (tk is None or
+        client_id != tk['orcid'] or
+        client_at != tk['access_token']):
+        return 'Error: invalid login'
+
+    # Ok, so pick the rest of the information
+    user_info = orcid_link.retrieve_info(session)
+
+    if user_info is None:
+        # Should never happen unless ORCID is down...
+        return 'Error: could not retrieve ORCID info'
+
+    # Compile everything
+    file_entry = {
+        'chemname': request.values.get('chemname'),
+        'doi': request.values.get('doi'),
+        'notes': request.values.get('notes'),
+        'user_id': client_id,
+        'user_info': user_info,
+        'magres': request.values.get('magres')
+    }
+
+    ### HERE GOES THE CODE TO UPLOAD TO THE DATABASE ### 
+
+    return 'Success'
 
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!

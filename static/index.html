@@ -158,10 +158,16 @@
         </table>        
         <span class="separator-2"></span>
         <div class="drag-drop-file" ngf-drop="load_files($files)" ngf-multiple="true">
-            <span>
+            <span ng-show="!magres_file">
                 <i class="fa fa-upload" aria-hidden="true"></i>
                 &nbsp;
                 Drop .magres file here
+            </span>
+            <span class="has-text-success" ng-show="magres_file && !uploading_now">
+                {{magres_file_name}}
+            </span>
+            <span>
+                <i class="fa fa-spinner rotate-endless is-size-3" aria-hidden="true" ng-show="magres_file && uploading_now"></i>
             </span>
         </div>        
         <span class="separator-1"></span>
