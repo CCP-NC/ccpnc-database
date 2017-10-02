@@ -7,7 +7,7 @@ to CCP-NC database, main file
 import os
 import json
 from orcid import OrcidConnection
-from flask import Flask, session
+from flask import Flask, session, request
 filepath = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask('ccpnc-database', static_url_path='')
@@ -38,6 +38,40 @@ def delete_tokens():
     orcid_link.delete_tokens(session)
     return 'Logged out'
 
+@app.route('/upload', methods=['POST'])
+def upload():
+
+    # First, check that the details are valid
+    tk = orcid_link.get_tokens(session)
+    client_at = request.values.get('access_token')
+    client_id = request.values.get('orcid')
+
+    if (tk is None or
+        client_id != tk['orcid'] or
+        client_at != tk['access_token']):
+        return 'Error: invalid login'
+
+    # Ok, so pick the rest of the information
+    user_info = orcid_link.retrieve_info(session)
+
+    if user_info is None:
+        # Should never happen unless ORCID is down...
+        return 'Error: could not retrieve ORCID info'
+
+    # Compile everything
+    file_entry = {
+        'chemname': request.values.get('chemname'),
+        'doi': request.values.get('doi'),
+        'notes': request.values.get('notes'),
+        'user_id': client_id,
+        'user_info': user_info,
+        'magres': request.values.get('magres')
+    }
+
+    ### HERE GOES THE CODE TO UPLOAD TO THE DATABASE ### 
+
+    return 'Success'
+
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!
 
@@ -47,3 +81,4 @@ if __name__ == '__main__':
 
     app.config['SERVER_NAME'] = 'localhost:8000'
     app.run(port=8000, threaded=True)
+

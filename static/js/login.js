@@ -124,12 +124,15 @@ function addLoginController(ngApp) {
         function LoginController($scope, loginStatus) {
 
             $scope.logged_in = false;
+            $scope.just_logged_in = false;
             $scope.username = '';
+            $scope.orcid = '';
 
             function update_details(details) {
 
                 $scope.logged_in = (details != null);
                 $scope.username = ($scope.logged_in ? details.name : '');
+                $scope.orcid = ($scope.logged_in ? details.orcid : '');
                 $scope.$applyAsync();
 
                 if (details != null) {
@@ -164,6 +167,8 @@ function addLoginController(ngApp) {
                     } catch (e) {
                         console.log(e);
                     }
+
+                    $scope.just_logged_in = $scope.logged_in;
                 });
             }
 
@@ -195,6 +200,11 @@ function addLoginController(ngApp) {
                     }
                 });
 
+            }
+
+            $scope.confirm = function() {
+                // Make the confirm popup disappear
+                $scope.just_logged_in = false;
             }
 
         });

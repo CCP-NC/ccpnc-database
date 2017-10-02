@@ -80,18 +80,40 @@
         <!-- Here the important Login logic happens! A dedicated Angular controller -->        
         <div class="navbar-end" ng-controller="LoginController" ng-cloak>
             <div class="navbar-item is-size-6" ng-if="logged_in">
-                Logged in as&nbsp;<span class="has-text-primary">{{username}}</span>
+                Logged in as&nbsp;
+                <i class="ai ai-orcid orcid-green is-size-4" aria-hidden="true"></i>&nbsp;
+                <a href="https://orcid.org/{{orcid}}" class="has-text-primary" target="_blank"
+                   title="User: {{username}}">
+                    orcid.org/{{orcid}}
+                </a>
             </div>
             <a class="navbar-item" ng-if="!logged_in" ng-click="login()">
                 Login
                 &nbsp;
-                <i class="ai ai-orcid" aria-hidden="true"></i>
+                <i class="ai ai-orcid orcid-green is-size-4" aria-hidden="true"></i>
             </a>
             <a class="navbar-item" ng-if="logged_in" ng-click="logout()">
                 Logout
                 &nbsp;
                 <i class="fa fa-sign-out" aria-hidden="true"></i>
             </a>
+
+            <!-- Welcome message (as required by ORCID standards) -->
+            <div class="modal {{just_logged_in? 'is-active' : ''}}">
+              <div class="modal-background"></div>
+              <div class="modal-content">
+                <div class="box has-text-centered">
+                    <p>
+                        Success! You are now logged in with ORCID
+                        <span class="orcid-green">{{orcid}}</span>
+                        and name {{username}}.
+                    </p>
+                    <br>
+                    <a class="button is-primary" ng-click="confirm()">Ok</a>
+                </div>
+              </div>
+            </div>  
+
         </div>
     </div>
 
@@ -183,6 +205,12 @@
         The source code is licensed
         <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
         is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC ANS 4.0</a>.
+        <br>
+        Uses the <a href="https://orcid.org" target="_blank">
+            <i class="ai ai-orcid orcid-green is-size-4" aria-hidden="true"></i> ORCID
+        </a>
+        Public API v2.0 for authentication.
+
       </p>
     </div>
   </div>  
