@@ -23,7 +23,7 @@
     <script src="/js/main.js" async defer></script>
 
 </head>
-<body>
+<body ng-controller="NavigateController">
 
 <div ng-controller="CookieLawController">
     <div class="modal {{approved? '' : 'is-active'}}">
@@ -53,17 +53,22 @@
 
     <div id="navBarCCPNC" class="navbar-menu is-size-5">
         <div class="navbar-start">
-            <a class="navbar-item" data-target="div-home">
+            <a class="navbar-item" ng-click="open_tab='home';">
                 Home
                 &nbsp;
                 <i class="fa fa-home" aria-hidden="true"></i>
             </a>
-            <a class="navbar-item" data-target="div-upload">
+            <a class="navbar-item" ng-click="open_tab='search';">
+                Search
+                &nbsp;
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </a>
+            <a class="navbar-item" ng-click="open_tab='upload';">
                 Upload
                 &nbsp;
                 <i class="fa fa-upload" aria-hidden="true"></i>
             </a>
-            <a class="navbar-item" data-target="div-yourfiles">
+            <a class="navbar-item" ng-click="open_tab='yourfiles';">
                 Your files
                 &nbsp;
                 <i class="fa fa-file-text" aria-hidden="true"></i>
@@ -90,67 +95,75 @@
 
 </nav>
 
-<div id="div-home" class="section main-section">
-    <div class="container">
-        This is a database. It datas the bases. Sometimes, it's based on data.
-        <br><br>
-        Usually it just sort of exists.
+<div class="main-section" ng-switch="open_tab">
+    <div id="div-home" class="section" ng-switch-default  ng-cloak>
+        <div class="container">
+            This is a database. It datas the bases. Sometimes, it's based on data.
+            <br><br>
+            Usually it just sort of exists.
+        </div>
     </div>
-</div>
 
-<div id="div-upload" class="section main-section" ng-controller="UploadController">
-        
-    <div class="container has-text-centered">
-        <table id="upload-form" class="table is-fullwidth">
-            <tr>
-                <td colspan="" rowspan="" headers="">
-                    Chemical name
-                </td>
-                <td colspan="" rowspan="" headers="">
-                    <input class="input width-3" type="text" placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)">
-                </td>
-            </tr>
-            <tr>
-                <td colspan="" rowspan="" headers="">
-                    doi
-                </td>
-                <td colspan="" rowspan="" headers="">
-                    <input class="input width-3" type="text" placeholder="doi pointing to the paper for which this calculation has been used">
-                </td>
-            </tr>
-            <tr>
-                <td colspan="" rowspan="" headers="">
-                    Notes
-                </td>
-                <td colspan="" rowspan="" headers="">
-                    <textarea class="textarea" placeholder="Useful details about calculation type, suggestion for reproducibility etc." 
-                    rows="10"></textarea>
-                </td>
-            </tr>
-        </table>        
-        <span class="separator-2"></span>
-        <div class="drag-drop-file" ngf-drop="load_files($files)" ngf-multiple="true">
-            <span>
-                <i class="fa fa-upload" aria-hidden="true"></i>
-                &nbsp;
-                Drop .magres file here
+    <div id="div-search" class="section" ng-switch-when="search" ng-cloak>
+        <div class="container">
+            Searching things.
+        </div>
+    </div>
+
+    <div id="div-upload" class="section" ng-switch-when="upload" ng-controller="UploadController" ng-cloak>
+            
+        <div class="container has-text-centered">
+            <table id="upload-form" class="table is-fullwidth">
+                <tr>
+                    <td colspan="" rowspan="" headers="">
+                        Chemical name
+                    </td>
+                    <td colspan="" rowspan="" headers="">
+                        <input class="input width-3" type="text" placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="" rowspan="" headers="">
+                        doi
+                    </td>
+                    <td colspan="" rowspan="" headers="">
+                        <input class="input width-3" type="text" placeholder="doi pointing to the paper for which this calculation has been used">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="" rowspan="" headers="">
+                        Notes
+                    </td>
+                    <td colspan="" rowspan="" headers="">
+                        <textarea class="textarea" placeholder="Useful details about calculation type, suggestion for reproducibility etc." 
+                        rows="10"></textarea>
+                    </td>
+                </tr>
+            </table>        
+            <span class="separator-2"></span>
+            <div class="drag-drop-file" ngf-drop="load_files($files)" ngf-multiple="true">
+                <span>
+                    <i class="fa fa-upload" aria-hidden="true"></i>
+                    &nbsp;
+                    Drop .magres file here
+                </span>
+            </div>        
+            <span class="separator-1"></span>
+            <span class="box" ng-show="status !== ''" ng-class="{
+            'has-text-danger': status_err,
+            'has-text-success': !status_err,
+        }">
+                {{ status }}
             </span>
-        </div>        
-        <span class="separator-1"></span>
-        <span class="box" ng-show="status !== ''" ng-class="{
-        'has-text-danger': status_err,
-        'has-text-success': !status_err,
-    }">
-            {{ status }}
-        </span>
-        <span class="separator-1"></span>
-        <a class="button is-primary is-large" ng-click="upload()">Upload</a>
+            <span class="separator-1"></span>
+            <a class="button is-primary is-large" ng-click="upload()">Upload</a>
+        </div>
     </div>
-</div>
 
-<div id="div-yourfiles" class="section main-section">
-    <div class="container">
-    None at all.
+    <div id="div-yourfiles" class="section" ng-switch-when="yourfiles" ng-cloak>
+        <div class="container">
+        None at all.
+        </div>
     </div>
 </div>
 

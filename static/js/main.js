@@ -8,6 +8,7 @@
 
   // Add controllers
   console.log('Loading controllers...');
+  addNavigateController(ccpncApp);
   addLoginController(ccpncApp);
   addCookieLawController(ccpncApp);
   addUploadController(ccpncApp);
