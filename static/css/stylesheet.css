@@ -75,6 +75,18 @@ body {
     margin-bottom: 100px;
 }
 
+.text-bold {
+    font-weight: bold;
+}
+
+.database-record {
+    display: block;
+    padding: 10px;
+    background-color: #ffffff;
+    margin-bottom: 5px;
+    border: solid 1px #898989;
+}
+
 #ccpnc-logo {
     padding: 0 30px 0 30px;
 }

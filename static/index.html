@@ -14,7 +14,9 @@
     <script src="/vendor/angular.min.js"></script>
     <script src="/vendor/ng-file-upload-all.min.js"></script>
 
+    <script src="/js/record.js"></script>
     <script src="/js/login.js"></script>
+    <script src="/js/search.js"></script>
     <script src="/js/upload.js"></script>
     <script src="/js/cookielaw.js"></script>
     <script src="/js/magres-validate.js"></script>
@@ -63,12 +65,12 @@
                 &nbsp;
                 <i class="fa fa-search" aria-hidden="true"></i>
             </a>
-            <a class="navbar-item" ng-click="open_tab='upload';">
+            <a class="navbar-item" ng-click="open_tab='upload';" ng-show="loginStatus.get_login_status()" ng-cloak>
                 Upload
                 &nbsp;
                 <i class="fa fa-upload" aria-hidden="true"></i>
             </a>
-            <a class="navbar-item" ng-click="open_tab='yourfiles';">
+            <a class="navbar-item" ng-click="open_tab='yourfiles';" ng-show="loginStatus.get_login_status()" ng-cloak>
                 Your files
                 &nbsp;
                 <i class="fa fa-file-text" aria-hidden="true"></i>
@@ -104,9 +106,10 @@
         </div>
     </div>
 
-    <div id="div-search" class="section" ng-switch-when="search" ng-cloak>
+    <div id="div-search" class="section" ng-switch-when="search" ng-controller="SearchController" ng-cloak>
         <div class="container">
-            Searching things.
+            <div database-record="result" ng-repeat="result in results">
+            </div>
         </div>
     </div>
 

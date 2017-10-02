@@ -65,6 +65,10 @@ LoginStatus.prototype = {
         window.localStorage.removeItem('login_details');
     },
 
+    get_login_status: function() {
+        return window.localStorage.hasOwnProperty('login_details');
+    },
+
     verify_token: function(success, error) {
 
         error = error || function() {
