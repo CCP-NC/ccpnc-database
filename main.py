@@ -8,6 +8,8 @@ import os
 import json
 from orcid import OrcidConnection
 from flask import Flask, session, request
+from db_interface import addMagresFile
+
 filepath = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask('ccpnc-database', static_url_path='')
@@ -65,8 +67,9 @@ def upload():
         'notes': request.values.get('notes'),
         'user_id': client_id,
         'user_info': user_info,
-        'magres': request.values.get('magres')
     }
+
+    addMagresFile(request.values.get('magres'), file_entry)
 
     ### HERE GOES THE CODE TO UPLOAD TO THE DATABASE ### 
 
