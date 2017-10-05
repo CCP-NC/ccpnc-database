@@ -44,8 +44,13 @@ body {
     left: 50%;
 
     transform: translate(-50%, -50%);
+}
 
-    color: #888888;
+.drag-drop-file #noloaded {
+        color: #888888;
+}
+
+.drag-drop-file #loaded {
 }
 
 .width-1 {
@@ -88,9 +93,9 @@ body {
 }
 
 .rotate-endless {
-    -webkit-animation:spin 4s linear infinite;
-    -moz-animation:spin 4s linear infinite;
-    animation:spin 4s linear infinite;
+    -webkit-animation:spin 2s steps(8, end) infinite;
+    -moz-animation:spin 2s steps(8, end) infinite;
+    animation:spin 2s steps(8, end) infinite;
 }
 
 @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }

@@ -22,10 +22,13 @@ function addUploadController(ngApp) {
         $scope.status_err = false; // Is the status an error?        
 
         $scope.upload = function() {
+
             if ($scope.magres_file == null) {
                 $scope.status = 'No file to upload';
                 $scope.status_err = true;
+                return;
             }
+
             loginStatus.verify_token(function() {
                 // Package all the data
                 details = loginStatus.get_details()
@@ -48,8 +51,8 @@ function addUploadController(ngApp) {
                     data: data
                 }).done(function(r) {
                     // Did anything go wrong?
-                    if (r != 'Success') {
-                        $scope.status = r.responseText;
+                    if (r != 'Success') {                        
+                        $scope.status = 'ERROR: ' + r;
                         $scope.status_err = true;
                     }
                     else {
@@ -102,20 +105,6 @@ function addUploadController(ngApp) {
                     }
                 });
                 reader.readAsText(file);
-            }
-        }
-
-        $scope.show_warning = function(msg, is_err) {
-
-            var ue = $('.upload-error');
-
-            if (msg == null) {
-                ue.addClass('is-hidden');
-            } else if (!is_err) {
-                ue.html(msg);
-                ue.removeClass('has-text-danger');
-                ue.addClass('has-text-success');
-                ue.removeClass('is-hidden');
             }
         }
 

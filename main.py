@@ -69,11 +69,14 @@ def upload():
         'user_info': user_info,
     }
 
-    addMagresFile(request.values.get('magres'), file_entry)
+    try:
+        success = addMagresFile(request.values.get('magres'), file_entry)
+    except Exception as e:
+        return str(e)
 
     ### HERE GOES THE CODE TO UPLOAD TO THE DATABASE ### 
 
-    return 'Success'
+    return 'Success' if success else 'Failed'
 
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!

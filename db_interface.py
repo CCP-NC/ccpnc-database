@@ -42,7 +42,7 @@ def addMagresFile(magresStr, metadata={}):
     # Actually post data
     magresFilesID = magresFiles.insert_one({"magres": magresStr}).inserted_id
     d["magresFilesID"] = magresFilesID
-    magresData.insert_one(d)
+    return magresData.insert_one(d).acknowledged
 
 if __name__ == "__main__":
 

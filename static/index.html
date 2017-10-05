@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/css/font-awesome.min.css">
     <link rel="stylesheet" href="/academicons/css/academicons.min.css"/>
     <link rel="stylesheet" href="/css/stylesheet.css">
+    <link rel="stylesheet" href="/css/loader.css">
 
     <script src="/vendor/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/vendor/angular.min.js"></script>
@@ -167,11 +168,17 @@
             </table>        
             <span class="separator-2"></span>
             <div class="drag-drop-file" ngf-drop="load_files($files)" ngf-multiple="true">
-                <span>
+                <span id="noloaded" ng-show="magres_file_name == '' && !uploading_now">
                     <i class="fa fa-upload" aria-hidden="true"></i>
                     &nbsp;
-                    Drop .magres file here
+                    Drop .magres file here 
                 </span>
+                <span ng-show="uploading_now">
+                    <div class="loader">Loading...</div>
+                </span>
+                <span id="loaded" ng-show="magres_file_name !== '' && !uploading_now">
+                    {{magres_file_name}}
+                </span><br>
             </div>        
             <span class="separator-1"></span>
             <span class="box" ng-show="status !== ''" ng-class="{
