@@ -6,9 +6,10 @@ to CCP-NC database, main file
 
 import os
 import json
+import inspect
 from orcid import OrcidConnection
 from flask import Flask, session, request
-from db_interface import addMagresFile
+from db_interface import addMagresFile, searchByMS
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 
@@ -20,13 +21,15 @@ orcid_details = json.load(open(os.path.join(filepath, 'secret',
                                             'orcid_details.json')))
 orcid_link = OrcidConnection(orcid_details, 'https://orcid.org/')
 
+
 @app.route('/')
 def root():
     return app.send_static_file('index.html')
 
+
 @app.route('/gettokens/', defaults={'code': None})
 @app.route('/gettokens/<code>')
-def get_tokens(code):    
+def get_tokens(code):
     tk = orcid_link.get_tokens(session, code)
     # If they are None, return null
     if tk is None:
@@ -40,6 +43,7 @@ def delete_tokens():
     orcid_link.delete_tokens(session)
     return 'Logged out'
 
+
 @app.route('/upload', methods=['POST'])
 def upload():
 
@@ -49,8 +53,8 @@ def upload():
     client_id = request.values.get('orcid')
 
     if (tk is None or
-        client_id != tk['orcid'] or
-        client_at != tk['access_token']):
+            client_id != tk['orcid'] or
+            client_at != tk['access_token']):
         return 'Error: invalid login'
 
     # Ok, so pick the rest of the information
@@ -74,9 +78,36 @@ def upload():
     except Exception as e:
         return str(e)
 
-    ### HERE GOES THE CODE TO UPLOAD TO THE DATABASE ### 
+    ### HERE GOES THE CODE TO UPLOAD TO THE DATABASE ###
 
     return 'Success' if success else 'Failed'
+
+
+@app.route('/search', methods=['POST'])
+def search():
+
+    # List search functions
+    search_types = {
+        'msRange': searchByMS,
+    }
+
+    search_func = search_types.get(request.values.get('type'))
+
+    if search_func is None:
+        return 'ERROR - Search type does not exist'
+
+    # Find arguments
+    args = inspect.getargspec(search_func).args
+
+    # Get them as dict
+    args = {a: request.values.get(a) for a in args}
+
+    # If any of them is not there?
+    if None in args.values():
+        return 'ERROR - Missing arguments for search type'
+
+    
+
 
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!
@@ -87,4 +118,3 @@ if __name__ == '__main__':
 
     app.config['SERVER_NAME'] = 'localhost:8000'
     app.run(port=8000, threaded=True)
-

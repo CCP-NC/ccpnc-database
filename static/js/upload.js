@@ -29,21 +29,35 @@ function addUploadController(ngApp) {
                 return;
             }
 
+            // Check obligatory details
+            var data = {
+                    'magres': $scope.magres_file,
+                    'chemname': $('#upload-form #chemname').val(),
+                    'doi': $('#upload-form #doi').val(),
+                    'notes': $('#upload-form #notes').val(),
+            };
+
+            var obl = {'Chemical name': 'chemname'};
+
+            for (var kname in obl) {
+                if ($.trim(data[obl[kname]]) == '') {
+                    $scope.status = kname + ' is obligatory';
+                    $scope.status_err = true;
+                    return;
+                }
+            }                
+
+
             loginStatus.verify_token(function() {
                 // Package all the data
                 details = loginStatus.get_details()
-                data = {
-                        'magres': $scope.magres_file,
-                        'chemname': $('#upload-form #chemname').val(),
-                        'doi': $('#upload-form #doi').val(),
-                        'notes': $('#upload-form #notes').val(),
-                        'access_token': details['access_token'],
-                        'orcid': details['orcid']
-                    };
-                    // Send an Ajax request
+                data.access_token = details['access_token'];
+                data.orcid = details['orcid'];
+
+                // Send an Ajax request
                 $scope.uploading_now = true;
                 $scope.$apply();
-                
+
                 $.ajax({
                     url: '/upload',
                     type: 'POST',
@@ -92,6 +106,7 @@ function addUploadController(ngApp) {
                 var reader = new FileReader();
                 reader.onload = (function(fevent) {
                     var mtext = fevent.currentTarget.result;
+                    $scope.uploading_now = false;
                     if (validateMagres(file.name, mtext)) {
                         $scope.magres_file_name = file.name;
                         $scope.magres_file = mtext;
@@ -103,7 +118,9 @@ function addUploadController(ngApp) {
                         $scope.status_err = true;
                         $scope.status = 'The file is not in the Magres format';
                     }
+                    $scope.$apply();
                 });
+                $scope.uploading_now = true;
                 reader.readAsText(file);
             }
         }

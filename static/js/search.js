@@ -3,13 +3,13 @@ function addSearchController(ngApp) {
 
         $scope.results = [
             {
-                title: 'Generic Metallic Oxide',
+                chemname: 'Generic Metallic Oxide',
                 orcid: '00000001',
             },
 
             {
                 title: 'Very Cool Zeolite',
-                orcid: '00000002',
+                chemname: '00000002',
             },
 
         ];

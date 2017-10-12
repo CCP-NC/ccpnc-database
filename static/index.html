@@ -142,7 +142,7 @@
             <table id="upload-form" class="table is-fullwidth">
                 <tr>
                     <td colspan="" rowspan="" headers="">
-                        Chemical name
+                        Chemical name<sup class="has-text-danger">*</sup>
                     </td>
                     <td colspan="" rowspan="" headers="">
                         <input id="chemname" class="input width-3" type="text" placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)">
@@ -165,7 +165,10 @@
                         rows="10"></textarea>
                     </td>
                 </tr>
-            </table>        
+            </table>
+            <p>
+                Fields marked with <sup class="has-text-danger">*</sup> are obligatory.
+            </p>
             <span class="separator-2"></span>
             <div class="drag-drop-file" ngf-drop="load_files($files)" ngf-multiple="true">
                 <span id="noloaded" ng-show="magres_file_name == '' && !uploading_now">
