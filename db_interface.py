@@ -1,8 +1,14 @@
+import json
+import inspect
 import tempfile
 import numpy as np
 from ase import io
 from soprano.properties.nmr import MSIsotropy
 from pymongo import MongoClient
+
+_db_url = 'wigner.esc.rl.ac.uk'
+
+### METHODS FOR COMPILATION OF METADATA ###
 
 
 def getMSMetadata(magres):
@@ -20,32 +26,11 @@ def getMSMetadata(magres):
 
     return msdata
 
-
-def searchByMS(sp, minms, maxms):
-
-    client = MongoClient(host='wigner.esc.rl.ac.uk')
-    ccpnc = client.ccpnc
-
-    ff = ccpnc.magresData.find({"$and": [
-        {"values": {"$elemMatch": {"species": sp}}},
-        {"values": {"$elemMatch":
-                    {"$nor": [{"iso": {"$lt": minms}},
-                              {"iso": {"$gt": maxms}}]}
-                    }
-         }
-    ]})
-
-    # Return the data
-
-    fileIDs = [{'chemname': f.get('chemname', 'N/A'),
-                'orcid': f.get('orcid', 'N/A')}
-               for f in ff]
-
-    return json.dumps(fileIDs)
+### UPLOADING ###
 
 
 def addMagresFile(magresStr, metadata={}):
-    client = MongoClient(host='wigner.esc.rl.ac.uk')
+    client = MongoClient(host=_db_url)
     ccpnc = client.ccpnc
 
     # get the magresFiles collection from the database
@@ -71,6 +56,73 @@ def addMagresFile(magresStr, metadata={}):
 
 if __name__ == "__main__":
 
+    # Used for testing purposes
+
     import sys
 
     addMagresFile(open(sys.argv[1]).read(), {'dummy': 0})
+
+### SEARCH METHODS ###
+
+def makeEntry(f):
+    # From database record to parsable entry
+    try:
+        entry = {
+            'chemname': f['chemname'],
+            'doi': f['doi']
+        }
+    except KeyError:
+        return None
+
+    return entry
+
+
+def databaseSearch(search_spec):
+
+    client = MongoClient(host=_db_url)
+    ccpnc = client.ccpnc
+
+    # List search functions
+    search_types = {
+        'msRange': searchByMS,
+    }
+
+    search_dict = {
+        '$and': [],
+    }
+
+    # Build the string
+    for src in search_spec:
+        try:
+            search_func = search_types[src.get('type')]
+        except KeyError:
+            raise ValueError('Invalid search spec')
+
+        # Find arguments
+        args = inspect.getargspec(search_func).args
+
+        # Get them as dict
+        try:
+            args = {a: src[a] for a in args}
+        except KeyError:
+            raise ValueError('Invalid search spec')
+
+        search_dict['$and'] += search_func(**args)
+
+    # Carry out the actual search
+    results = ccpnc.magresData.find(search_dict)
+
+    return json.dumps([makeEntry(f)
+                       for f in results])
+
+
+def searchByMS(sp, minms, maxms):
+
+    return [
+        {'values': {'$elemMatch': {'species': sp}}},
+        {'values': {'$elemMatch':
+                    {'$nor': [{'iso': {'$lt': minms}},
+                              {'iso': {'$gt': maxms}}]}
+                    }
+         }
+    ]

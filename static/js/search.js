@@ -14,5 +14,24 @@ function addSearchController(ngApp) {
 
         ];
 
+        $scope.search = function() {
+            // For now just a test thing to keep in mind how it's done
+            query =  {
+                url: '/search', 
+                type: 'POST', 
+                crossDomain: true, 
+                contentType: 'application/json', 
+                data: JSON.stringify({'search_spec': [{'type': 'msRange', 
+                                                       'sp': 'C', 
+                                                       'minms': 30, 
+                                                       'maxms': 200}]
+                                    })
+            }
+
+            $.ajax(query).done(function(d) {
+                console.log(d);
+            });
+        }
+
     });
 }

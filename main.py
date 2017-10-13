@@ -9,7 +9,7 @@ import json
 import inspect
 from orcid import OrcidConnection
 from flask import Flask, session, request
-from db_interface import addMagresFile, searchByMS
+from db_interface import addMagresFile, databaseSearch
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 
@@ -86,27 +86,12 @@ def upload():
 @app.route('/search', methods=['POST'])
 def search():
 
-    # List search functions
-    search_types = {
-        'msRange': searchByMS,
-    }
+    try:
+        results = databaseSearch(request.json['search_spec'])
+    except ValueError:
+        return 'ERROR: search parameters are wrong or incomplete'
 
-    search_func = search_types.get(request.values.get('type'))
-
-    if search_func is None:
-        return 'ERROR - Search type does not exist'
-
-    # Find arguments
-    args = inspect.getargspec(search_func).args
-
-    # Get them as dict
-    args = {a: request.values.get(a) for a in args}
-
-    # If any of them is not there?
-    if None in args.values():
-        return 'ERROR - Missing arguments for search type'
-
-    
+    return results
 
 
 if __name__ == '__main__':
