@@ -158,4 +158,9 @@ var validateMagres = function(fname, ftxt) {
 }
 
 // For testing with Node.js
-module.exports.validateMagres = validateMagres;
+try {
+    module.exports.validateMagres = validateMagres;    
+}
+catch(e) {
+    // Do nothing
+}
