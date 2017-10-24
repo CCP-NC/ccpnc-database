@@ -2,6 +2,10 @@ import requests
 from requests.exceptions import ConnectionError
 
 
+class OrcidError(Exception):
+    pass
+
+
 class OrcidConnection:
     """ Provides an interface to connect with
     ORCID, given the relevant app data."""
@@ -68,4 +72,11 @@ class OrcidConnection:
         r = requests.get(self._api_url + tk['orcid'] + '/record',
                          headers=headers)
 
-        return r.json()
+        try:
+            rdata = r.json()
+        except AttributeError:
+            raise OrcidError('Error: could not retrieve ORCID info')
+        if 'error-code' in rdata:
+            raise OrcidError(rdata['developer-message'])
+
+        return rdata

@@ -7,8 +7,8 @@ to CCP-NC database, main file
 import os
 import json
 import inspect
-from orcid import OrcidConnection
 from flask import Flask, session, request
+from orcid import OrcidConnection, OrcidError
 from db_interface import addMagresFile, databaseSearch
 
 filepath = os.path.abspath(os.path.dirname(__file__))
@@ -58,11 +58,11 @@ def upload():
         return 'Error: invalid login'
 
     # Ok, so pick the rest of the information
-    user_info = orcid_link.retrieve_info(session)
-
-    if user_info is None:
-        # Should never happen unless ORCID is down...
-        return 'Error: could not retrieve ORCID info'
+    try:
+        user_info = orcid_link.retrieve_info(session)
+    except OrcidError as e:
+        # Something went wrong in the request itself
+        return str(e)
 
     # Compile everything
     file_entry = {

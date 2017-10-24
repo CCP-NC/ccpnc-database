@@ -1,7 +1,7 @@
 function addUploadController(ngApp) {
     ngApp.controller('UploadController', function($scope, loginStatus, Upload) {
 
-        var clearMagres = function() {
+        var clearForm = function() {
             $scope.magres_file_name = '';
             $scope.magres_file = null; // Contents of the last uploaded file            
             $scope.uploading_now = false; // To show spinner if needed
@@ -12,7 +12,7 @@ function addUploadController(ngApp) {
 
         }
 
-        clearMagres();
+        clearForm();
 
         // Form data
         $scope.chemname = '';
@@ -73,7 +73,7 @@ function addUploadController(ngApp) {
                         $scope.status = 'Successfully uploaded';
                         $scope.status_err = false;                    
                         // Also, clear
-                        clearMagres();
+                        clearForm();
                     }
 
                     $scope.uploading_now = false;
