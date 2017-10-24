@@ -64,6 +64,7 @@ if __name__ == "__main__":
 
 ### SEARCH METHODS ###
 
+
 def makeEntry(f):
     # From database record to parsable entry
     try:
@@ -85,6 +86,7 @@ def databaseSearch(search_spec):
     # List search functions
     search_types = {
         'msRange': searchByMS,
+        'doi': searchByDOI,
     }
 
     search_dict = {
@@ -115,6 +117,8 @@ def databaseSearch(search_spec):
     return json.dumps([makeEntry(f)
                        for f in results])
 
+# Specific search functions
+
 
 def searchByMS(sp, minms, maxms):
 
@@ -125,4 +129,11 @@ def searchByMS(sp, minms, maxms):
                               {'iso': {'$gt': maxms}}]}
                     }
          }
+    ]
+
+
+def searchByDOI(doi):
+
+    return [
+        {'doi': doi}
     ]

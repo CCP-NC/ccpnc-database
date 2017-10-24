@@ -80,6 +80,10 @@ body {
     margin-bottom: 100px;
 }
 
+.is-fixed {
+    table-layout: fixed;
+}
+
 .database-record {
     display: block;
     padding: 15px;
