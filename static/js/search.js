@@ -56,9 +56,8 @@ function addSearchController(ngApp) {
             }
 
             $.ajax(query).done(function(d) {
-                $scope.search_results = d;
+                $scope.search_results = JSON.parse(d);
                 $scope.$apply();
-                console.log($scope.search_results);
             });
         }
 
