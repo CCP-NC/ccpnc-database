@@ -65,16 +65,23 @@ def upload():
         return str(e)
 
     # Compile everything
-    file_entry = {
-        'chemname': request.values.get('chemname'),
-        'doi': request.values.get('doi'),
-        'notes': request.values.get('notes'),
-        'user_id': client_id,
-        'user_info': user_info,
-    }
-
     try:
+
+        # Obligatory values
+        file_entry = {
+            'chemname': request.values.get('chemname'),
+            'orcid': user_info['orcid-identifier'],
+        }
+
+        # Optional ones
+        file_entry.update({
+            k: request.values.get(k) for k in ('doi', 'notes')
+            if (request.values.get(k) is not None and
+                len(request.values.get(k)) > 0)
+        })
+
         success = addMagresFile(request.values.get('magres'), file_entry)
+
     except Exception as e:
         return str(e)
 

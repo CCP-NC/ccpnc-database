@@ -49,10 +49,22 @@ def addMagresFile(magresStr, metadata={}):
     d = metadata
     d.update(getMSMetadata(magres))
 
-    # Actually post data
-    magresFilesID = magresFiles.insert_one({"magres": magresStr}).inserted_id
-    d["magresFilesID"] = magresFilesID
-    return magresData.insert_one(d).acknowledged
+    # Actually post data. First, the magres file
+    magresFilesInsertion = magresFiles.insert_one({'magres': magresStr})
+    magresFilesID = magresFilesInsertion.inserted_id
+    # Then we need to keep track of the id in the data
+    d['magresFilesID'] = magresFilesID
+    magresDataInsertion = magresData.insert_one(d)
+    magresDataID = magresDataInsertion.inserted_id
+    # And we cross-reference
+    magresFilesUpdate = magresFiles.update_one({'_id': magresFilesID},
+                                               {'$set': {'magresDataID':
+                                                         magresDataID}})
+
+    # Return True only if all went well
+    return (magresFilesInsertion.acknowledged and
+            magresDataInsertion.acknowledged and
+            magresFilesUpdate.modified_count)
 
 if __name__ == "__main__":
 
