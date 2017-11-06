@@ -3,7 +3,7 @@ var LoginStatus = function() {};
 
 LoginStatus.prototype = {
 
-    login_server_app: 'http://localhost:8000', // Location of the login server
+    login_server_app: '', // Location of the login server
 
     parse_response_tokens: function(response) {
         var resp = JSON.parse(response);

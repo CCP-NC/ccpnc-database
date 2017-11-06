@@ -1,8 +1,6 @@
 const fs = require('fs');
 const mVal = require('../static/js/magres-validate.js');
 
-const test_fname = 'ethanol.magres';
-
 function validate(fname) {
 
     fs.readFile(fname, function(err, data) {
@@ -27,7 +25,9 @@ function validate(fname) {
 }
 
 // Should be good
-validate(test_fname);
+//validate('ethanol.magres');
+validate('alanine.magres');
 
 // Designed to fail
 validate('test_magres.js');
+
