@@ -22,7 +22,7 @@ var validateMagres = function(fname, ftxt) {
     data.version = match_v[1];
 
     // Now parse atomic formula and positions
-    var block_re = /\[([\/]*)(atoms|magres)\]/;
+    var block_re = /[\[<]([\/]*)(atoms|magres)[\]>]/;
     var curr_block = null;
     var blocks = {};
 
@@ -39,6 +39,7 @@ var validateMagres = function(fname, ftxt) {
             blocks[curr_block].push(flines[i]);
         }
     }
+
     if (curr_block != null || !('atoms' in blocks) || !('magres' in blocks)) {
         // Invalid or corrupted file
         return false;
