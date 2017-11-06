@@ -83,7 +83,7 @@ def upload():
         success = addMagresFile(request.values.get('magres'), file_entry)
 
     except Exception as e:
-        return str(e)
+        return e.__class__.__name__ + ': ' + str(e)
 
     ### HERE GOES THE CODE TO UPLOAD TO THE DATABASE ###
 
