@@ -45,7 +45,7 @@ function addUploadController(ngApp) {
                     $scope.status_err = true;
                     return;
                 }
-            }                
+            }
 
 
             loginStatus.verify_token(function() {

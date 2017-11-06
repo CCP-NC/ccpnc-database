@@ -5,6 +5,8 @@ import numpy as np
 from ase import io
 from soprano.properties.nmr import MSIsotropy
 from pymongo import MongoClient
+from schema import SchemaError
+from db_schema import magresDataSchema
 
 _db_url = 'wigner.esc.rl.ac.uk'
 
@@ -20,7 +22,7 @@ def getMSMetadata(magres):
     sp = {s: np.where(symbols == s) for s in set(symbols)}
     isos = MSIsotropy.get(magres)
 
-    msdata["values"] = [{'species': s,
+    msdata['values'] = [{'species': s,
                          'iso': list(isos[inds])}
                         for s, inds in sp.iteritems()]
 
@@ -48,6 +50,9 @@ def addMagresFile(magresStr, metadata={}):
 
     d = metadata
     d.update(getMSMetadata(magres))
+
+    # Validate
+    d = magresDataSchema.validate(d)
 
     # Actually post data. First, the magres file
     magresFilesInsertion = magresFiles.insert_one({'magres': magresStr})
@@ -123,6 +128,8 @@ def databaseSearch(search_spec):
 
         search_dict['$and'] += search_func(**args)
 
+    print(search_dict)
+
     # Carry out the actual search
     results = ccpnc.magresData.find(search_dict)
 
@@ -137,8 +144,8 @@ def searchByMS(sp, minms, maxms):
     return [
         {'values': {'$elemMatch': {'species': sp}}},
         {'values': {'$elemMatch':
-                    {'$nor': [{'iso': {'$lt': minms}},
-                              {'iso': {'$gt': maxms}}]}
+                    {'$nor': [{'iso': {'$lt': float(minms)}},
+                              {'iso': {'$gt': float(maxms)}}]}
                     }
          }
     ]

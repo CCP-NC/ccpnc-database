@@ -9,17 +9,17 @@ obligatory but enforced by the uploading process itself."""
 orcid_path_re = re.compile('[0-9]{4}-'*3+'[0-9]{3}[0-9X]{1}\Z')
 
 magresDataSchema = Schema({
-    'chemname': And(str, len),
+    'chemname': And(basestring, len),
     'orcid': {
         'path': orcid_path_re.match,
-        'host': str,
+        'host': basestring,
         'uri': orcid_path_re.search,
     },
-    Optional('doi'): str,
-    Optional('notes'): str,
+    'values': [{
+        'species': basestring,
+        'iso': [float],
+    }],
+    Optional('doi'): basestring,
+    Optional('notes'): basestring,
     Optional('metadata'): dict
-})
-
-magresFileSchema = Schema({
-    'magres': And(str, len)
 })
