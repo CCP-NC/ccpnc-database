@@ -25,10 +25,7 @@ function addSearchController(ngApp) {
 
         $scope.reset_search_args($scope.search_type); // Init
 
-        $scope.search_results = [{
-            'chemname': 'Ethanol',
-            'doi': '10.1000'
-        }];
+        $scope.search_results = [];
 
         $scope.search = function() {
             // For now just a test thing to keep in mind how it's done
