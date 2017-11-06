@@ -128,8 +128,6 @@ def databaseSearch(search_spec):
 
         search_dict['$and'] += search_func(**args)
 
-    print(search_dict)
-
     # Carry out the actual search
     results = ccpnc.magresData.find(search_dict)
 
