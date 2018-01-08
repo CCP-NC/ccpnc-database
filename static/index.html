@@ -29,16 +29,10 @@
 <body ng-controller="NavigateController">
 
 <div ng-controller="CookieLawController">
-    <div class="modal {{approved? '' : 'is-active'}}">
-      <div class="modal-background"></div>
-      <div class="modal-content">
-        <div class="box has-text-centered">
+    <div class="notification is-primary is-borderless" ng-show="!approved" ng-cloak>
+        <button class="delete" ng-click="approve()"></button>
             <p>This site uses cookies in order to store and keep track of your login information. If you keep using this site,
             we will assume you accept this as a necessary part of the service.</p>
-            <br>
-            <a class="button is-primary" ng-click="approve()">I accept</a>
-        </div>
-      </div>
     </div>
 </div>
 
