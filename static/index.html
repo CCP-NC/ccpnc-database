@@ -20,6 +20,7 @@
     <script src="/js/search.js"></script>
     <script src="/js/upload.js"></script>
     <script src="/js/cookielaw.js"></script>
+    <script src="/js/yourfiles.js"></script>
     <script src="/js/magres-validate.js"></script>
 
     <script src="/js/navigate.js" async defer></script>
@@ -246,9 +247,10 @@
         </div>
     </div>
 
-    <div id="div-yourfiles" class="section" ng-switch-when="yourfiles" ng-cloak>
+    <div id="div-yourfiles" class="section" ng-switch-when="yourfiles" ng-controller="FileListerController" ng-cloak>
         <div class="container">
-        None at all.
+            <div database-record="result" ng-repeat="result in search_results">
+            </div>
         </div>
     </div>
 </div>

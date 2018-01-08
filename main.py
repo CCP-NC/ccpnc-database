@@ -95,8 +95,9 @@ def search():
 
     try:
         results = databaseSearch(request.json['search_spec'])
-    except ValueError:
-        return 'ERROR: search parameters are wrong or incomplete'
+    except ValueError as e:
+        return ('ERROR: search parameters are wrong or incomplete '
+                '({0})').format(e)
 
     return results
 
