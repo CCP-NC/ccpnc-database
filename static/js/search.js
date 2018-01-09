@@ -29,6 +29,11 @@ function addSearchController(ngApp) {
     ngApp.controller('SearchController', function($scope) {
 
         $scope.search_type = 'doi';
+        $scope.search_specs = [{
+            'type': 'doi'
+        }, {
+            'type': 'doi'
+        }];
 
         $scope.reset_search_args = function(new_type) {
             $scope.search_args = {};
@@ -37,16 +42,20 @@ function addSearchController(ngApp) {
             }
         }
 
-        $scope.reset_search_args($scope.search_type); // Init
+        for (var i = 0; i < $scope.search_specs.length; ++i) {
+            $scope.reset_search_args($scope.search_specs[i].type); // Init
+        }
 
         $scope.search_results = [];
 
         $scope.search = function() {
             // For now just a test thing to keep in mind how it's done
+            
             search_spec = [];
             search_data = {
                 'type': $scope.search_type
             };
+
             for (var argname in $scope.search_args) {
                 if ($scope.search_args[argname] != null)
                     search_data[argname] = $scope.search_args[argname];
@@ -62,7 +71,7 @@ function addSearchController(ngApp) {
                 type: 'POST', 
                 crossDomain: true, 
                 contentType: 'application/json', 
-                data: JSON.stringify({'search_spec': search_spec
+                data: JSON.stringify({'search_spec': $scope.search_specs
                                     })
             }
 

@@ -98,6 +98,8 @@ def makeEntry(f):
 
 def databaseSearch(search_spec):
 
+    print(search_spec)
+
     client = MongoClient(host=_db_url)
     ccpnc = client.ccpnc
 

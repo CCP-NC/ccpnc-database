@@ -127,37 +127,38 @@
     <div id="div-search" class="section" ng-switch-when="search" ng-controller="SearchController" ng-cloak>
 
         <div class="container has-text-centered">
-            <table class="table is-fullwidth is-bordered is-striped is-fixed">
+
+            <table class="table is-fullwidth is-bordered is-striped is-fixed" ng-repeat="search_spec in search_specs">
                 <tr>
                     <td class="width-1" colspan="1" rowspan="" headers="">
                         Search type
                     </td>
                     <td class="width-3" colspan="3" rowspan="" headers="">
                         <div class="select">
-                            <select ng-model="search_type" ng-change="reset_search_args(search_type)">
+                            <select ng-model="search_spec.type" ng-change="reset_search_args(search_spec.type)">
                                 <option value="doi">doi</option>
                                 <option value="msRange">Shielding</option>
                             </select>
                         </div>
                     </td>
                 </tr>
-                <tbody ng-if="search_type == 'doi'">
+                <tbody ng-if="search_spec.type == 'doi'">
                     <tr>
                         <td colspan="1" rowspan="" headers="">
                             doi
                         </td>
                         <td colspan="3" rowspan="" headers="">
-                            <input class="input" type="text" placeholder="doi" ng-model="search_args.doi">
+                            <input class="input" type="text" placeholder="doi" ng-model="search_spec.args.doi">
                         </td>
                     </tr>
                 </tbody>
-                <tbody ng-if="search_type == 'msRange'">
+                <tbody ng-if="search_spec.type == 'msRange'">
                     <tr>
                         <td colspan="1" rowspan="" headers="">
                             Species
                         </td>
                         <td colspan="3" rowspan="" headers="">
-                            <input class="input" type="text" placeholder="Element symbol" ng-model="search_args.sp">
+                            <input class="input" type="text" placeholder="Element symbol" ng-model="search_spec.args.sp">
                         </td>
                     </tr>
                     <tr>
@@ -165,21 +166,24 @@
                             Min. MS value
                         </td>
                         <td colspan="1" rowspan="" headers="">
-                            <input class="input" type="text" placeholder="Minimum shielding (ppm)" ng-model="search_args.minms">
+                            <input class="input" type="text" placeholder="Minimum shielding (ppm)" ng-model="search_spec.args.minms">
                         </td>
                         <td colspan="1" rowspan="" headers="">
                             Max. MS value
                         </td>
                         <td colspan="1" rowspan="" headers="">
-                            <input class="input" type="text" placeholder="Maximum shielding (ppm)" ng-model="search_args.maxms">
+                            <input class="input" type="text" placeholder="Maximum shielding (ppm)" ng-model="search_spec.args.maxms">
                         </td>
                     </tr>
                 </tbody>
             </table>
+
             <a class="button is-primary is-medium" ng-click="search()">
                 Search
             </a>
+
         </div>
+        
         <span class="separator-2"></span>
 
         <div class="container">
