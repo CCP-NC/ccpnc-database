@@ -105,6 +105,7 @@ def databaseSearch(search_spec):
     search_types = {
         'msRange': searchByMS,
         'doi': searchByDOI,
+        'orcid': searchByOrcid,
     }
 
     search_dict = {
@@ -154,4 +155,10 @@ def searchByDOI(doi):
 
     return [
         {'doi': doi}
+    ]
+
+def searchByOrcid(orcid):
+
+    return [
+        {'orcid.path': orcid}
     ]

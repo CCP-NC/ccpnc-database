@@ -20,6 +20,7 @@
     <script src="/js/search.js"></script>
     <script src="/js/upload.js"></script>
     <script src="/js/cookielaw.js"></script>
+    <script src="/js/yourfiles.js"></script>
     <script src="/js/magres-validate.js"></script>
 
     <script src="/js/navigate.js" async defer></script>
@@ -29,16 +30,10 @@
 <body ng-controller="NavigateController">
 
 <div ng-controller="CookieLawController">
-    <div class="modal {{approved? '' : 'is-active'}}">
-      <div class="modal-background"></div>
-      <div class="modal-content">
-        <div class="box has-text-centered">
+    <div class="notification is-primary is-borderless" ng-show="!approved" ng-cloak>
+        <button class="delete" ng-click="approve()"></button>
             <p>This site uses cookies in order to store and keep track of your login information. If you keep using this site,
             we will assume you accept this as a necessary part of the service.</p>
-            <br>
-            <a class="button is-primary" ng-click="approve()">I accept</a>
-        </div>
-      </div>
     </div>
 </div>
 
@@ -252,9 +247,10 @@
         </div>
     </div>
 
-    <div id="div-yourfiles" class="section" ng-switch-when="yourfiles" ng-cloak>
+    <div id="div-yourfiles" class="section" ng-switch-when="yourfiles" ng-controller="FileListerController" ng-cloak>
         <div class="container">
-        None at all.
+            <div database-record="result" ng-repeat="result in search_results">
+            </div>
         </div>
     </div>
 </div>

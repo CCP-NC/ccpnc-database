@@ -1,3 +1,17 @@
+function parseSearchResults(s) {
+    // Try parsing as JSON; if not, print as error message
+    results = null;
+
+    try {
+        results = JSON.parse(s);
+    }
+    catch (e) {
+        console.log(s);
+    }
+
+    return results
+}
+
 function addSearchController(ngApp) {
 
     /* SEARCH TYPES and arguments */
@@ -53,7 +67,7 @@ function addSearchController(ngApp) {
             }
 
             $.ajax(query).done(function(d) {
-                $scope.search_results = JSON.parse(d);
+                $scope.search_results = parseSearchResults(d);
                 $scope.$apply();
             });
         }
