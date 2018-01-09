@@ -9,6 +9,7 @@ from schema import SchemaError
 from db_schema import magresDataSchema
 
 _db_url = 'wigner.esc.rl.ac.uk'
+#_db_url = 'localhost:9000'
 
 ### METHODS FOR COMPILATION OF METADATA ###
 
