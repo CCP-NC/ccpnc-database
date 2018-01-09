@@ -53,6 +53,14 @@ body {
 .drag-drop-file #loaded {
 }
 
+.search-form {
+    margin: 0;
+}
+
+.plus-button {
+    margin: 5pt 0 0pt 0;
+}
+
 .width-1 {
     width: 200px;
 }

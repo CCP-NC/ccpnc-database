@@ -28,12 +28,20 @@ function addSearchController(ngApp) {
 
     ngApp.controller('SearchController', function($scope) {
 
-        $scope.search_type = 'doi';
-        $scope.search_specs = [{
-            'type': 'doi'
-        }, {
-            'type': 'doi'
-        }];
+        $scope.message = '';
+
+        $scope.search_specs = [];
+
+        $scope.add_spec = function() {
+            $scope.search_specs.push({
+                'type': 'doi'
+            });
+        }
+
+        $scope.remove_spec = function(i) {
+            if ($scope.search_specs.length > 1)
+                $scope.search_specs.splice(i, 1);
+        }
 
         $scope.reset_search_args = function(new_type) {
             $scope.search_args = {};
@@ -42,30 +50,13 @@ function addSearchController(ngApp) {
             }
         }
 
-        for (var i = 0; i < $scope.search_specs.length; ++i) {
-            $scope.reset_search_args($scope.search_specs[i].type); // Init
-        }
-
+        $scope.add_spec();
         $scope.search_results = [];
 
         $scope.search = function() {
             // For now just a test thing to keep in mind how it's done
+            $scope.message = '';
             
-            search_spec = [];
-            search_data = {
-                'type': $scope.search_type
-            };
-
-            for (var argname in $scope.search_args) {
-                if ($scope.search_args[argname] != null)
-                    search_data[argname] = $scope.search_args[argname];
-                else {                    
-                    console.log('Error');
-                    return;
-                }
-            }
-            search_spec.push(search_data);
-
             query =  {
                 url: '/search', 
                 type: 'POST', 
@@ -77,6 +68,17 @@ function addSearchController(ngApp) {
 
             $.ajax(query).done(function(d) {
                 $scope.search_results = parseSearchResults(d);
+                if ($scope.search_results == null) {
+                    var errcode = parseInt(d.match(/\d+/)[0]);
+                    switch(errcode) { // Return more understandable errors
+                        case 400:
+                            $scope.message = 'Search parameters missing or invalid';
+                            break;
+                        default:
+                            $scope.message = 'An unknown error has happened';
+                            break;
+                    }
+                }
                 $scope.$apply();
             });
         }

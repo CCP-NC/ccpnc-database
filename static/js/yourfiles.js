@@ -23,7 +23,7 @@ function addFileListerController(ngApp) {
 
         $.ajax(query).done(function(d) {
             $scope.search_results = parseSearchResults(d);
-            console.log($scope.search_results);
+            //console.log($scope.search_results);
             $scope.$apply();
         });
 

@@ -98,8 +98,6 @@ def makeEntry(f):
 
 def databaseSearch(search_spec):
 
-    print(search_spec)
-
     client = MongoClient(host=_db_url)
     ccpnc = client.ccpnc
 
@@ -126,9 +124,9 @@ def databaseSearch(search_spec):
 
         # Get them as dict
         try:
-            args = {a: src[a] for a in args}
+            args = {a: src['args'][a] for a in args}
         except KeyError:
-            raise ValueError('Invalid search spec')
+            raise ValueError('400 Bad Request - Invalid search spec')
 
         search_dict['$and'] += search_func(**args)
 
