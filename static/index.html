@@ -10,9 +10,11 @@
     <link rel="stylesheet" href="/academicons/css/academicons.min.css"/>
     <link rel="stylesheet" href="/css/stylesheet.css">
     <link rel="stylesheet" href="/css/loader.css">
+    <link rel="stylesheet" href="/css/capsule.min.css">
 
     <script src="/vendor/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/vendor/angular.min.js"></script>
+    <script src="/vendor/capsule.min.js"></script>
     <script src="/vendor/ng-file-upload-all.min.js"></script>
 
     <script src="/js/record.js"></script>
@@ -134,16 +136,14 @@
 
                 <table class="table is-fullwidth is-bordered is-striped is-fixed search-form">
                     <tr>
-                        <td class="width-1" colspan="1" rowspan="" headers="">
+                        <td class="width-1 is-size-7" colspan="1" rowspan="" headers="">
                             Search type
                         </td>
                         <td class="width-3" colspan="3" rowspan="" headers="">
-                            <div class="select">
-                                <select ng-model="search_spec.type" ng-change="reset_search_args(search_spec.type)">
-                                    <option value="doi">doi</option>
-                                    <option value="msRange">Shielding</option>
-                                </select>
-                            </div>
+                            <select class="cc-ctrl cc-bulma" ng-model="search_spec.type" ng-change="reset_search_args(search_spec.type)">
+                                <option value="doi">doi</option>
+                                <option value="msRange">Shielding</option>
+                            </select>
                         </td>
                     </tr>
                     <tbody ng-if="search_spec.type == 'doi'">
@@ -152,7 +152,7 @@
                                 doi
                             </td>
                             <td colspan="3" rowspan="" headers="">
-                                <input class="input" type="text" placeholder="doi" ng-model="search_spec.args.doi">
+                                <input class="cc-ctrl cc-bulma" type="text" placeholder="doi" ng-model="search_spec.args.doi">
                             </td>
                         </tr>
                     </tbody>
@@ -162,7 +162,7 @@
                                 Species
                             </td>
                             <td colspan="3" rowspan="" headers="">
-                                <input class="input" type="text" placeholder="Element symbol" ng-model="search_spec.args.sp">
+                                <input class="cc-ctrl cc-bulma" type="text" placeholder="Element symbol" ng-model="search_spec.args.sp">
                             </td>
                         </tr>
                         <tr>
@@ -170,13 +170,13 @@
                                 Min. MS value
                             </td>
                             <td colspan="1" rowspan="" headers="">
-                                <input class="input" type="text" placeholder="Minimum shielding (ppm)" ng-model="search_spec.args.minms">
+                                <input class="cc-ctrl cc-bulma" type="text" placeholder="Minimum shielding (ppm)" ng-model="search_spec.args.minms">
                             </td>
                             <td colspan="1" rowspan="" headers="">
                                 Max. MS value
                             </td>
                             <td colspan="1" rowspan="" headers="">
-                                <input class="input" type="text" placeholder="Maximum shielding (ppm)" ng-model="search_spec.args.maxms">
+                                <input class="cc-ctrl cc-bulma" type="text" placeholder="Maximum shielding (ppm)" ng-model="search_spec.args.maxms">
                             </td>
                         </tr>
                     </tbody>
@@ -219,7 +219,7 @@
                         Chemical name<sup class="has-text-danger">*</sup>
                     </td>
                     <td colspan="" rowspan="" headers="">
-                        <input id="chemname" class="input width-3" type="text" placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)">
+                        <input id="chemname" class="cc-ctrl cc-bulma width-3" type="text" placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)">
                     </td>
                 </tr>
                 <tr>
@@ -227,7 +227,7 @@
                         doi
                     </td>
                     <td colspan="" rowspan="" headers="">
-                        <input id="doi" class="input width-3" type="text" placeholder="doi pointing to the paper for which this calculation has been used">
+                        <input id="doi" class="cc-ctrl cc-bulma width-3" type="text" placeholder="doi pointing to the paper for which this calculation has been used">
                     </td>
                 </tr>
                 <tr>
@@ -235,7 +235,7 @@
                         Notes
                     </td>
                     <td colspan="" rowspan="" headers="">
-                        <textarea id="notes" class="textarea" placeholder="Useful details about calculation type, suggestion for reproducibility etc." 
+                        <textarea id="notes" class="cc-ctrl cc-bulma textarea" placeholder="Useful details about calculation type, suggestion for reproducibility etc." 
                         rows="10"></textarea>
                     </td>
                 </tr>
