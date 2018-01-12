@@ -271,6 +271,9 @@
 
     <div id="div-yourfiles" class="section" ng-switch-when="yourfiles" ng-controller="FileListerController" ng-cloak>
         <div class="container">
+            <div class="notification is-danger" ng-show="message != ''">
+                {{ message }}
+            </div>
             <div database-record="result" ng-repeat="result in search_results">
             </div>
         </div>
