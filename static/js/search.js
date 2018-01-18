@@ -50,6 +50,8 @@ function addSearchController(ngApp) {
             }
         }
 
+        $scope.server_app = 'https://www.ccpnc.ac.uk/database'
+
         $scope.add_spec();
         $scope.search_results = [];
 
@@ -58,7 +60,7 @@ function addSearchController(ngApp) {
             $scope.message = '';
             
             query =  {
-                url: '/search', 
+                url: $scope.server_app + '/search', 
                 type: 'POST', 
                 crossDomain: true, 
                 contentType: 'application/json', 
