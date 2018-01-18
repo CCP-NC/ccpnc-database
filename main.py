@@ -13,7 +13,7 @@ from db_interface import addMagresFile, databaseSearch
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 
-app = Flask('ccpnc-database', static_url_path='')
+app = Flask('ccpnc-database', static_url_path='',static_folder = os.path.join(filepath,"static"))
 app.secret_key = open(os.path.join(filepath, 'secret',
                                    'secret.key')).read().strip()
 
