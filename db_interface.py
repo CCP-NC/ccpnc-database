@@ -8,8 +8,8 @@ from pymongo import MongoClient
 from schema import SchemaError
 from db_schema import magresDataSchema
 
-_db_url = 'wigner.esc.rl.ac.uk'
-#_db_url = 'localhost:9000'
+_db_url = 'localhost'
+_db_port = 27017
 
 ### METHODS FOR COMPILATION OF METADATA ###
 
@@ -33,7 +33,7 @@ def getMSMetadata(magres):
 
 
 def addMagresFile(magresStr, metadata={}):
-    client = MongoClient(host=_db_url)
+    client = MongoClient(host=_db_url,port=_db_port)
     ccpnc = client.ccpnc
 
     # get the magresFiles collection from the database
@@ -98,7 +98,7 @@ def makeEntry(f):
 
 def databaseSearch(search_spec):
 
-    client = MongoClient(host=_db_url)
+    client = MongoClient(host=_db_url,port=_db_port)
     ccpnc = client.ccpnc
 
     # List search functions
