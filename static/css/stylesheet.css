@@ -8,6 +8,10 @@ body {
     flex-direction: column;
 }
 
+a {
+    color: hsl(171, 100%, 41%);
+}
+
 .main-section {
     flex: 1;
 }
