@@ -6,7 +6,10 @@ from ase import io
 from soprano.properties.nmr import MSIsotropy
 from pymongo import MongoClient
 from schema import SchemaError
-from db_schema import magresDataSchema
+from gridfs import GridFS
+from db_schema import (magresDataSchema,
+                       magresVersionSchema,
+                       magresMetadataSchema)
 
 _db_url = 'wigner.esc.rl.ac.uk'
 #_db_url = 'localhost:9000'
@@ -32,14 +35,19 @@ def getMSMetadata(magres):
 ### UPLOADING ###
 
 
-def addMagresFile(magresStr, metadata={}):
+def addMagresFile(magresStr, chemname, orcid, data={}):
     client = MongoClient(host=_db_url)
     ccpnc = client.ccpnc
 
-    # get the magresFiles collection from the database
-    magresFiles = ccpnc.magresFiles
-    # get the magresData collection from the database
-    magresData = ccpnc.magresData
+    # Three collections:
+    # 1. GridFS collection for magres files
+    magresFilesFS = GridFS(ccpnc, 'magresFilesFS')
+    # 2. Metadata collection (one element per database entry,
+    # including history)
+    magresMetadata = ccpnc.magresMetadata
+    # 3. Searchable data, updated when the other two change, to the latest
+    # version
+    magresIndex = ccpnc.magresIndex
 
     with tempfile.NamedTemporaryFile(suffix='.magres') as f:
         f.write(magresStr)
@@ -49,28 +57,44 @@ def addMagresFile(magresStr, metadata={}):
         # https://docs.python.org/2/library/tempfile.html#tempfile.NamedTemporaryFile
         magres = io.read(f.name)
 
-    d = metadata
-    d.update(getMSMetadata(magres))
+    #d = data
+    #d.update(getMSMetadata(magres))
 
-    # Validate
-    d = magresDataSchema.validate(d)
+    # Validate metadata
+    metadata = {
+        'chemname': chemname,
+        'orcid': orcid,
+        'version_history': []
+    }
+    metadata = magresMetadataSchema.validate(metadata)
 
-    # Actually post data. First, the magres file
-    magresFilesInsertion = magresFiles.insert_one({'magres': magresStr})
-    magresFilesID = magresFilesInsertion.inserted_id
-    # Then we need to keep track of the id in the data
-    d['magresFilesID'] = magresFilesID
-    magresDataInsertion = magresData.insert_one(d)
-    magresDataID = magresDataInsertion.inserted_id
-    # And we cross-reference
-    magresFilesUpdate = magresFiles.update_one({'_id': magresFilesID},
-                                               {'$set': {'magresDataID':
-                                                         magresDataID}})
+    # Create first version (with dummy ID) and validate
+    version = {
+        'magresFilesID': 'dummy'
+    }
+    version.update(data)
+    version = magresVersionSchema.validate(version)
+
+    # Now on to the data posting. We start with the metadata
+    magresMetadataInsertion = magresMetadata.insert_one(metadata)
+    magresMetadataID = magresMetadataInsertion.inserted_id
+    # Then we move on to the GridFS storage of the file itself
+    magresFilesID = magresFilesFS.put(magresStr, filename=magresMetadataID)
+    # And cross-reference
+    version['magresFilesID'] = magresFilesID
+    magresMetadataUpdate = magresMetadata.update_one({'_id':
+                                                      magresMetadataID},
+                                                     {'$push': {
+                                                         'version_history':
+                                                         version
+                                                     }})
+    # Now create the searchable dictionary
+    
 
     # Return True only if all went well
-    return (magresFilesInsertion.acknowledged and
-            magresDataInsertion.acknowledged and
-            magresFilesUpdate.modified_count)
+    return (magresMetadataInsertion.acknowledged and
+            (magresFilesID is not None) and
+            magresMetadataUpdate.modified_count)
 
 if __name__ == "__main__":
 
@@ -156,6 +180,7 @@ def searchByDOI(doi):
     return [
         {'doi': doi}
     ]
+
 
 def searchByOrcid(orcid):
 
