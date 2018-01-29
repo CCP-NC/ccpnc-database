@@ -269,11 +269,13 @@
         </div>
     </div>
 
-    <div id="div-yourfiles" class="section" ng-switch-when="yourfiles" ng-controller="FileListerController" ng-cloak>
+    <div id="div-yourfiles" class="section is-relative" ng-switch-when="yourfiles" ng-controller="FileListerController" ng-cloak>
         <div class="container">
             <div class="notification is-danger" ng-show="message != ''">
                 {{ message }}
             </div>
+        </div>
+        <div class="container is-scroll-y">
             <div database-record="result" ng-repeat="result in search_results">
             </div>
         </div>

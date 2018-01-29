@@ -165,6 +165,10 @@ def makeEntry(f):
     try:
         entry = {
             'chemname': f['chemname'],
+            'orcid': f['orcid']['path'],
+            'formula': ''.join(map(lambda x: x['species'] + str(x['n']),
+                                   f['formula'])),
+            'orcid_uri': f['orcid']['uri'],
             'doi': f['latest_version']['doi']
         }
     except KeyError:

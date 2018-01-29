@@ -103,6 +103,10 @@ def search():
 
     return results
 
+@app.route('/test', methods=['GET'])
+def test_get():
+
+    return 'Hello world'
 
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!
