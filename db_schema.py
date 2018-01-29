@@ -37,7 +37,7 @@ orcidSchema = Schema({
 
 magresVersionSchema = Schema({
     'magresFilesID': basestring,
-    Optional('doi'): basestring,
+    Optional('doi', default=''): basestring,
     Optional('notes'): basestring,
     Optional('csd-ref'): {
         'refcode': And(basestring, lambda s: len(s) == 6),
@@ -54,11 +54,13 @@ magresMetadataSchema = Schema({
 magresIndexSchema = Schema({
     'chemname': And(basestring, len),
     'orcid': orcidSchema,
+    'metadataID': str,
+    'latest_version': magresVersionSchema,
     'values': [{
         'species': basestring,
         'iso': [float],
     }],
     'formula': [{'species': str,
                  'n': int}]
-                 
+
 })
