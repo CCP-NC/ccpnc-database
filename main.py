@@ -8,7 +8,7 @@ import os
 import sys
 import json
 import inspect
-from flask import Flask, session, request
+from flask import Flask, Response, session, request, make_response
 from orcid import OrcidConnection, OrcidError
 from db_interface import addMagresFile, databaseSearch
 
@@ -106,7 +106,11 @@ def search():
 @app.route('/test', methods=['GET'])
 def test_get():
 
-    return 'Hello world'
+    resp = make_response('Hello world')
+    resp.headers['Content-Type'] = 'text/plain'
+    resp.headers['Content-Disposition'] = 'attachment; filename=test.txt'
+
+    return resp
 
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!
