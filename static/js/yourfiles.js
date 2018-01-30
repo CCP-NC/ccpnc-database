@@ -30,7 +30,6 @@ function addFileListerController(ngApp) {
                 $scope.$apply();
             },
             error: function(d) {
-                console.log(d);
                 $scope.message = 'ERROR: connection failed - ' + d.statusText;
                 $scope.$apply();
             },

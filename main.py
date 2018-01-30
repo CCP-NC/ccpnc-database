@@ -9,6 +9,7 @@ import sys
 import json
 import inspect
 from flask import Flask, Response, session, request, make_response
+from flask.ext.api import status
 from orcid import OrcidConnection, OrcidError
 from db_interface import addMagresFile, databaseSearch
 
@@ -62,7 +63,7 @@ def get_tokens(code):
 @app.route('/logout')
 def delete_tokens():
     orcid_link.delete_tokens(session)
-    return 'Logged out'
+    return 'Logged out', status.HTTP_200_OK
 
 
 @app.route('/upload', methods=['POST'])
@@ -73,7 +74,7 @@ def upload():
         user_info = user_info_auth()
     except OrcidError as e:
         # Something went wrong in the request itself
-        return str(e)
+        return str(e), status.HTTP_401_UNAUTHORIZED
 
     # Compile everything
     try:
@@ -95,11 +96,13 @@ def upload():
                                 file_entry)
 
     except Exception as e:
-        return e.__class__.__name__ + ': ' + str(e)
+        return (e.__class__.__name__ + ': ' + str(e),
+                status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    ### HERE GOES THE CODE TO UPLOAD TO THE DATABASE ###
-
-    return 'Success' if success else 'Failed'
+    if success:
+        return 'Success', status.HTTP_200_OK
+    else:
+        return 'Failed', status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 @app.route('/search', methods=['POST'])
@@ -109,19 +112,22 @@ def search():
         results = databaseSearch(request.json['search_spec'])
     except ValueError as e:
         return ('ERROR: search parameters are wrong or incomplete '
-                '({0})').format(e)
+                '({0})').format(e), status.HTTP_400_BAD_REQUEST
 
-    return results
+    return results, status.HTTP_200_OK
 
 
-@app.route('/test', methods=['GET'])
+@app.route('/doc', methods=['GET'])
 def test_get():
+
+    doc_id = request.args.get('id')
+    doc_v = request.args.get('version')
 
     resp = make_response('Hello world')
     resp.headers['Content-Type'] = 'text/plain'
     resp.headers['Content-Disposition'] = 'attachment; filename=test.txt'
 
-    return resp
+    return resp, status.HTTP_200_OK
 
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!
