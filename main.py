@@ -22,6 +22,26 @@ orcid_details = json.load(open(os.path.join(filepath, 'secret',
                                             'orcid_details.json')))
 orcid_link = OrcidConnection(orcid_details, 'https://orcid.org/')
 
+# Utilities
+
+
+def user_info_auth():
+    # Return user info if all tokens check out, otherwise raise OrcidError
+
+    # First, check that the details are valid
+    tk = orcid_link.get_tokens(session)
+    client_at = request.values.get('access_token')
+    client_id = request.values.get('orcid')
+
+    if (tk is None or
+            client_id != tk['orcid'] or
+            client_at != tk['access_token']):
+        raise OrcidError('Error: invalid login')
+
+    return orcid_link.retrieve_info(session)
+
+
+### APP ROUTES ###
 
 @app.route('/')
 def root():
@@ -48,19 +68,9 @@ def delete_tokens():
 @app.route('/upload', methods=['POST'])
 def upload():
 
-    # First, check that the details are valid
-    tk = orcid_link.get_tokens(session)
-    client_at = request.values.get('access_token')
-    client_id = request.values.get('orcid')
-
-    if (tk is None or
-            client_id != tk['orcid'] or
-            client_at != tk['access_token']):
-        return 'Error: invalid login'
-
     # Ok, so pick the rest of the information
     try:
-        user_info = orcid_link.retrieve_info(session)
+        user_info = user_info_auth()
     except OrcidError as e:
         # Something went wrong in the request itself
         return str(e)
@@ -102,6 +112,7 @@ def search():
                 '({0})').format(e)
 
     return results
+
 
 @app.route('/test', methods=['GET'])
 def test_get():
