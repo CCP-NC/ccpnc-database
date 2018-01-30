@@ -24,13 +24,13 @@ function addFileListerController(ngApp) {
                     },
                 }, ]
             }),
-            success: function(d) {
+            success: function(d, statusText, xhr) {
                 $scope.search_results = parseSearchResults(d);
                 $scope.message = '';
                 $scope.$apply();
             },
-            error: function(d) {
-                $scope.message = 'ERROR: connection failed - ' + d.statusText;
+            error: function(xhr, statusText) {
+                $scope.message = 'ERROR: connection failed - ' + xhr.statusText;
                 $scope.$apply();
             },
             timeout: 1000

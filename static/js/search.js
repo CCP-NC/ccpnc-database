@@ -56,21 +56,20 @@ function addSearchController(ngApp) {
         $scope.search = function() {
             // For now just a test thing to keep in mind how it's done
             $scope.message = '';
-            
+            console.log($scope.search_specs);
             query =  {
                 url: '/search', 
-                type: 'POST', 
+                type: 'POST',
                 crossDomain: true, 
                 contentType: 'application/json', 
                 data: JSON.stringify({'search_spec': $scope.search_specs
-                                    })
-            }
-
-            $.ajax(query).done(function(d) {
-                $scope.search_results = parseSearchResults(d);
-                if ($scope.search_results == null) {
-                    var errcode = parseInt(d.match(/\d+/)[0]);
-                    switch(errcode) { // Return more understandable errors
+                                    }),
+                success: function(d, statusText, xhr) {
+                    $scope.search_results = parseSearchResults(d);
+                    $scope.$apply();
+                },
+                error: function(xhr, statusText) {
+                    switch(xhr.status) { // Return more understandable errors
                         case 400:
                             $scope.message = 'Search parameters missing or invalid';
                             break;
@@ -78,9 +77,11 @@ function addSearchController(ngApp) {
                             $scope.message = 'An unknown error has happened';
                             break;
                     }
+                    $scope.$apply();
                 }
-                $scope.$apply();
-            });
+            }
+
+            $.ajax(query);
         }
 
     });

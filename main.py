@@ -132,7 +132,7 @@ def test_get():
     resp.headers['Content-Type'] = 'text/plain'
     resp.headers['Content-Disposition'] = 'attachment; filename=test.txt'
 
-    return resp, HTTP_200_OK
+    return resp
 
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!
