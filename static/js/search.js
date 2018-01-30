@@ -56,7 +56,6 @@ function addSearchController(ngApp) {
         $scope.search = function() {
             // For now just a test thing to keep in mind how it's done
             $scope.message = '';
-            console.log($scope.search_specs);
             query =  {
                 url: '/search', 
                 type: 'POST',
@@ -66,6 +65,10 @@ function addSearchController(ngApp) {
                                     }),
                 success: function(d, statusText, xhr) {
                     $scope.search_results = parseSearchResults(d);
+                    if ($scope.search_results == null) {
+                        // Should NEVER happen, but you never know...
+                        $scope.message = 'An unknown error has occurred';
+                    }
                     $scope.$apply();
                 },
                 error: function(xhr, statusText) {
@@ -74,7 +77,7 @@ function addSearchController(ngApp) {
                             $scope.message = 'Search parameters missing or invalid';
                             break;
                         default:
-                            $scope.message = 'An unknown error has happened';
+                            $scope.message = 'An unknown error has occurred';
                             break;
                     }
                     $scope.$apply();

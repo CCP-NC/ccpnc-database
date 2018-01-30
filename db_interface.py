@@ -6,7 +6,7 @@ from ase import io
 from soprano.properties.nmr import MSIsotropy
 from pymongo import MongoClient
 from schema import SchemaError
-from gridfs import GridFS
+from gridfs import GridFS, NoFile
 from bson.objectid import ObjectId
 from db_schema import (magresDataSchema,
                        magresVersionSchema,
@@ -116,6 +116,32 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
             magresIndexInsertion.acknowledged and
             (magresFilesID is not None) and
             magresMetadataUpdate.modified_count)
+
+
+def getMagresFile(entry_id, version_n):
+
+    client = MongoClient(host=_db_url)
+    ccpnc = client.ccpnc
+
+    magresFilesFS = GridFS(ccpnc, 'magresFilesFS')
+    magresMetadata = ccpnc.magresMetadata
+
+    try:
+        mdata_ref = magresMetadata.find({'_id': entry_id}).next()
+    except StopIteration:
+        return None
+
+    try:
+        mfile_id = mdata_ref['version_history'][version_n][magresFilesID]
+    except IndexError:
+        return None
+
+    try:
+        mfile_ref = magresFilesFS.get(ObjectId(mfile_id))
+    except NoFile:
+        return None
+
+    return mfile_ref.read()
 
 
 def removeMagresFiles(index_id):
