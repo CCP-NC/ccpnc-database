@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from ase.io.magres import read_magres
 from schema import Schema, And, Optional
 
@@ -37,6 +38,7 @@ orcidSchema = Schema({
 
 magresVersionSchema = Schema({
     'magresFilesID': basestring,
+    'date': datetime,
     Optional('doi', default=''): basestring,
     Optional('notes'): basestring,
     Optional('csd-ref'): {

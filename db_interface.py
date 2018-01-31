@@ -3,6 +3,7 @@ import inspect
 import tempfile
 import numpy as np
 from ase import io
+from datetime import datetime
 from soprano.properties.nmr import MSIsotropy
 from pymongo import MongoClient
 from schema import SchemaError
@@ -79,7 +80,8 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
 
     # Create first version (with dummy ID) and validate
     version = {
-        'magresFilesID': 'dummy'
+        'magresFilesID': 'dummy',
+        'date': datetime.utcnow()
     }
     version.update(data)
     version = magresVersionSchema.validate(version)
@@ -186,16 +188,17 @@ if __name__ == "__main__":
 ### SEARCH METHODS ###
 
 
-def makeEntry(f):
+def makeEntry(ind, meta):
     # From database record to parsable entry
     try:
         entry = {
-            'chemname': f['chemname'],
-            'orcid': f['orcid']['path'],
+            'chemname': ind['chemname'],
+            'orcid': ind['orcid']['path'],
             'formula': ''.join(map(lambda x: x['species'] + str(x['n']),
-                                   f['formula'])),
-            'orcid_uri': f['orcid']['uri'],
-            'doi': f['latest_version']['doi']
+                                   ind['formula'])),
+            'orcid_uri': ind['orcid']['uri'],
+            'doi': meta['version_history'][-1]['doi'],
+            'version_history': meta['version_history']
         }
     except KeyError:
         return None
@@ -224,7 +227,7 @@ def databaseSearch(search_spec):
         try:
             search_func = search_types[src.get('type')]
         except KeyError:
-            raise ValueError('400 Bad Request - Invalid search type')
+            raise ValueError('Invalid search type')
 
         # Find arguments
         args = inspect.getargspec(search_func).args
@@ -233,15 +236,26 @@ def databaseSearch(search_spec):
         try:
             args = {a: src['args'][a] for a in args}
         except KeyError:
-            raise ValueError('400 Bad Request - Invalid search arguments')
+            raise ValueError('Invalid search arguments')
 
         search_dict['$and'] += search_func(**args)
 
     # Carry out the actual search
-    results = ccpnc.magresIndex.find(search_dict)
+    resultsInd = ccpnc.magresIndex.find(search_dict)
+    # Find the corresponding metadata
+    results = []
+    for rInd in resultsInd:
+        oid = ObjectId(rInd['metadataID'])
+        mdata = [m for m in ccpnc.magresMetadata.find({'_id': oid})]
+        if len(mdata) != 1:
+            # Wut?
+            # Invalid entry; skip
+            continue
+        else:
+            results.append((rInd, mdata[0]))
 
-    return json.dumps([makeEntry(f)
-                       for f in results])
+    return json.dumps([makeEntry(ind, meta)
+                       for ind, meta in results], default=str)  # For dates
 
 # Specific search functions
 
@@ -261,11 +275,7 @@ def searchByMS(sp, minms, maxms):
 def searchByDOI(doi):
 
     return [
-        {'latest_version': {
-            'doi': doi
-        }
-        }
-
+        {'latest_version.doi': doi}
     ]
 
 

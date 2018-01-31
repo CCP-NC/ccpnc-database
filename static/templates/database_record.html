@@ -1,21 +1,37 @@
 <div class="database-record">
     <table class="table is-fullwidth is-bordered is-striped is-fixed">
-        <tr>
-            <td class="width-1">Name:</td>
-            <td class="width-3 has-text-primary">{{databaseRecord.chemname}}</td>
-        </tr>
-        <tr>
-            <td class="width-1">ORCID:</td>
-            <td class="width-3"><a href="{{databaseRecord.orcid_uri}}" target="blank">{{databaseRecord.orcid}}</a></td>
-        </tr>
-        <tr>
-            <td class="width-1">Formula:</td>
-            <td class="width-3">{{databaseRecord.formula}}</td>
-        </tr>
-        <tr ng-if="databaseRecord.doi != ''">
-            <td class="width-1">DOI:</td>
-            <td class="width-3">{{databaseRecord.doi}}</td>
-        </tr>
+        <tbody>
+            <tr>
+                <th class="width-1">Name:</th>
+                <td class="width-3 has-text-primary">{{databaseRecord.chemname}}</td>
+            </tr>
+            <tr>
+                <th class="width-1">ORCID:</th>
+                <td class="width-3"><a href="{{databaseRecord.orcid_uri}}" target="blank">{{databaseRecord.orcid}}</a></td>
+            </tr>
+            <tr>
+                <th class="width-1">Formula:</th>
+                <td class="width-3">{{databaseRecord.formula}}</td>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    Version specific information
+                </th>
+            </tr>
+            <tr>
+                <th class="width-1">Version:</th>
+                <td class="width-3">
+                    <select class="cc-ctrl cc-bulma">
+                        <option ng-repeat="v in databaseRecord.version_history" value="{{v.magresFilesID}}"
+                        ng-selected="$index+1 == databaseRecord.version_history.length">Version {{$index+1}} [{{v.date}}]</option>
+                    </select>
+                </td>
+            </tr>
+            <tr ng-if="databaseRecord.doi != ''">
+                <th class="width-1">DOI:</th>
+                <td class="width-3">{{databaseRecord.doi}}</td>
+            </tr>
+        </tbody>
     </table>
     <a class="button is-primary" href="/test" download>
         Download
