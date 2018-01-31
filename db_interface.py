@@ -1,3 +1,4 @@
+import re
 import json
 import inspect
 import tempfile
@@ -205,6 +206,7 @@ def databaseSearch(search_spec):
         'msRange': searchByMS,
         'doi': searchByDOI,
         'orcid': searchByOrcid,
+        'cname': searchByChemname
     }
 
     search_dict = {
@@ -272,4 +274,13 @@ def searchByOrcid(orcid):
 
     return [
         {'orcid.path': orcid}
+    ]
+
+
+def searchByChemname(pattern):
+
+    regex = re.compile(pattern)
+
+    return [
+        {'chemname': {'$regex': regex}}
     ]
