@@ -10,7 +10,7 @@ import json
 import inspect
 from flask import Flask, Response, session, request, make_response
 from orcid import OrcidConnection, OrcidError
-from db_interface import addMagresFile, databaseSearch
+from db_interface import addMagresFile, databaseSearch, getMagresFile
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 
@@ -126,11 +126,12 @@ def search():
 def get_doc():
 
     doc_id = request.args.get('id')
-    print(doc_id)
 
-    resp = make_response('Hello world')
+    fname = '{0}.magres'.format(doc_id)
+    
+    resp = make_response(getMagresFile(doc_id))
     resp.headers['Content-Type'] = 'text/plain'
-    resp.headers['Content-Disposition'] = 'attachment; filename=test.txt'
+    resp.headers['Content-Disposition'] = 'attachment; filename=' + fname
 
     return resp
 

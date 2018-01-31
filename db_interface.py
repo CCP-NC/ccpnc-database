@@ -120,26 +120,15 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
             magresMetadataUpdate.modified_count)
 
 
-def getMagresFile(entry_id, version_n):
+def getMagresFile(file_id):
 
     client = MongoClient(host=_db_url)
     ccpnc = client.ccpnc
 
     magresFilesFS = GridFS(ccpnc, 'magresFilesFS')
-    magresMetadata = ccpnc.magresMetadata
 
     try:
-        mdata_ref = magresMetadata.find({'_id': entry_id}).next()
-    except StopIteration:
-        return None
-
-    try:
-        mfile_id = mdata_ref['version_history'][version_n][magresFilesID]
-    except IndexError:
-        return None
-
-    try:
-        mfile_ref = magresFilesFS.get(ObjectId(mfile_id))
+        mfile_ref = magresFilesFS.get(ObjectId(file_id))
     except NoFile:
         return None
 
