@@ -123,10 +123,10 @@ def search():
 
 
 @app.route('/doc', methods=['GET'])
-def test_get():
+def get_doc():
 
     doc_id = request.args.get('id')
-    doc_v = request.args.get('version')
+    print(doc_id)
 
     resp = make_response('Hello world')
     resp.headers['Content-Type'] = 'text/plain'
