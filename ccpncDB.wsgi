@@ -2,9 +2,22 @@
 
 import sys
 import os
+import json
 
-sys.path.append( os.path.abspath(os.path.dirname(__file__)) )
-sys.path.append( "/opt/rh/python27/root/usr/lib/python2.7/site-packages" )
-sys.path.append( "/opt/rh/python27/root/usr/lib64/python2.7/site-packages" )
+current_path = os.path.abspath(os.path.dirname(__file__))
+
+sys.path.append( current_path )
+
+try:
+    config = json.load(open( os.path.join(current_path,"config.json"), "r"))
+except:
+    config = {}
+
+try:
+    for p in config["pythonpath"]:
+        sys.path.append(p)
+
+except:
+    pass
 
 from main import app as application
