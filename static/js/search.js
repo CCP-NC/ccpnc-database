@@ -50,7 +50,7 @@ function addSearchController(ngApp) {
             }
         }
 
-        $scope.server_app = 'https://www.ccpnc.ac.uk/database'
+        $scope.server_app = ccpnc_config.server_app;
 
         $scope.add_spec();
         $scope.search_results = [];

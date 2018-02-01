@@ -3,7 +3,7 @@ var LoginStatus = function() {};
 
 LoginStatus.prototype = {
 
-    login_server_app: 'https://www.ccpnc.ac.uk/database', // Location of the login server
+    login_server_app: ccpnc_config.server_app, // Location of the login server
 
     parse_response_tokens: function(response) {
         var resp = JSON.parse(response);
@@ -119,7 +119,7 @@ function addLoginController(ngApp) {
         'client_id': 'APP-KV1OV8U12GT9FTQR',
         'response_type': 'code',
         'scope': '/authenticate',
-        'redirect_uri': 'https://www.ccpnc.ac.uk/database/'
+        'redirect_uri': ccpnc_config.redirect_uri
     };
 
     ngApp.controller('LoginController',

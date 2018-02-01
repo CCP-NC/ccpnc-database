@@ -5,7 +5,7 @@ function addFileListerController(ngApp) {
 
         $scope.message = '';
 
-        $scope.server_app = 'https://www.ccpnc.ac.uk/database'
+        $scope.server_app = ccpnc_config.server_app;
 
         // This code gets executed every time the tab is opened, and refreshes
         // the contents
