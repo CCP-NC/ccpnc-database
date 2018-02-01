@@ -1,1 +1,1 @@
-{"pythonpath": ["/Users/albert/local/lib/python2.7/site-packages", "/Users/albert/Code/soprano"]}
+{"pythonpath": ["/Users/albert/local/lib/python2.7/site-packages", "/Users/albert/Code/soprano"], "db_url": "wigner.esc.rl.ac.uk", "db_port": 27017}

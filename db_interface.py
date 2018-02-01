@@ -8,11 +8,16 @@ from pymongo import MongoClient
 from schema import SchemaError
 from db_schema import magresDataSchema
 
-_db_url = 'localhost'
-_db_port = 27017
+try:
+    config = json.load(open( os.path.join(
+        os.path.abspath(os.path.dirname(__file__)), "config", "config.json"), "r"))
+except:
+    config = {}
+
+_db_url = config.get("db_url","localhost")
+_db_port = config.get("db_port",27017)
 
 ### METHODS FOR COMPILATION OF METADATA ###
-
 
 def getMSMetadata(magres):
 
