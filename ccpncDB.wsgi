@@ -9,7 +9,7 @@ current_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append( current_path )
 
 try:
-    config = json.load(open( os.path.join(current_path,"config.json"), "r"))
+    config = json.load(open( os.path.join(current_path,"config","config.json"), "r"))
 except:
     config = {}
 
