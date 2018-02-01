@@ -2,3 +2,4 @@ secret/secret.key
 secret/orcid_details.json
 *.pyc
 .ipynb_checkpoints
+config.json
