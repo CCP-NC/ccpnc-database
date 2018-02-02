@@ -50,6 +50,8 @@ function addSearchController(ngApp) {
             }
         }
 
+        $scope.server_app = ccpnc_config.server_app;
+
         $scope.add_spec();
         $scope.search_results = [];
 
@@ -57,8 +59,8 @@ function addSearchController(ngApp) {
             // For now just a test thing to keep in mind how it's done
             $scope.message = '';
             query =  {
-                url: '/search', 
-                type: 'POST',
+                url: $scope.server_app + '/search', 
+                type: 'POST', 
                 crossDomain: true, 
                 contentType: 'application/json', 
                 data: JSON.stringify({'search_spec': $scope.search_specs
