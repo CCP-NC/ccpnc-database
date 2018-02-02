@@ -86,6 +86,7 @@ function addSearchController(ngApp) {
                 }
             }
 
+            console.log(query);
             $.ajax(query);
         }
 

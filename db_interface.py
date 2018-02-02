@@ -1,3 +1,4 @@
+import os
 import re
 import json
 import inspect
@@ -16,15 +17,16 @@ from db_schema import (magresDataSchema,
                        magresIndexSchema)
 
 try:
-    config = json.load(open( os.path.join(
+    config = json.load(open(os.path.join(
         os.path.abspath(os.path.dirname(__file__)), "config", "config.json"), "r"))
-except:
+except IOError:
     config = {}
 
-_db_url = config.get("db_url","localhost")
-_db_port = config.get("db_port",27017)
+_db_url = config.get("db_url", "localhost")
+_db_port = config.get("db_port", 27017)
 
 ### METHODS FOR COMPILATION OF METADATA ###
+
 
 def getFormula(magres):
 
@@ -52,7 +54,7 @@ def getMSMetadata(magres):
 
 
 def addMagresFile(magresStr, chemname, orcid, data={}):
-    client = MongoClient(host=_db_url,port=_db_port)
+    client = MongoClient(host=_db_url, port=_db_port)
     ccpnc = client.ccpnc
 
     # Three collections:
@@ -203,7 +205,7 @@ def makeEntry(ind, meta):
 
 def databaseSearch(search_spec):
 
-    client = MongoClient(host=_db_url,port=_db_port)
+    client = MongoClient(host=_db_url, port=_db_port)
     ccpnc = client.ccpnc
 
     # List search functions
@@ -280,6 +282,7 @@ def searchByOrcid(orcid):
     return [
         {'orcid.path': orcid}
     ]
+
 
 def searchByChemname(pattern):
 
