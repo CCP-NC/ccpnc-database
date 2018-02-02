@@ -3,7 +3,9 @@ function addNavigateController(ngApp) {
         $scope.open_tab = '';
         $scope.loginStatus = loginStatus;
 
-        var obj = {a: 'x', b: 'Hello '};
-        $scope.things = [obj, {b: 'Duh '}];
+        $scope.menu_display = false;
+        $scope.show_menu_mobile = function() {
+            $scope.menu_display = !$scope.menu_display;
+        }
     });
 }

@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from ase.io.magres import read_magres
 from schema import Schema, And, Optional
 
@@ -27,4 +28,41 @@ magresDataSchema = Schema({
         'refcode': And(basestring, lambda s: len(s) == 6),
         Optional('digits'): csd_digits_re.match
     }
+})
+
+orcidSchema = Schema({
+    'path': orcid_path_re.match,
+    'host': basestring,
+    'uri': orcid_path_re.search,
+})
+
+magresVersionSchema = Schema({
+    'magresFilesID': basestring,
+    'date': datetime,
+    Optional('doi', default=''): basestring,
+    Optional('notes'): basestring,
+    Optional('csd-ref'): {
+        'refcode': And(basestring, lambda s: len(s) == 6),
+        Optional('digits'): csd_digits_re.match
+    }
+})
+
+magresMetadataSchema = Schema({
+    'chemname': And(basestring, len),
+    'orcid': orcidSchema,
+    'version_history': [magresVersionSchema]
+})
+
+magresIndexSchema = Schema({
+    'chemname': And(basestring, len),
+    'orcid': orcidSchema,
+    'metadataID': str,
+    'latest_version': magresVersionSchema,
+    'values': [{
+        'species': basestring,
+        'iso': [float],
+    }],
+    'formula': [{'species': str,
+                 'n': int}]
+
 })

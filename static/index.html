@@ -45,14 +45,14 @@
         <a class="nabvar-item has-text-centered">
             <span id="ccpnc-logo" class="is-size-1">CCP-NC</span>
         </a>
-        <div class="navbar-burger burger is-size-2" data-target="navBarCCPNC">
+        <div class="navbar-burger burger is-size-2" ng-click="show_menu_mobile();" data-target="#navBarCCPNC">
           <span></span>
           <span></span>
           <span></span>
         </div>
     </div>
 
-    <div id="navBarCCPNC" class="navbar-menu is-size-5">
+    <div id="navBarCCPNC" class="navbar-menu is-size-5" ng-class="(menu_display? 'is-active' : '')">
         <div class="navbar-start">
             <a class="navbar-item" ng-click="open_tab='home';">
                 Home
@@ -137,13 +137,14 @@
 
                 <table class="table is-fullwidth is-bordered is-striped is-fixed search-form">
                     <tr>
-                        <td class="width-1 is-size-7" colspan="1" rowspan="" headers="">
+                        <td class="width-1" colspan="1" rowspan="" headers="">
                             Search type
                         </td>
                         <td class="width-3" colspan="3" rowspan="" headers="">
                             <select class="cc-ctrl cc-bulma" ng-model="search_spec.type" ng-change="reset_search_args(search_spec.type)">
                                 <option value="doi">doi</option>
                                 <option value="msRange">Shielding</option>
+                                <option value="cname">Chemical name</option>
                             </select>
                         </td>
                     </tr>
@@ -181,6 +182,16 @@
                             </td>
                         </tr>
                     </tbody>
+                    <tbody ng-if="search_spec.type == 'cname'">
+                        <tr>
+                            <td colspan="1" rowspan="" headers="">
+                                Search pattern
+                            </td>
+                            <td colspan="3" rowspan="" headers="">
+                                <input class="cc-ctrl cc-bulma" type="text" placeholder="Pattern (regular expressions allowed)" ng-model="search_spec.args.pattern">
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
 
                 <div class="plus-button" ng-show="$index == search_specs.length-1">
@@ -188,7 +199,6 @@
                         <i class="fa fa-plus" aria-hidden="true"></i>
                     </button>
                 </div>
-
             </div>
 
             <div class="notification is-warning" ng-show="message != ''">
@@ -205,7 +215,7 @@
 
         <span class="separator-2"></span>
 
-        <div class="container">
+        <div class="container is-scroll-y">        
             <div database-record="result" ng-repeat="result in search_results">
             </div>
         </div>
@@ -270,11 +280,13 @@
         </div>
     </div>
 
-    <div id="div-yourfiles" class="section" ng-switch-when="yourfiles" ng-controller="FileListerController" ng-cloak>
+    <div id="div-yourfiles" class="section is-relative" ng-switch-when="yourfiles" ng-controller="FileListerController" ng-cloak>
         <div class="container">
             <div class="notification is-danger" ng-show="message != ''">
                 {{ message }}
             </div>
+        </div>
+        <div class="container is-scroll-y">
             <div database-record="result" ng-repeat="result in search_results">
             </div>
         </div>

@@ -8,6 +8,14 @@ body {
     flex-direction: column;
 }
 
+a {
+    color: hsl(171, 100%, 41%);
+}
+
+a.navbar-item:hover {
+    color: hsl(171, 100%, 41%);
+}
+
 .main-section {
     flex: 1;
 }
@@ -92,13 +100,23 @@ body {
     table-layout: fixed;
 }
 
+.is-relative {
+    position: relative;
+}
+
+.is-scroll-y {
+    position: relative;
+    overflow-y: scroll;
+    max-height: 55vh;
+}
+
 .database-record {
     display: block;
     padding: 15px;
     background-color: #ffffff;
     margin-bottom: 5px;
-    border: solid 2px #333333;
-    border-radius: 10px;
+    border: solid 1px #00d1b2;
+    border-radius: 5px;
 }
 
 .orcid-green {
