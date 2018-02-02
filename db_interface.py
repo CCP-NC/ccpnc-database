@@ -15,11 +15,16 @@ from db_schema import (magresDataSchema,
                        magresMetadataSchema,
                        magresIndexSchema)
 
-_db_url = 'wigner.esc.rl.ac.uk'
-#_db_url = 'localhost:9000'
+try:
+    config = json.load(open( os.path.join(
+        os.path.abspath(os.path.dirname(__file__)), "config", "config.json"), "r"))
+except:
+    config = {}
+
+_db_url = config.get("db_url","localhost")
+_db_port = config.get("db_port",27017)
 
 ### METHODS FOR COMPILATION OF METADATA ###
-
 
 def getFormula(magres):
 
@@ -47,7 +52,7 @@ def getMSMetadata(magres):
 
 
 def addMagresFile(magresStr, chemname, orcid, data={}):
-    client = MongoClient(host=_db_url)
+    client = MongoClient(host=_db_url,port=_db_port)
     ccpnc = client.ccpnc
 
     # Three collections:
@@ -198,7 +203,7 @@ def makeEntry(ind, meta):
 
 def databaseSearch(search_spec):
 
-    client = MongoClient(host=_db_url)
+    client = MongoClient(host=_db_url,port=_db_port)
     ccpnc = client.ccpnc
 
     # List search functions
@@ -275,7 +280,6 @@ def searchByOrcid(orcid):
     return [
         {'orcid.path': orcid}
     ]
-
 
 def searchByChemname(pattern):
 

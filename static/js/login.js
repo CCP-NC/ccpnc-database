@@ -3,7 +3,7 @@ var LoginStatus = function() {};
 
 LoginStatus.prototype = {
 
-    login_server_app: '', // Location of the login server
+    login_server_app: ccpnc_config.server_app, // Location of the login server
 
     parse_response_tokens: function(response) {
         var resp = JSON.parse(response);
@@ -28,11 +28,13 @@ LoginStatus.prototype = {
         };
 
         url = this.login_server_app + '/gettokens/';
+
         if (code != null)
         {
             console.log('Requesting tokens for code ' + code);
             url += code;
         }
+
         $.ajax({
             url: url,
             type: "GET",
@@ -117,7 +119,7 @@ function addLoginController(ngApp) {
         'client_id': 'APP-KV1OV8U12GT9FTQR',
         'response_type': 'code',
         'scope': '/authenticate',
-        'redirect_uri': 'http://localhost:8000'
+        'redirect_uri': ccpnc_config.redirect_uri
     };
 
     ngApp.controller('LoginController',
@@ -159,11 +161,12 @@ function addLoginController(ngApp) {
                     }
                     update_details(resp);
                     // And if possible reset the location
+
                     try {
                         window.history.pushState({
-                                path: window.location.origin
+                                path: window.location.origin+window.location.pathname
                             }, '',
-                            window.location.origin)
+                            window.location.origin+window.location.pathname)
                     } catch (e) {
                         console.log(e);
                     }
