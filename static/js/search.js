@@ -4,8 +4,7 @@ function parseSearchResults(s) {
 
     try {
         results = JSON.parse(s);
-    }
-    catch (e) {
+    } catch (e) {
         console.log(s);
     }
 
@@ -50,21 +49,20 @@ function addSearchController(ngApp) {
             }
         }
 
-        $scope.server_app = ccpnc_config.server_app;
-
         $scope.add_spec();
         $scope.search_results = [];
 
         $scope.search = function() {
             // For now just a test thing to keep in mind how it's done
             $scope.message = '';
-            query =  {
-                url: $scope.server_app + '/search', 
-                type: 'POST', 
-                crossDomain: true, 
-                contentType: 'application/json', 
-                data: JSON.stringify({'search_spec': $scope.search_specs
-                                    }),
+            query = {
+                url: ngApp.server_app + '/search',
+                type: 'POST',
+                crossDomain: true,
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    'search_spec': $scope.search_specs
+                }),
                 success: function(d, statusText, xhr) {
                     $scope.search_results = parseSearchResults(d);
                     if ($scope.search_results == null) {
@@ -74,7 +72,7 @@ function addSearchController(ngApp) {
                     $scope.$apply();
                 },
                 error: function(xhr, statusText) {
-                    switch(xhr.status) { // Return more understandable errors
+                    switch (xhr.status) { // Return more understandable errors
                         case 400:
                             $scope.message = 'Search parameters missing or invalid';
                             break;
@@ -86,7 +84,6 @@ function addSearchController(ngApp) {
                 }
             }
 
-            console.log(query);
             $.ajax(query);
         }
 

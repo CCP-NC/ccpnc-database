@@ -20,7 +20,6 @@ function addUploadController(ngApp) {
         // Status message
         $scope.status = '';
         $scope.status_err = false; // Is the status an error?        
-        $scope.server_app = ccpnc_config.server_app;
 
         $scope.upload = function() {
 
@@ -60,7 +59,7 @@ function addUploadController(ngApp) {
                 $scope.$apply();
 
                 $.ajax({
-                    url: $scope.server_app + '/upload',
+                    url: ngApp.server_app + '/upload',
                     type: 'POST',
                     crossDomain: true,
                     data: data

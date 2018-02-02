@@ -5,8 +5,6 @@ function addFileListerController(ngApp) {
 
         $scope.message = '';
 
-        $scope.server_app = ccpnc_config.server_app;
-
         // This code gets executed every time the tab is opened, and refreshes
         // the contents
 
@@ -14,7 +12,7 @@ function addFileListerController(ngApp) {
 
         // Perform a search for files with same ORCID
         query = {
-            url: $scope.server_app + '/search',
+            url: ngApp.server_app + '/search',
             type: 'POST',
             crossDomain: true,
             contentType: 'application/json',

@@ -1,9 +1,9 @@
 // Definition of the LoginStatus service object
-var LoginStatus = function() {};
+var LoginStatus = function() {
+    this.server_app = ccpnc_config.server_app;
+};
 
 LoginStatus.prototype = {
-
-    login_server_app: ccpnc_config.server_app, // Location of the login server
 
     parse_response_tokens: function(response) {
         var resp = JSON.parse(response);
@@ -27,7 +27,7 @@ LoginStatus.prototype = {
             console.log(status);
         };
 
-        url = this.login_server_app + '/gettokens/';
+        url = this.server_app + '/gettokens/';
 
         if (code != null)
         {
@@ -48,7 +48,7 @@ LoginStatus.prototype = {
     remove_cookies: function() {
         // Delete the cookies
         $.ajax({
-            url: this.login_server_app + '/logout',
+            url: ccpnc_config.server_app + '/logout',
             type: "GET",
             crossDomain: true
         });
@@ -119,7 +119,7 @@ function addLoginController(ngApp) {
         'client_id': 'APP-KV1OV8U12GT9FTQR',
         'response_type': 'code',
         'scope': '/authenticate',
-        'redirect_uri': ccpnc_config.redirect_uri
+        'redirect_uri': ngApp.redirect_uri
     };
 
     ngApp.controller('LoginController',

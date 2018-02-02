@@ -3,6 +3,10 @@
   console.log('Creating Angular app...');
   var ccpncApp = angular.module('ccpncDatabaseApp', ['ngFileUpload']);
 
+  // Assign some app-wide configuration constants
+  ccpncApp.server_app = ccpnc_config.server_app;
+  ccpncApp.redirect_uri = ccpnc_config.redirect_uri;
+
   // Create a service to hold login data
   ccpncApp.service('loginStatus', LoginStatus);
 
