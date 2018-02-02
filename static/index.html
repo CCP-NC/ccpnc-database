@@ -270,14 +270,15 @@
             </div>        
             <span class="separator-1"></span>
             <span class="box" ng-show="status !== ''" ng-class="{
-            'has-text-danger': status_err,
-            'has-text-success': !status_err,
-        }">
+                'has-text-danger': status_err,
+                'has-text-success': !status_err,
+            }">
                 {{ status }}
             </span>
             <span class="separator-1"></span>
             <a class="button is-primary is-large" ng-click="upload()">Upload</a>
         </div>
+        
     </div>
 
     <div id="div-yourfiles" class="section is-relative" ng-switch-when="yourfiles" ng-controller="FileListerController" ng-cloak>
@@ -289,6 +290,15 @@
         <div class="container is-scroll-y">
             <div database-record="result" ng-repeat="result in search_results">
             </div>
+        </div>
+
+        <!-- Use for edits -->
+        <div class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-content">
+                <!-- Any other Bulma elements you want -->
+            </div>
+            <button class="modal-close is-large" aria-label="close"></button>
         </div>
     </div>
 </div>
