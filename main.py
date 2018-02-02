@@ -128,7 +128,7 @@ def get_doc():
     doc_id = request.args.get('id')
 
     fname = '{0}.magres'.format(doc_id)
-    
+
     resp = make_response(getMagresFile(doc_id))
     resp.headers['Content-Type'] = 'text/plain'
     resp.headers['Content-Disposition'] = 'attachment; filename=' + fname
