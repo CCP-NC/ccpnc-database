@@ -13,6 +13,7 @@
   // Add directives
   console.log('Loading directives...');
   addRecordDirective(ccpncApp);
+  addEditFormDirective(ccpncApp);
 
   // Add controllers
   console.log('Loading controllers...');
