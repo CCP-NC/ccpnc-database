@@ -36,7 +36,10 @@
     <a class="button is-primary" href="/doc?id={{_selected_id}}" download>
         Download&nbsp;<i class="fa fa-download"></i>
     </a>
-    <div class="button is-primary is-pulled-right" download>
+    <div class="button is-primary is-pulled-right" ng-click="edit()" download>
         Edit&nbsp;<i class="fa fa-edit"></i>
+    </div>
+
+    <div edit-form="formData">
     </div>
 </div>

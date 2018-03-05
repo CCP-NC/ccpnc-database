@@ -8,6 +8,14 @@ function addRecordDirective(ngApp) {
             templateUrl: 'templates/database_record.html',
             scope: {
                 databaseRecord: '=',
+            },
+            link: function(scope, elem, attr) {
+
+                scope.formData = {};
+
+                scope.edit = function() {
+                    this.formData.is_open = true;
+                };           
             }
         };
     });
@@ -22,6 +30,17 @@ function addEditFormDirective(ngApp) {
             templateUrl: 'templates/edit_form.html',
             scope: {
                 editForm: '=',
+            },
+            // Associated functions
+            link: function(scope, elem, attr) {
+
+                scope.cancel = function() {
+                    this.editForm.is_open = false;
+                };
+
+                if (scope.submit == null) {
+                    scope.submit = scope.cancel;
+                }
             }
         };
     });
