@@ -21,25 +21,26 @@
             <tr>
                 <th class="width-1">Version:</th>
                 <td class="width-3">
-                    <select class="cc-ctrl cc-bulma" ng-model="_selected_id" ng-init="_selected_id=databaseRecord.version_history[databaseRecord.version_history.length-1].magresFilesID">
-                        <option ng-repeat="v in databaseRecord.version_history" value="{{v.magresFilesID}}"
-                        ng-selected="$index+1 == databaseRecord.version_history.length">Version {{$index+1}} [{{v.date}}]</option>
+                    <!-- Note that the ng-init value is cast to a string in order to be detected immediately and avoid an ugly 'blank' option -->
+                    <select class="cc-ctrl cc-bulma" ng-model="_selected_index" ng-init="_selected_index=(databaseRecord.version_history.length-1)+''">
+                        <option ng-repeat="v in databaseRecord.version_history" value="{{$index}}"
+                        ng-selected="$last">Version {{$index+1}} [{{v.date}}]</option>
                     </select>
                 </td>
             </tr>
-            <tr ng-if="databaseRecord.doi != ''">
+            <tr ng-if="databaseRecord.version_history[_selected_index].doi != ''">
                 <th class="width-1">DOI:</th>
-                <td class="width-3">{{databaseRecord.doi}}</td>
+                <td class="width-3">{{databaseRecord.version_history[_selected_index].doi}}</td>
             </tr>
         </tbody>
     </table>
-    <a class="button is-primary" href="/doc?id={{_selected_id}}" download>
+    <a class="button is-primary" href="/doc?id={{databaseRecord.version_history[_selected_index].magresFilesID}}" download>
         Download&nbsp;<i class="fa fa-download"></i>
     </a>
     <div class="button is-primary is-pulled-right" ng-click="edit()" download>
         Edit&nbsp;<i class="fa fa-edit"></i>
     </div>
 
-    <div edit-form="formData">
+    <div edit-form="_edit_form">
     </div>
 </div>

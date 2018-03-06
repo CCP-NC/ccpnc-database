@@ -2,15 +2,28 @@
   <div class="modal-background"></div>
   <div class="modal-card">
     <header class="modal-card-head">
-      <p class="modal-card-title">Modal title</p>
+      <p class="modal-card-title">Editable data for {{editForm.parent.databaseRecord.chemname}}</p>
       <button class="delete" aria-label="close" ng-click="cancel()"></button>
     </header>
     <section class="modal-card-body">
-        {{editForm}}
+        <table class="table is-bordered is-striped is-fixed">
+            <tbody>
+                <tr ng-repeat="(p, v) in editForm._props">
+                    <!-- Here we list all possible value types, and how they're presented -->
+                    <th class="width-1" ng-switch="p">
+                        <span ng-switch-case="doi">DOI:</span>
+                    </th>
+                    <td class="width-3">
+                        <input id="edit-doi" class="cc-ctrl cc-bulma" type="text"
+                        placeholder="DOI" ng-model="v">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </section>
     <footer class="modal-card-foot">
-      <button class="button is-success" ng-click="submit()">Save changes</button>
-      <button class="button">Cancel</button>
+      <button class="button is-primary" ng-click="submit()">Save changes</button>
+      <button class="button" ng-click="cancel()">Cancel</button>
     </footer>
   </div>
 </div>

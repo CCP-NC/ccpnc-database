@@ -11,10 +11,24 @@ function addRecordDirective(ngApp) {
             },
             link: function(scope, elem, attr) {
 
-                scope.formData = {};
+                scope._edit_form = {};
 
                 scope.edit = function() {
-                    this.formData.is_open = true;
+                    this._edit_form.is_open = true; 
+                    this._edit_form.parent = this;
+
+                    // Gather all the editable properties
+                    var editable_props = ['doi'];
+                    this._edit_form._props = {};
+
+                    for (var i = 0; i < editable_props.length; ++i) {
+                        var p = editable_props[i];
+                        this._edit_form._props[p] = this.databaseRecord.version_history[this._selected_index][p];
+                    }
+
+                    this._edit_form.submit = function() {
+                        console.log(this._props);
+                    }
                 };           
             }
         };
@@ -38,8 +52,10 @@ function addEditFormDirective(ngApp) {
                     this.editForm.is_open = false;
                 };
 
-                if (scope.submit == null) {
-                    scope.submit = scope.cancel;
+                scope.submit = function() {
+                    if (this.editForm.submit != null)
+                        this.editForm.submit();
+                    this.editForm.is_open = false;
                 }
             }
         };
