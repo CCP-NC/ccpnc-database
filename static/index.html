@@ -18,7 +18,8 @@
     <script src="vendor/ng-file-upload-all.min.js"></script>
 
     <script src="js/config.js"></script>
-    <script src="js/directives.js"></script>
+    <script src="js/edit.js"></script>
+    <script src="js/record.js"></script>
     <script src="js/login.js"></script>
     <script src="js/search.js"></script>
     <script src="js/upload.js"></script>
@@ -222,7 +223,10 @@
     </div>
 
     <div id="div-upload" class="section" ng-switch-when="upload" ng-controller="UploadController" ng-cloak>
-            
+        
+        <div edit-form="_edit_form">
+        </div>
+
         <div class="container has-text-centered">
             <table id="upload-form" class="table is-fullwidth">
                 <tr>
@@ -235,25 +239,15 @@
                 </tr>
                 <tr>
                     <td colspan="" rowspan="" headers="">
-                        doi
+                        Additional data
                     </td>
                     <td colspan="" rowspan="" headers="">
-                        <input id="doi" class="cc-ctrl cc-bulma width-3" type="text" placeholder="doi pointing to the paper for which this calculation has been used">
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="" rowspan="" headers="">
-                        Notes
-                    </td>
-                    <td colspan="" rowspan="" headers="">
-                        <textarea id="notes" class="cc-ctrl cc-bulma textarea" placeholder="Useful details about calculation type, suggestion for reproducibility etc." 
-                        rows="10"></textarea>
+                        <div class="button is-primary is-medium is-pulled-right">
+                            Edit&nbsp;<i class="fa fa-edit"></i>
+                        </div>
                     </td>
                 </tr>
             </table>
-            <p>
-                Fields marked with <sup class="has-text-danger">*</sup> are obligatory.
-            </p>
             <span class="separator-2"></span>
             <div class="drag-drop-file" ngf-drop="load_files($files)" ngf-multiple="true">
                 <span id="noloaded" ng-show="magres_file_name == '' && !uploading_now">

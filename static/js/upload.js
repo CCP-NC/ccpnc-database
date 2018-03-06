@@ -21,6 +21,11 @@ function addUploadController(ngApp) {
         $scope.status = '';
         $scope.status_err = false; // Is the status an error?        
 
+        // Edit form
+        $scope._edit_form = {
+            is_open: false
+        };
+
         $scope.upload = function() {
 
             if ($scope.magres_file == null) {
