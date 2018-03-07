@@ -1,0 +1,21 @@
+<div class="edit-popup modal" ng-class="editPopup.is_open? 'is-active' : ''">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title" ng-if="editPopup.name">
+        Editable data for {{editPopup.name}}
+      </p>
+      <button class="delete" aria-label="close" ng-click="cancel()"></button>
+    </header>
+    <section class="modal-card-body">
+        <table class="table is-bordered is-striped is-fixed">
+          <tbody edit-table="editPopup._table">
+          </tbody>
+        </table>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-primary" ng-click="submit()">Save changes</button>
+      <button class="button" ng-click="cancel()">Cancel</button>
+    </footer>
+  </div>
+</div>

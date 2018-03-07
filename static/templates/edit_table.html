@@ -1,0 +1,11 @@
+<tr ng-repeat="(p, v) in editTable._props">
+    <!-- Here we list all possible value types, and how they're presented -->
+    <th class="width-1" ng-switch="p">
+        <span ng-switch-when="doi">DOI:</span>
+        <span ng-switch-default>N/A</span>
+    </th>
+    <td class="width-3">
+        <input id="edit-doi" class="cc-ctrl cc-bulma" type="text"
+        placeholder="DOI" ng-model="editTable._props[p]">
+    </td>
+</tr>

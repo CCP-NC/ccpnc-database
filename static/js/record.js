@@ -11,15 +11,16 @@ function addRecordDirective(ngApp) {
             },
             link: function(scope, elem, attr) {
 
-                scope._edit_form = {};
+                scope._edit_popup = {};
 
                 scope.edit = function() {
-                    this._edit_form = new editFormScope(this, 
-                                                        this.databaseRecord.version_history[this._selected_index],
-                                                        function() {
-                        console.log(this._props);
+                    this._edit_popup = new editPopup(this, 
+                                                    this.databaseRecord.chemname,
+                                                    this.databaseRecord.version_history[this._selected_index],
+                                                    function() {
+                        console.log(this._table._props);
                     });
-                };           
+                };
             }
         };
     });

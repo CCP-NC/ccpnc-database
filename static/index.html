@@ -229,25 +229,20 @@
 
         <div class="container has-text-centered">
             <table id="upload-form" class="table is-fullwidth">
-                <tr>
-                    <td colspan="" rowspan="" headers="">
-                        Chemical name<sup class="has-text-danger">*</sup>
-                    </td>
-                    <td colspan="" rowspan="" headers="">
-                        <input id="chemname" class="cc-ctrl cc-bulma width-3" type="text" placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)">
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="" rowspan="" headers="">
-                        Additional data
-                    </td>
-                    <td colspan="" rowspan="" headers="">
-                        <div class="button is-primary is-medium is-pulled-right" ng-click="edit_additional()">
-                            Edit&nbsp;<i class="fa fa-edit"></i>
-                        </div>
-                    </td>
-                </tr>
+                <thead>
+                    <tr>
+                        <td colspan="" rowspan="" headers="">
+                            Chemical name<sup class="has-text-danger">*</sup>
+                        </td>
+                        <td colspan="" rowspan="" headers="">
+                            <input id="chemname" class="cc-ctrl cc-bulma width-3" type="text" placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)">
+                        </td>
+                    </tr>
+                </thead>
+                <tbody edit-table="_edit_table">
+                </tbody>
             </table>
+            Fields marked with <sup class="has-text-danger">*</sup> are obligatory.
             <span class="separator-2"></span>
             <div class="drag-drop-file" ngf-drop="load_files($files)" ngf-multiple="true">
                 <span id="noloaded" ng-show="magres_file_name == '' && !uploading_now">
@@ -261,7 +256,7 @@
                 <span id="loaded" ng-show="magres_file_name !== '' && !uploading_now">
                     {{magres_file_name}}
                 </span><br>
-            </div>        
+            </div>
             <span class="separator-1"></span>
             <span class="box" ng-show="status !== ''" ng-class="{
                 'has-text-danger': status_err,

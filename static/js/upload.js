@@ -21,10 +21,8 @@ function addUploadController(ngApp) {
         $scope.status = '';
         $scope.status_err = false; // Is the status an error?        
 
-        // Edit form
-        $scope._edit_form = {
-            is_open: false
-        };
+        // Edit table
+        $scope._edit_table = new editTable($scope, {});
 
         $scope.upload = function() {
 
@@ -51,7 +49,7 @@ function addUploadController(ngApp) {
             }
 
             // Now add the optional information
-            data = $.extend(data, $scope._edit_form._props);
+            data = $.extend(data, $scope._edit_table._props);
 
             loginStatus.verify_token(function() {
                 // Package all the data
@@ -131,9 +129,7 @@ function addUploadController(ngApp) {
         }
 
         $scope.edit_additional = function() {
-                $scope._edit_form = new editFormScope($scope, {}, function() {
-                    console.log($scope._edit_form);
-                });
+                $scope._edit_form = new editFormScope($scope);
         }
 
     });
