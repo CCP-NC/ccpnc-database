@@ -18,7 +18,8 @@ from db_schema import (magresDataSchema,
 
 try:
     config = json.load(open(os.path.join(
-        os.path.abspath(os.path.dirname(__file__)), "config", "config.json"), "r"))
+        os.path.abspath(os.path.dirname(__file__)), "config", "config.json"),
+        "r"))
 except IOError:
     config = {}
 
@@ -50,10 +51,9 @@ def getMSMetadata(magres):
 
     return msdata
 
-### UPLOADING ###
 
-
-def addMagresFile(magresStr, chemname, orcid, data={}):
+def getDBCollections():
+    # Return the database's collections after establishing a connection
     client = MongoClient(host=_db_url, port=_db_port)
     ccpnc = client.ccpnc
 
@@ -66,6 +66,16 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
     # 3. Searchable data, updated when the other two change, to the latest
     # version
     magresIndex = ccpnc.magresIndex
+
+    return magresFilesFS, magresMetadata, magresIndex
+
+
+### UPLOADING ###
+
+
+def addMagresFile(magresStr, chemname, orcid, data={}):
+
+    magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
     with tempfile.NamedTemporaryFile(suffix='.magres') as f:
         f.write(magresStr)
@@ -128,12 +138,15 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
             magresMetadataUpdate.modified_count)
 
 
+def editMagresFile(file_id, orcid, data={}):
+
+    magresFilesFS, magresMetadata, magresIndex = getDBCollections()
+
+
+
 def getMagresFile(file_id):
 
-    client = MongoClient(host=_db_url)
-    ccpnc = client.ccpnc
-
-    magresFilesFS = GridFS(ccpnc, 'magresFilesFS')
+    magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
     try:
         mfile_ref = magresFilesFS.get(ObjectId(file_id))
@@ -144,20 +157,9 @@ def getMagresFile(file_id):
 
 
 def removeMagresFiles(index_id):
-
     # Only used for debug, should not be exposed to users
-    client = MongoClient(host=_db_url)
-    ccpnc = client.ccpnc
 
-    # Three collections:
-    # 1. GridFS collection for magres files
-    magresFilesFS = GridFS(ccpnc, 'magresFilesFS')
-    # 2. Metadata collection (one element per database entry,
-    # including history)
-    magresMetadata = ccpnc.magresMetadata
-    # 3. Searchable data, updated when the other two change, to the latest
-    # version
-    magresIndex = ccpnc.magresIndex
+    magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
     try:
         index_entry = magresIndex.find({'_id': ObjectId(index_id)}).next()
@@ -205,8 +207,7 @@ def makeEntry(ind, meta):
 
 def databaseSearch(search_spec):
 
-    client = MongoClient(host=_db_url, port=_db_port)
-    ccpnc = client.ccpnc
+    magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
     # List search functions
     search_types = {
@@ -239,12 +240,12 @@ def databaseSearch(search_spec):
         search_dict['$and'] += search_func(**args)
 
     # Carry out the actual search
-    resultsInd = ccpnc.magresIndex.find(search_dict)
+    resultsInd = magresIndex.find(search_dict)
     # Find the corresponding metadata
     results = []
     for rInd in resultsInd:
         oid = ObjectId(rInd['metadataID'])
-        mdata = [m for m in ccpnc.magresMetadata.find({'_id': oid})]
+        mdata = [m for m in magresMetadata.find({'_id': oid})]
         if len(mdata) != 1:
             # Wut?
             # Invalid entry; skip
