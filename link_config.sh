@@ -11,6 +11,6 @@ if [ ! -e $pyconf_path.$1.json ] || [ ! -e $jsconf_path.$1.js ]; then
 fi
 
 [ -L $pyconf_path.json ] && rm $pyconf_path.json
-ln -s $pyconf_path.$1.json $pyconf_path.json
+ln -s `realpath $pyconf_path.$1.json` $pyconf_path.json
 [ -L $jsconf_path.js ] && rm $jsconf_path.js
-ln -s $jsconf_path.$1.json $jsconf_path.js
+ln -s `realpath $pyconf_path.$1.json` $jsconf_path.js
