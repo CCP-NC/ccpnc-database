@@ -13,4 +13,4 @@ fi
 [ -L $pyconf_path.json ] && rm $pyconf_path.json
 ln -s `realpath $pyconf_path.$1.json` $pyconf_path.json
 [ -L $jsconf_path.js ] && rm $jsconf_path.js
-ln -s `realpath $pyconf_path.$1.json` $jsconf_path.js
+ln -s `realpath $jsconf_path.$1.js` $jsconf_path.js
