@@ -138,10 +138,56 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
             magresMetadataUpdate.modified_count)
 
 
-def editMagresFile(file_id, orcid, data={}):
+def editMagresFile(index_id, data={}, magresStr=None):
 
     magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
+    # Retrieve the entry from the index
+    magresIndexID = ObjectId(index_id)
+    index_entry = magresIndex.find_one({'_id': magresIndexID})
+
+    if index_entry is None:
+        raise RuntimeError('No entry to edit found')
+
+    # Now the metadata
+    magresMetadataID = ObjectId(index_entry['metadataID'])
+    mdata_entry = magresMetadata.find_one({'_id': magresMetadataID})
+
+    if mdata_entry is None:
+        raise RuntimeError('Metadata missing for requested entry')
+
+    # Now, if there's a new file, upload it, otherwise use the last one
+    if magresStr is not None:
+        magresFilesID = magresFilesFS.put(magresStr,
+                                          filename=index_entry['metadataID'],
+                                          encoding='UTF-8')
+    else:
+        magresFilesID = index_entry['latest_version']['magresFilesID']
+
+    # Create the new version
+    version = {
+        'magresFilesID': str(magresFilesID),
+        'date': datetime.utcnow()
+    }
+    version.update(data)
+    version = magresVersionSchema.validate(version)
+
+    # Then update the metadata
+    magresMetadataUpdate = magresMetadata.update_one({'_id':
+                                                      magresMetadataID},
+                                                     {'$push': {
+                                                         'version_history':
+                                                         version
+                                                     }})
+    # And update the index
+    magresIndexUpdate = magresIndex.update_one({'_id': magresIndexID},
+                                               {'$set': {
+                                                   'latest_version': version
+                                               }})
+
+    # Return True only if all went well
+    return (magresMetadataUpdate.modified_count and
+            magresIndexUpdate.modified_count)
 
 
 def getMagresFile(file_id):
@@ -197,7 +243,9 @@ def makeEntry(ind, meta):
                                    ind['formula'])),
             'orcid_uri': ind['orcid']['uri'],
             'doi': meta['version_history'][-1]['doi'],
-            'version_history': meta['version_history']
+            'version_history': meta['version_history'],
+            'index_id': ind['_id'],
+            'meta_id': meta['_id']
         }
     except KeyError:
         return None
