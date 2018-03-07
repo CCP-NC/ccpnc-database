@@ -130,5 +130,11 @@ function addUploadController(ngApp) {
             }
         }
 
+        $scope.edit_additional = function() {
+                $scope._edit_form = new editFormScope($scope, {}, function() {
+                    console.log($scope._edit_form);
+                });
+        }
+
     });
 }

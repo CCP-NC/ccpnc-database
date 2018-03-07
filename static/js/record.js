@@ -14,9 +14,9 @@ function addRecordDirective(ngApp) {
                 scope._edit_form = {};
 
                 scope.edit = function() {
-                    this._edit_form = new createEditFormScope(this, 
-                                                              this.databaseRecord.version_history[this._selected_index],
-                                                              function() {
+                    this._edit_form = new editFormScope(this, 
+                                                        this.databaseRecord.version_history[this._selected_index],
+                                                        function() {
                         console.log(this._props);
                     });
                 };           

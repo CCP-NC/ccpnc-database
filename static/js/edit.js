@@ -27,8 +27,8 @@ function addEditFormDirective(ngApp) {
 // Object creator for edit form scope
 // Takes: reference to the parent scope, object with editable properties, 
 // submit callback
-var createEditFormScope = function(parent, properties, submit) {
-    this.is_open = true; 
+var editFormScope = function(parent, properties, submit) {
+    this.is_open = true;
     this.parent = this;
     this.submit = submit;
 
