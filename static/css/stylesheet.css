@@ -61,6 +61,14 @@ a.navbar-item:hover {
 .drag-drop-file #loaded {
 }
 
+.drag-drop-file.ddrop-small {
+    width: auto;
+    height: auto;
+    padding: 10px;
+
+    font-size: 1.2em;
+}
+
 .search-form {
     margin: 0;
 }

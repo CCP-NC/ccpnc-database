@@ -19,6 +19,7 @@ function addRecordDirective(ngApp) {
                                                     this.databaseRecord.version_history[this._selected_index],
                                                     function() {
                         console.log(this._table._props);
+                        console.log(this.magres_file_name);
                     });
                 };
             }
