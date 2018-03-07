@@ -38,8 +38,6 @@ function addUploadController(ngApp) {
             var data = {
                     'magres': $scope.magres_file,
                     'chemname': $('#upload-form #chemname').val(),
-                    'doi': $('#upload-form #doi').val(),
-                    'notes': $('#upload-form #notes').val(),
             };
 
             var obl = {'Chemical name': 'chemname'};
@@ -52,6 +50,8 @@ function addUploadController(ngApp) {
                 }
             }
 
+            // Now add the optional information
+            data = $.extend(data, $scope._edit_form._props);
 
             loginStatus.verify_token(function() {
                 // Package all the data
