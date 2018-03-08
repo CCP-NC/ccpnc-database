@@ -10,7 +10,8 @@ import json
 import inspect
 from flask import Flask, Response, session, request, make_response
 from orcid import OrcidConnection, OrcidError
-from db_interface import addMagresFile, databaseSearch, getMagresFile
+from db_interface import (addMagresFile, databaseSearch,
+                          getMagresFile, editMagresFile)
 from db_schema import magresVersionOptFields
 
 filepath = os.path.abspath(os.path.dirname(__file__))
@@ -76,7 +77,7 @@ def delete_tokens():
 @app.route('/upload', methods=['POST'])
 def upload():
 
-    # Ok, so pick the rest of the information
+    # Authenticate and retrieve user info
     try:
         user_info = user_info_auth()
     except OrcidError as e:
@@ -110,6 +111,43 @@ def upload():
         return 'Success', HTTP_200_OK
     else:
         return 'Failed', HTTP_500_INTERNAL_SERVER_ERROR
+
+
+@app.route('/edit', methods=['POST'])
+def edit():
+
+    # Authenticate and retrieve user info
+    try:
+        user_info = user_info_auth()
+    except OrcidError as e:
+        # Something went wrong in the request itself
+        return str(e), HTTP_401_UNAUTHORIZED
+
+    # Compile everything
+    try:
+
+        # Obligatory values
+        index_id = request.values.get('index_id')
+        orcid = user_info['orcid-identifier']
+
+        # Optional ones
+        data = {
+            k: request.values.get(k) for k in magresVersionOptFields
+            if (request.values.get(k) is not None and
+                len(request.values.get(k)) > 0)
+        }
+
+        success = editMagresFile(index_id, data, request.values.get('magres'))
+
+    except Exception as e:
+        return (e.__class__.__name__ + ': ' + str(e),
+                HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if success:
+        return 'Success', HTTP_200_OK
+    else:
+        return 'Failed', HTTP_500_INTERNAL_SERVER_ERROR
+
 
 @app.route('/search', methods=['POST'])
 def search():

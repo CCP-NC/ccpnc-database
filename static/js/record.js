@@ -13,6 +13,10 @@ function addRecordDirective(ngApp) {
 
                 scope._edit_popup = {};
 
+                // It's important to use "var" here and keep the scope local
+                // or there's some reference shenanigans...
+                var index_id = scope.databaseRecord.index_id;
+
                 scope.edit = function() {
                     this._edit_popup = new editPopup(this, 
                                                     this.databaseRecord.chemname,
@@ -25,12 +29,15 @@ function addRecordDirective(ngApp) {
 
                         console.log(this._table._props);
                         console.log(this.magres_file_name);
+                        console.log(index_id);
 
-                        popup = this;
-
-                        request_data = $.extend({}, this._table._props);                        
+                        request_data = $.extend({
+                            index_id: index_id, 
+                        }, this._table._props);                        
                         if (this.magres_file_name != '')
                             request_data['magres'] = this.magres_file;
+
+                        popup = this;
 
                         loginStatus.verify_token(function() {
                             // Package all the data
@@ -54,7 +61,7 @@ function addRecordDirective(ngApp) {
                                 }
                                 else {
                                     // Just close
-                                    popup.cancel();
+                                    scope.cancel();
                                 }
 
                                 popup.uploading_now = false;
