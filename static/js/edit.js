@@ -16,8 +16,10 @@ function addEditPopupDirective(ngApp) {
 
                 scope.submit = function() {
                     if (this.editPopup.submit != null)
-                        this.editPopup.submit();
-                    this.editPopup.is_open = false;
+                        this.editPopup.submit(scope);
+
+                    if (this.editPopup.close_onsub)
+                        this.cancel();
                 }
 
                 scope.load_files = function(files) {
@@ -77,11 +79,12 @@ function addEditTableDirective(ngApp) {
 // Object creator for edit form scope
 // Takes: reference to the parent scope, object with editable properties, 
 // submit callback
-var editPopup = function(parent, name, properties, submit) {
+var editPopup = function(parent, name, properties, submit, close_onsub) {
     this.is_open = true;
     this.parent = parent;
     this.name = name;
     this.submit = submit;
+    this.close_onsub = close_onsub;
 
     this.status = '';
     this.status_err = false;

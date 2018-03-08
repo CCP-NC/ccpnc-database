@@ -66,3 +66,9 @@ magresIndexSchema = Schema({
                  'n': int}]
 
 })
+
+# Convenient to keep a list of optional version keys
+opt_re = re.compile('Optional\(\'([a-zA-Z\-]+)\'\)')
+magresVersionOptFields = [opt_re.match(str(k)).groups()[0]
+                          for k in magresVersionSchema._schema.keys()
+                          if opt_re.match(str(k)) != None]

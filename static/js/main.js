@@ -8,6 +8,7 @@
   ccpncApp.redirect_uri = ccpnc_config.redirect_uri;
 
   // Create a service to hold login data
+  console.log('Launching login service...');
   ccpncApp.service('loginStatus', LoginStatus);
 
   // Add directives

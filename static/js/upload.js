@@ -33,7 +33,7 @@ function addUploadController(ngApp) {
             }
 
             // Check obligatory details
-            var data = {
+            var request_data = {
                     'magres': $scope.magres_file,
                     'chemname': $('#upload-form #chemname').val(),
             };
@@ -49,13 +49,13 @@ function addUploadController(ngApp) {
             }
 
             // Now add the optional information
-            data = $.extend(data, $scope._edit_table._props);
+            request_data = $.extend(request_data, $scope._edit_table._props);
 
             loginStatus.verify_token(function() {
                 // Package all the data
                 details = loginStatus.get_details()
-                data.access_token = details['access_token'];
-                data.orcid = details['orcid'];
+                request_data.access_token = details['access_token'];
+                request_data.orcid = details['orcid'];
 
                 // Send an Ajax request
                 $scope.uploading_now = true;
@@ -65,7 +65,7 @@ function addUploadController(ngApp) {
                     url: ngApp.server_app + '/upload',
                     type: 'POST',
                     crossDomain: true,
-                    data: data
+                    data: request_data
                 }).done(function(r) {
                     // Did anything go wrong?
                     if (r != 'Success') {                        

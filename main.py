@@ -11,10 +11,12 @@ import inspect
 from flask import Flask, Response, session, request, make_response
 from orcid import OrcidConnection, OrcidError
 from db_interface import addMagresFile, databaseSearch, getMagresFile
+from db_schema import magresVersionOptFields
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 
-app = Flask('ccpnc-database', static_url_path='',static_folder = os.path.join(filepath,"static"))
+app = Flask('ccpnc-database', static_url_path='',
+            static_folder=os.path.join(filepath, "static"))
 app.secret_key = open(os.path.join(filepath, 'secret',
                                    'secret.key')).read().strip()
 
@@ -89,8 +91,8 @@ def upload():
         orcid = user_info['orcid-identifier']
 
         # Optional ones
-        file_entry = {
-            k: request.values.get(k) for k in ('doi', 'notes')
+        data = {
+            k: request.values.get(k) for k in magresVersionOptFields
             if (request.values.get(k) is not None and
                 len(request.values.get(k)) > 0)
         }
@@ -98,7 +100,7 @@ def upload():
         success = addMagresFile(request.values.get('magres'),
                                 chemname,
                                 orcid,
-                                file_entry)
+                                data)
 
     except Exception as e:
         return (e.__class__.__name__ + ': ' + str(e),
@@ -108,7 +110,6 @@ def upload():
         return 'Success', HTTP_200_OK
     else:
         return 'Failed', HTTP_500_INTERNAL_SERVER_ERROR
-
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -134,6 +135,7 @@ def get_doc():
     resp.headers['Content-Disposition'] = 'attachment; filename=' + fname
 
     return resp
+
 
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!

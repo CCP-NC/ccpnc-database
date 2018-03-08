@@ -66,6 +66,8 @@ a.navbar-item:hover {
     height: auto;
     padding: 10px;
 
+    border-width: 3px;
+
     font-size: 1.2em;
 }
 
