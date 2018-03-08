@@ -27,6 +27,13 @@
         </span><br>
     </div>
 
+    <span class="box" ng-show="editPopup.status !== ''" ng-class="{
+            'has-text-danger': editPopup.status_err,
+            'has-text-success': !editPopup.status_err,
+        }">
+            {{ editPopup.status }}
+    </span>
+
     </section>
     <footer class="modal-card-foot">
       <button class="button is-primary" ng-click="submit()">Submit</button>

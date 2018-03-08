@@ -27,10 +27,6 @@ function addRecordDirective(ngApp) {
                         // Refer to edit.js to actually see the object
                         // This method is encapsulated anonymously here for security
 
-                        console.log(this._table._props);
-                        console.log(this.magres_file_name);
-                        console.log(index_id);
-
                         request_data = $.extend({
                             index_id: index_id, 
                         }, this._table._props);                        
@@ -68,7 +64,7 @@ function addRecordDirective(ngApp) {
                                 scope.$apply();
 
                             }).fail(function(e) {
-                                popup.status = e;
+                                popup.status = 'ERROR: ' + e.responseText;
                                 popup.status_err = true;
                                 popup.uploading_now = false;
                                 scope.$apply();
