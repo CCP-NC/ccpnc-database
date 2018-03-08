@@ -138,13 +138,16 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
             magresMetadataUpdate.modified_count)
 
 
-def editMagresFile(index_id, data={}, magresStr=None):
+def editMagresFile(index_id, orcid, data={}, magresStr=None):
 
     magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
     # Retrieve the entry from the index
     magresIndexID = ObjectId(index_id)
     index_entry = magresIndex.find_one({'_id': magresIndexID})
+
+    if orcid != index_entry['orcid']:
+        raise RuntimeError('Entry is not owned by user')
 
     if index_entry is None:
         raise RuntimeError('No entry to edit found')
@@ -158,6 +161,21 @@ def editMagresFile(index_id, data={}, magresStr=None):
 
     # Now, if there's a new file, upload it, otherwise use the last one
     if magresStr is not None:
+        # Check that the formula is right
+
+        with tempfile.NamedTemporaryFile(suffix='.magres') as f:
+            f.write(magresStr)
+            f.flush()
+            # WARNING: this will only work on a UNIX system! Apparently does
+            # not work on Windows NT and above. More details at
+            # https://docs.python.org/2/library/tempfile.html#tempfile.NamedTemporaryFile
+            magres = io.read(f.name)
+
+        formula = getFormula(magres)
+        if index_entry['formula'] != formula:
+            raise RuntimeError('Invalid Magres File for editing '
+                               '(different compound)')
+
         magresFilesID = magresFilesFS.put(magresStr,
                                           filename=index_entry['metadataID'],
                                           encoding='UTF-8')

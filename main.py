@@ -137,7 +137,8 @@ def edit():
                 len(request.values.get(k)) > 0)
         }
 
-        success = editMagresFile(index_id, data, request.values.get('magres'))
+        success = editMagresFile(index_id, orcid,
+                                 data, request.values.get('magres'))
 
     except Exception as e:
         return (e.__class__.__name__ + ': ' + str(e),
