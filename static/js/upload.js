@@ -41,7 +41,7 @@ function addUploadController(ngApp) {
             var obl = {'Chemical name': 'chemname'};
 
             for (var kname in obl) {
-                if ($.trim(data[obl[kname]]) == '') {
+                if ($.trim(request_data[obl[kname]]) == '') {
                     $scope.status = kname + ' is obligatory';
                     $scope.status_err = true;
                     return;
