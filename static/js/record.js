@@ -17,6 +17,15 @@ function addRecordDirective(ngApp) {
                 // or there's some reference shenanigans...
                 var index_id = scope.databaseRecord.index_id;
 
+                scope.isown = function() {
+                    if (!loginStatus.get_login_status()) {
+                        return false;
+                    }
+                    else {
+                        return this.databaseRecord.orcid == loginStatus.get_details().orcid;
+                    }
+                }
+
                 scope.edit = function() {
                     this._edit_popup = new editPopup(this, 
                                                     this.databaseRecord.chemname,
