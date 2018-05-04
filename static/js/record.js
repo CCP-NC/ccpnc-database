@@ -86,6 +86,10 @@ function addRecordDirective(ngApp) {
                         });                        
                     });
                 };
+
+                scope.filename = function() {
+                    return this.databaseRecord.chemname + '_v' + (parseInt(this._selected_index)+1) + '.magres';
+                }
             }
         };
     });
