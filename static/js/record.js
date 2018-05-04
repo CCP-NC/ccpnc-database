@@ -65,7 +65,8 @@ function addRecordDirective(ngApp) {
                                     popup.status_err = true;
                                 }
                                 else {
-                                    // Just close
+                                    // Refresh and close
+                                    scope.$parent.$parent.refresh();
                                     scope.cancel();
                                 }
 

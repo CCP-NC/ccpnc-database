@@ -36,7 +36,10 @@ function addFileListerController(ngApp) {
             timeout: 1000
         };
 
-        $.ajax(query);
+        $scope.refresh = function() {
+            $.ajax(query);
+        }
 
+        $scope.refresh();
     });
 }

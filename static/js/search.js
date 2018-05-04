@@ -52,6 +52,8 @@ function addSearchController(ngApp) {
         $scope.add_spec();
         $scope.search_results = [];
 
+        var last_query = null;
+
         $scope.search = function() {
             // For now just a test thing to keep in mind how it's done
             $scope.message = '';
@@ -85,6 +87,14 @@ function addSearchController(ngApp) {
             }
 
             $.ajax(query);
+            last_query = query;
+        }
+
+        $scope.refresh = function() {
+            // Just repeat the last query
+            if (last_query) {
+                $.ajax(last_query);
+            }
         }
 
     });
