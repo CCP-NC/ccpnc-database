@@ -6,7 +6,9 @@ import tempfile
 import numpy as np
 from ase import io
 from datetime import datetime
+from ase.io.magres import read_magres
 from soprano.properties.nmr import MSIsotropy
+
 from pymongo import MongoClient
 from schema import SchemaError
 from gridfs import GridFS, NoFile
@@ -25,6 +27,20 @@ except IOError:
 
 _db_url = config.get("db_url", "localhost")
 _db_port = config.get("db_port", 27017)
+
+# Convenient tool to turn a magres string into an ase.Atoms object
+
+
+class MagresStrCast(object):
+
+    def __init__(self, mstr):
+        self._mstr = mstr
+
+    def read(self):
+        return self._mstr
+
+    def atoms(self):
+        return read_magres(self)
 
 ### METHODS FOR COMPILATION OF METADATA ###
 
@@ -77,16 +93,7 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
 
     magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
-    with tempfile.NamedTemporaryFile(suffix='.magres') as f:
-        f.write(magresStr)
-        f.flush()
-        # WARNING: this will only work on a UNIX system! Apparently does not
-        # work on Windows NT and above. More details at
-        # https://docs.python.org/2/library/tempfile.html#tempfile.NamedTemporaryFile
-        magres = io.read(f.name)
-
-    #d = data
-    # d.update(getMSMetadata(magres))
+    magres = MagresStrCast(magresStr).atoms()
 
     # Validate metadata
     metadata = {
@@ -163,13 +170,7 @@ def editMagresFile(index_id, orcid, data={}, magresStr=None):
     if magresStr is not None:
         # Check that the formula is right
 
-        with tempfile.NamedTemporaryFile(suffix='.magres') as f:
-            f.write(magresStr)
-            f.flush()
-            # WARNING: this will only work on a UNIX system! Apparently does
-            # not work on Windows NT and above. More details at
-            # https://docs.python.org/2/library/tempfile.html#tempfile.NamedTemporaryFile
-            magres = io.read(f.name)
+        magres = MagresStrCast(magresStr).atoms()
 
         formula = getFormula(magres)
         if index_entry['formula'] != formula:
