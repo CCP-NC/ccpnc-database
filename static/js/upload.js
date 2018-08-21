@@ -49,7 +49,7 @@ function addUploadController(ngApp) {
             }
 
             // Now add the optional information
-            request_data = $.extend(request_data, $scope._edit_table._props);
+            request_data = $.extend(request_data, $scope._edit_table.get_props());
 
             loginStatus.verify_token(function() {
                 // Package all the data

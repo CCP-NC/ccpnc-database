@@ -76,6 +76,13 @@ function addEditTableDirective(ngApp) {
 
 }
 
+// Table property
+var TableProperty = function(name, value, hidden) {
+    this.name = name;
+    this.value = value;
+    this.hidden = hidden;
+}
+
 // Object creator for edit form scope
 // Takes: reference to the parent scope, object with editable properties, 
 // submit callback
@@ -100,14 +107,25 @@ var editTable = function(parent, properties) {
 
     // Gather all the editable properties
     this._props = {
-        'doi': '',
+        'doi': new TableProperty('DOI', ''),
+        'author': new TableProperty('Author', ''),
     };
 
-    if (properties == null) {
+    if (properties == null) { // Passes any previously existing values
         properties = {};
     }
 
     for (var p in this._props) {
-        this._props[p] = properties[p] || this._props[p];
+        this._props[p].value = properties[p] || this._props[p].value;
+    }
+
+    this.get_props = function() {
+        var prop_dict = {};
+
+        for (var p in this._props) {
+            prop_dict[p] = this._props[p].value;
+        }
+
+        return prop_dict;
     }
 }

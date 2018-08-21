@@ -38,7 +38,7 @@ function addRecordDirective(ngApp) {
 
                         request_data = $.extend({
                             index_id: index_id, 
-                        }, this._table._props);                        
+                        }, this._table.get_props());                        
                         if (this.magres_file_name != '')
                             request_data['magres'] = this.magres_file;
 
