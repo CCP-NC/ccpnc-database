@@ -4,6 +4,11 @@ import json
 import inspect
 import tempfile
 import numpy as np
+import zipfile
+import tarfile
+import csv
+import StringIO
+
 from ase import io
 from datetime import datetime
 from ase.io.magres import read_magres
@@ -144,6 +149,59 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
             (magresFilesID is not None) and
             magresMetadataUpdate.modified_count)
 
+def addMagresArchive(archiveStr,orcid):
+    archive = StringIO.StringIO(archiveStr)
+    fileList = {}
+
+    if zipfile.is_zipfile(archive):
+        with zipfile.ZipFile(archive) as z:
+            for n in z.namelist():
+                name = os.path.basename(n)
+                if len(name) > 0:
+                    with z.open(n) as f:
+                        fileList.update({name:f.read()})
+    else:
+        try:
+            with tarfile.open(fileobj=archive) as z:
+                for ti in z.getmembers():
+                    if ti.isfile():
+                        f = z.extractfile(ti)
+                        fileList.update({os.path.basename(ti.name):f.read()})
+                        f.close()
+        except tarfile.ReadError:
+            raise RuntimeError("Uploaded archive file is not a valid zip or tar file.")
+
+    archive.close()
+
+    info = [f for name,f in fileList.iteritems() if name.lower().find(".csv",-4) > -1]
+
+    if len(info) != 1:
+        raise RuntimeError("Uploaded archive file must contain a single .csv file")
+
+    infoDict = csv.DictReader(info[0].splitlines())
+    magresDict = []
+    for i in infoDict:
+        fileName = i['Filename']
+        if len(fileName) > 0:
+            if fileName.lower().find(".magres",-7) < 0:
+                raise RuntimeError("File referenced in .csv is not a .magres file")
+
+            try:
+                i.update({"magresStr":fileList.pop(fileName)})
+                magresDict.append(i)
+            except KeyError:
+                raise RuntimeError("Could not find {:s} in the archive".format(fileName))
+
+    if len(fileList) > 1: # we still have the info .csv file in the dictionary
+        raise RuntimeError("There were files in the archive not referenced in the .csv")
+
+    success = True
+    for m in magresDict:
+        magresStr = m.pop("magresStr")
+        chemname = m.pop("Chemical name")
+        success = success and addMagresFile(magresStr,chemname,orcid,data=m)
+
+    return success
 
 def editMagresFile(index_id, orcid, data={}, magresStr=None):
 
