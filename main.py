@@ -174,6 +174,32 @@ def get_doc():
     return resp
 
 
+@app.route('/optionals', methods=['GET'])
+def get_optionals():
+
+    # Return the optional arguments from the schema definition
+    return json.dumps([
+        {
+            'short_name': k,
+            'full_name': opt.full_name,
+            'input_type': opt.input_type,
+            'input_size': opt.input_size
+        }
+        for (k, opt) in magresVersionOptionals.items()
+    ])
+
+
+@app.route('/csvtemplate', methods=['GET'])
+def get_csv():
+
+    resp = make_response('filename,' +
+                         ','.join(magresVersionOptionals.keys()))
+    resp.headers['Content-Type'] = 'text/plain'
+    resp.headers.set('Content-Disposition', 'attachment', filename='info.csv')
+
+    return resp
+
+
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!
 

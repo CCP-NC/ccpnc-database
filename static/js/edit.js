@@ -77,13 +77,25 @@ function addEditTableDirective(ngApp) {
 }
 
 // Table property
-var TableProperty = function(name, value, size, is_area, hidden) {
+var TableProperty = function(name, short_name, value, size, type, hidden) {
     this.name = name;
+    this.short_name = short_name;
     this.value = value;
     this.size = size || 35;
-    this.is_area = is_area;
+    this.type = type || 'text';
     this.hidden = hidden;
 }
+
+// The edit table template is retrieved from the server
+var edit_table_template = [];
+$.ajax({
+    url: ccpnc_config.server_app + '/optionals',
+    type: 'GET',
+    crossDomain: true,
+    dataType: 'JSON'
+}).done(function(r) {
+    edit_table_template = r;
+});
 
 // Object creator for edit form scope
 // Takes: reference to the parent scope, object with editable properties, 
@@ -108,24 +120,32 @@ var editTable = function(parent, properties) {
     this.parent = parent;
 
     // Gather all the editable properties
-    this._props = {
-        'doi': new TableProperty('DOI', ''),
-        'author': new TableProperty('Author(s)', '', 100),
-    };
+    this._props = [];
+    for (var i = 0; i < edit_table_template.length; ++i) {
+        var opt = edit_table_template[i];
+        this._props.push(new TableProperty(opt.full_name, opt.short_name,
+            '', opt.input_size, opt.input_type));
+    }
 
     if (properties == null) { // Passes any previously existing values
         properties = {};
     }
 
-    for (var p in this._props) {
-        this._props[p].value = properties[p] || this._props[p].value;
+    for (var p in properties) {
+        for (var i = 0; i < this._props.length; ++i) {
+            var prop = this._props[i];
+            if (prop.short_name == p) {
+                prop.value = properties[p];
+            }
+        }
     }
 
     this.get_props = function() {
         var prop_dict = {};
 
-        for (var p in this._props) {
-            prop_dict[p] = this._props[p].value;
+        for (var i = 0; i < this._props.length; ++i) {
+            var p = this._props[i];
+            prop_dict[p.short_name] = p.value;
         }
 
         return prop_dict;
