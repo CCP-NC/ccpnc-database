@@ -243,31 +243,62 @@
 
     <div id="div-upload" class="section" ng-switch-when="upload" ng-controller="UploadController" ng-cloak>
         
-        <div edit-form="_edit_form">
-        </div>
+        <!-- I think this is not necessary any more...        
+            <div edit-form="_edit_form">
+            </div>
+        -->
+
 
         <div class="container has-text-centered">
-            <table id="upload-form" class="table is-fullwidth">
-                <thead>
-                    <tr>
-                        <th colspan="" rowspan="" headers="">
-                            Chemical name<sup class="has-text-danger">*</sup>
-                        </th>
-                        <td colspan="" rowspan="" headers="">
-                            <input id="chemname" class="cc-ctrl cc-bulma width-3" type="text" placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)">
-                        </td>
-                    </tr>
-                </thead>
-                <tbody edit-table="_edit_table">
-                </tbody>
-            </table>
+
+            <div class="tabs">
+              <ul>
+                <li ng-class="upload_multi? '' : 'is-active'"><a class="tab-link" ng-click="upload_multi=false">Single file</a></li>
+                <li ng-class="upload_multi? 'is-active' : ''"><a class="tab-link" ng-click="upload_multi=true">Archive</a></li>
+              </ul>
+            </div>
+
+            <div ng-show="upload_multi" ng-cloak>
+                <p>
+                    You can use this form to upload a <tt>.zip</tt>, <tt>.tar</tt> or <tt>.tar.gz</tt> archive containing multiple <tt>.magres</tt> files in one go. The files will be added as separate entries to the database, so please use this just to upload in group lots of different structures, not lots of versions of the same structure. The files need to be either at the top level of the archive or inside a single folder.
+                </p>
+                <p>
+                   The data in the form below will be used as the default for all the given structures. However, if you want to have custom values for some or all files in your archive, you should download <a>this CSV file</a> and fill in its various fields for the structures you care about, then put it in the archive at the same level as the <tt>.magres</tt> files.
+                </p>
+                <span class="separator-1"></span>
+            </div>
+
+            <div class="table-container" >
+                <table id="upload-form" class="table is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th colspan="" rowspan="" headers="">
+                                Chemical name<sup class="has-text-danger">*</sup>
+                            </th>
+                            <td colspan="" rowspan="" headers="">
+                                <input id="chemname" class="cc-ctrl cc-bulma" type="text" size="80" placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th colspan="" rowspan="" headers="">
+                                Form
+                            </th>
+                            <td colspan="" rowspan="" headers="">
+                                <input id="chemform" class="cc-ctrl cc-bulma" type="text" size="80" placeholder="Additional relevant descriptors (e.g.: phase, conformer, etc.)">
+                            </td>                            
+                        </tr>
+                    </thead>
+                    <tbody edit-table="_edit_table">
+                    </tbody>
+                </table>
+            </div>
             Fields marked with <sup class="has-text-danger">*</sup> are obligatory.
             <span class="separator-2"></span>
             <div class="drag-drop-file" ngf-drop="load_files($files)" ngf-multiple="true">
                 <span id="noloaded" ng-show="magres_file_name == '' && !uploading_now">
                     <i class="fa fa-upload" aria-hidden="true"></i>
                     &nbsp;
-                    Drop .magres file here 
+                    Drop {{ upload_multi? 'archive' : '.magres file' }} here 
                 </span>
                 <span ng-show="uploading_now">
                     <div class="loader">Loading...</div>

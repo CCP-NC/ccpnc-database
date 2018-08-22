@@ -24,6 +24,9 @@ function addUploadController(ngApp) {
         // Edit table
         $scope._edit_table = new editTable($scope, {});
 
+        // Upload mode
+        $scope.upload_multi = false;
+
         $scope.upload = function() {
 
             if ($scope.magres_file == null) {

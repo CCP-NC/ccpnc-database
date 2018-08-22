@@ -18,8 +18,7 @@ from pymongo import MongoClient
 from schema import SchemaError
 from gridfs import GridFS, NoFile
 from bson.objectid import ObjectId
-from db_schema import (magresDataSchema,
-                       magresVersionSchema,
+from db_schema import (magresVersionSchema,
                        magresMetadataSchema,
                        magresIndexSchema)
 

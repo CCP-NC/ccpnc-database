@@ -16,6 +16,15 @@ a.navbar-item:hover {
     color: hsl(171, 100%, 41%);
 }
 
+.tabs li.is-active a {
+    color: hsl(171, 100%, 41%);
+    border-bottom-color: hsl(171, 100%, 41%);
+}
+
+tt {
+    background-color: #eeeeee;
+}
+
 .main-section {
     flex: 1;
 }

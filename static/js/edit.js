@@ -77,9 +77,11 @@ function addEditTableDirective(ngApp) {
 }
 
 // Table property
-var TableProperty = function(name, value, hidden) {
+var TableProperty = function(name, value, size, is_area, hidden) {
     this.name = name;
     this.value = value;
+    this.size = size || 35;
+    this.is_area = is_area;
     this.hidden = hidden;
 }
 
@@ -108,7 +110,7 @@ var editTable = function(parent, properties) {
     // Gather all the editable properties
     this._props = {
         'doi': new TableProperty('DOI', ''),
-        'author': new TableProperty('Author', ''),
+        'author': new TableProperty('Author(s)', '', 100),
     };
 
     if (properties == null) { // Passes any previously existing values
