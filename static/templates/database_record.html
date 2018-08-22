@@ -28,7 +28,7 @@
                     </select>
                 </td>
             </tr>
-            <tr ng-if="databaseRecord.version_history[_selected_index].doi != ''">
+            <tr ng-if="databaseRecord.version_history[_selected_index].doi != null">
                 <th class="width-1">DOI:</th>
                 <td class="width-3">{{databaseRecord.version_history[_selected_index].doi}}</td>
             </tr>

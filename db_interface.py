@@ -318,7 +318,6 @@ def makeEntry(ind, meta):
             'formula': ''.join(map(lambda x: x['species'] + str(x['n']),
                                    ind['formula'])),
             'orcid_uri': ind['orcid']['uri'],
-            'doi': meta['version_history'][-1]['doi'],
             'version_history': meta['version_history'],
             'index_id': ind['_id'],
             'meta_id': meta['_id']

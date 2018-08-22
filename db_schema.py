@@ -1,14 +1,46 @@
 import re
 from datetime import datetime
+from collections import namedtuple
 from ase.io.magres import read_magres
 from schema import Schema, And, Optional
 
-"""A schema for entries to be uploaded to the Database.
-This currently does not include the cross-referencing IDs, as they are 
-obligatory but enforced by the uploading process itself."""
+"""Data schemas for entries to be uploaded to the Database."""
 
 orcid_path_re = re.compile('[0-9]{4}-'*3+'[0-9]{3}[0-9X]{1}\Z')
 csd_digits_re = re.compile('[0-9]{2}\Z')
+
+# Optional arguments for each magres version. These are useful also
+# client-side so we store them in their own definitions
+
+OptVArg = namedtuple('OptVArg', ['full_name', 'validator',
+                                 'input_type', 'input_size'])
+
+magresVersionArguments = {
+    'magresFilesID': basestring,
+    'date': datetime
+}
+
+magresVersionOptionals = {
+    'doi': OptVArg('DOI', basestring,
+                   'text',
+                   '35'),
+    'notes': OptVArg('Notes', basestring,
+                     'textarea',
+                     None),
+    'csd-ref': OptVArg('CSD reference', {
+        'refcode': And(basestring, lambda s: len(s) == 6),
+        Optional('digits'): csd_digits_re.match
+    },
+        'text',
+        50)
+}
+
+magresVersionArguments.update({
+    Optional(k): opt.validator
+    for (k, opt) in magresVersionOptionals.items()
+})
+
+# Schemas
 
 orcidSchema = Schema({
     'path': orcid_path_re.match,
@@ -16,16 +48,7 @@ orcidSchema = Schema({
     'uri': orcid_path_re.search,
 })
 
-magresVersionSchema = Schema({
-    'magresFilesID': basestring,
-    'date': datetime,
-    Optional('doi', default=''): basestring,
-    Optional('notes'): basestring,
-    Optional('csd-ref'): {
-        'refcode': And(basestring, lambda s: len(s) == 6),
-        Optional('digits'): csd_digits_re.match
-    }
-})
+magresVersionSchema = Schema(magresVersionArguments)
 
 magresMetadataSchema = Schema({
     'chemname': And(basestring, len),
@@ -46,9 +69,3 @@ magresIndexSchema = Schema({
                  'n': int}]
 
 })
-
-# Convenient to keep a list of optional version keys
-opt_re = re.compile('Optional\(\'([a-zA-Z\-]+)\'\)')
-magresVersionOptFields = [opt_re.match(str(k)).groups()[0]
-                          for k in magresVersionSchema._schema.keys()
-                          if opt_re.match(str(k)) != None]

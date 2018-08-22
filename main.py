@@ -12,7 +12,7 @@ from flask import Flask, Response, session, request, make_response
 from orcid import OrcidConnection, OrcidError
 from db_interface import (addMagresFile, databaseSearch,
                           getMagresFile, editMagresFile)
-from db_schema import magresVersionOptFields
+from db_schema import magresVersionOptionals
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 
@@ -93,7 +93,7 @@ def upload():
 
         # Optional ones
         data = {
-            k: request.values.get(k) for k in magresVersionOptFields
+            k: request.values.get(k) for k in magresVersionOptionals
             if (request.values.get(k) is not None and
                 len(request.values.get(k)) > 0)
         }
@@ -132,7 +132,7 @@ def edit():
 
         # Optional ones
         data = {
-            k: request.values.get(k) for k in magresVersionOptFields
+            k: request.values.get(k) for k in magresVersionOptionals
             if (request.values.get(k) is not None and
                 len(request.values.get(k)) > 0)
         }
