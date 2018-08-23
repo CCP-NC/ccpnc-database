@@ -87,7 +87,14 @@ class FakeOrcidConnection(OrcidConnection):
 
     """ Provides a fake interface imitating ORCID, for debugging purposes."""
 
+    def __init__(self):
+        pass
+
     def retrieve_tokens(self, session, code):
+
+        if code != '123456':
+            raise RuntimeError('Invalid fake code! '
+                               'The right fake code is 123456')
 
         fake_details = {
             'name': 'Johnny B. Goode',
