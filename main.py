@@ -192,7 +192,7 @@ def get_optionals():
 @app.route('/csvtemplate', methods=['GET'])
 def get_csv():
 
-    resp = make_response('filename,' +
+    resp = make_response('filename,chemname,form,' +
                          ','.join(magresVersionOptionals.keys()))
     resp.headers['Content-Type'] = 'text/plain'
     resp.headers.set('Content-Disposition', 'attachment', filename='info.csv')
