@@ -95,6 +95,8 @@ def getDBCollections():
 
 def addMagresFile(magresStr, chemname, orcid, data={}):
 
+    # Inserts a file, returns index id if successful, otherwise False
+
     magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
     magres = MagresStrCast(magresStr).atoms()
@@ -142,13 +144,17 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
 
     magresIndexInsertion = magresIndex.insert_one(index)
 
-    # Return True only if all went well
-    return (magresMetadataInsertion.acknowledged and
-            magresIndexInsertion.acknowledged and
-            (magresFilesID is not None) and
-            magresMetadataUpdate.modified_count)
+    # Return ID only if all went well
+    if ((magresMetadataInsertion.acknowledged and
+         magresIndexInsertion.acknowledged and
+         (magresFilesID is not None) and
+         magresMetadataUpdate.modified_count)):
+        return magresIndexInsertion.inserted_id
+    else:
+        return False
 
-def addMagresArchive(archiveStr,orcid):
+
+def addMagresArchive(archiveStr, orcid):
     archive = StringIO.StringIO(archiveStr)
     fileList = {}
 
@@ -158,49 +164,56 @@ def addMagresArchive(archiveStr,orcid):
                 name = os.path.basename(n)
                 if len(name) > 0:
                     with z.open(n) as f:
-                        fileList.update({name:f.read()})
+                        fileList.update({name: f.read()})
     else:
         try:
             with tarfile.open(fileobj=archive) as z:
                 for ti in z.getmembers():
                     if ti.isfile():
                         f = z.extractfile(ti)
-                        fileList.update({os.path.basename(ti.name):f.read()})
+                        fileList.update({os.path.basename(ti.name): f.read()})
                         f.close()
         except tarfile.ReadError:
-            raise RuntimeError("Uploaded archive file is not a valid zip or tar file.")
+            raise RuntimeError(
+                "Uploaded archive file is not a valid zip or tar file.")
 
     archive.close()
 
-    info = [f for name,f in fileList.iteritems() if name.lower().find(".csv",-4) > -1]
+    info = [f for name, f in fileList.iteritems(
+    ) if name.lower().find(".csv", -4) > -1]
 
     if len(info) != 1:
-        raise RuntimeError("Uploaded archive file must contain a single .csv file")
+        raise RuntimeError(
+            "Uploaded archive file must contain a single .csv file")
 
     infoDict = csv.DictReader(info[0].splitlines())
     magresDict = []
     for i in infoDict:
         fileName = i['Filename']
         if len(fileName) > 0:
-            if fileName.lower().find(".magres",-7) < 0:
-                raise RuntimeError("File referenced in .csv is not a .magres file")
+            if fileName.lower().find(".magres", -7) < 0:
+                raise RuntimeError(
+                    "File referenced in .csv is not a .magres file")
 
             try:
-                i.update({"magresStr":fileList.pop(fileName)})
+                i.update({"magresStr": fileList.pop(fileName)})
                 magresDict.append(i)
             except KeyError:
-                raise RuntimeError("Could not find {:s} in the archive".format(fileName))
+                raise RuntimeError(
+                    "Could not find {:s} in the archive".format(fileName))
 
-    if len(fileList) > 1: # we still have the info .csv file in the dictionary
-        raise RuntimeError("There were files in the archive not referenced in the .csv")
+    if len(fileList) > 1:  # we still have the info .csv file in the dictionary
+        raise RuntimeError(
+            "There were files in the archive not referenced in the .csv")
 
     success = True
     for m in magresDict:
         magresStr = m.pop("magresStr")
         chemname = m.pop("Chemical name")
-        success = success and addMagresFile(magresStr,chemname,orcid,data=m)
+        success = success and addMagresFile(magresStr, chemname, orcid, data=m)
 
     return success
+
 
 def editMagresFile(index_id, orcid, data={}, magresStr=None):
 

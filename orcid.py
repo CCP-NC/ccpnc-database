@@ -114,4 +114,9 @@ class FakeOrcidConnection(OrcidConnection):
         if tk is None:
             return None
 
-        return {'orcid-identifier': '0000-0000-0000-0000'}
+        return {'orcid-identifier': {
+                'path': '0000-0000-0000-0000',
+                'host': 'none',
+                'uri': '0000-0000-0000-0000'
+                }
+        }
