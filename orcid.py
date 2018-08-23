@@ -81,3 +81,30 @@ class OrcidConnection:
             raise OrcidError(rdata['developer-message'])
 
         return rdata
+
+
+class FakeOrcidConnection(OrcidConnection):
+
+    """ Provides a fake interface imitating ORCID, for debugging purposes."""
+
+    def retrieve_tokens(self, session, code):
+
+        fake_details = {
+            'name': 'Johnny B. Goode',
+            'access_token': 'XXX',
+            'orcid': '0000-0000-0000-0000',
+            'scope': '/authenticate'
+        }
+
+        session['login_details'] = fake_details
+
+        return fake_details
+
+    def retrieve_info(self, session):
+
+        tk = self.get_tokens(session)
+
+        if tk is None:
+            return None
+
+        return {'orcid-identifier': '0000-0000-0000-0000'}

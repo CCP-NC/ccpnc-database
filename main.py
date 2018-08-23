@@ -23,7 +23,11 @@ app.secret_key = open(os.path.join(filepath, 'secret',
 
 orcid_details = json.load(open(os.path.join(filepath, 'secret',
                                             'orcid_details.json')))
-orcid_link = OrcidConnection(orcid_details, 'https://orcid.org/')
+
+if not hasattr(app, 'extensions'):
+    app.extensions = {}
+app.extensions['orcidlink'] = OrcidConnection(orcid_details,
+                                              'https://orcid.org/')
 
 # Response codes
 HTTP_200_OK = 200
@@ -34,13 +38,11 @@ HTTP_500_INTERNAL_SERVER_ERROR = 500
 # Utilities
 
 
-def user_info_auth():
+def user_info_auth(orcid_link, client_at, client_id):
     # Return user info if all tokens check out, otherwise raise OrcidError
 
     # First, check that the details are valid
     tk = orcid_link.get_tokens(session)
-    client_at = request.values.get('access_token')
-    client_id = request.values.get('orcid')
 
     if (tk is None or
             client_id != tk['orcid'] or
@@ -60,7 +62,7 @@ def root():
 @app.route('/gettokens/', defaults={'code': None})
 @app.route('/gettokens/<code>')
 def get_tokens(code):
-    tk = orcid_link.get_tokens(session, code)
+    tk = app.extensions['orcidlink'].get_tokens(session, code)
     # If they are None, return null
     if tk is None:
         return 'null'
@@ -70,7 +72,7 @@ def get_tokens(code):
 
 @app.route('/logout')
 def delete_tokens():
-    orcid_link.delete_tokens(session)
+    app.extensions['orcidlink'].delete_tokens(session)
     return 'Logged out', HTTP_200_OK
 
 
@@ -79,7 +81,9 @@ def upload():
 
     # Authenticate and retrieve user info
     try:
-        user_info = user_info_auth()
+        user_info = user_info_auth(app.extensions['orcidlink'],
+                                   request.values.get('access_token'),
+                                   request.values.get('orcid'))
     except OrcidError as e:
         # Something went wrong in the request itself
         return str(e), HTTP_401_UNAUTHORIZED
@@ -98,8 +102,8 @@ def upload():
                 len(request.values.get(k)) > 0)
         }
 
-        if request.values.get('upload_multi', False):
-            print(request.values.get('magres'))
+        if request.values.get('upload_multi', 'false') == 'true':
+            print('Archive')
             success = True
         else:
             success = addMagresFile(request.values.get('magres'),
@@ -122,14 +126,15 @@ def edit():
 
     # Authenticate and retrieve user info
     try:
-        user_info = user_info_auth()
+        user_info = user_info_auth(app.extensions['orcidlink'],
+                                   request.values.get('access_token'),
+                                   request.values.get('orcid'))
     except OrcidError as e:
         # Something went wrong in the request itself
         return str(e), HTTP_401_UNAUTHORIZED
 
     # Compile everything
     try:
-
         # Obligatory values
         index_id = request.values.get('index_id')
         orcid = user_info['orcid-identifier']
@@ -211,5 +216,6 @@ if __name__ == '__main__':
     from flask_cors import CORS
     CORS(app)
 
+    app.debug = True
     app.config['SERVER_NAME'] = 'localhost:8000'
     app.run(port=8000, threaded=True)
