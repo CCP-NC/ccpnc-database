@@ -98,10 +98,14 @@ def upload():
                 len(request.values.get(k)) > 0)
         }
 
-        success = addMagresFile(request.values.get('magres'),
-                                chemname,
-                                orcid,
-                                data)
+        if request.values.get('upload_multi', False):
+            print(request.values.get('magres'))
+            success = True
+        else:
+            success = addMagresFile(request.values.get('magres'),
+                                    chemname,
+                                    orcid,
+                                    data)
 
     except Exception as e:
         return (e.__class__.__name__ + ': ' + str(e),
@@ -192,7 +196,7 @@ def get_optionals():
 @app.route('/csvtemplate', methods=['GET'])
 def get_csv():
 
-    resp = make_response('filename,chemname,form,' +
+    resp = make_response('filename,chemname,chemform,' +
                          ','.join(magresVersionOptionals.keys()))
     resp.headers['Content-Type'] = 'text/plain'
     resp.headers.set('Content-Disposition', 'attachment', filename='info.csv')

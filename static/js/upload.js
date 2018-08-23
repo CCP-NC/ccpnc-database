@@ -7,12 +7,12 @@ function addUploadController(ngApp) {
             $scope.uploading_now = false; // To show spinner if needed
 
             $('#upload-form #chemname').val('');
-            $('#upload-form #doi').val('');
-            $('#upload-form #notes').val('');
+            $('#upload-form #chemform').val('');
 
+            for (var p in $scope._edit_table.get_props()) {
+                $('#upload-form #edit-' + p).val('');
+            }
         }
-
-        clearForm();
 
         // Form data
         $scope.chemname = '';
@@ -27,6 +27,8 @@ function addUploadController(ngApp) {
         // Upload mode
         $scope.upload_multi = false;
 
+        clearForm();
+
         $scope.upload = function() {
 
             if ($scope.magres_file == null) {
@@ -37,11 +39,15 @@ function addUploadController(ngApp) {
 
             // Check obligatory details
             var request_data = {
-                    'magres': $scope.magres_file,
-                    'chemname': $('#upload-form #chemname').val(),
+                'upload_multi': $scope.upload_multi,
+                'magres': $scope.magres_file,
+                'chemname': $('#upload-form #chemname').val(),
+                'form': $('#upload-form #chemform').val()
             };
 
-            var obl = {'Chemical name': 'chemname'};
+            var obl = {
+                'Chemical name': 'chemname'
+            };
 
             for (var kname in obl) {
                 if ($.trim(request_data[obl[kname]]) == '') {
@@ -71,13 +77,12 @@ function addUploadController(ngApp) {
                     data: request_data
                 }).done(function(r) {
                     // Did anything go wrong?
-                    if (r != 'Success') {                        
+                    if (r != 'Success') {
                         $scope.status = 'ERROR: ' + r;
                         $scope.status_err = true;
-                    }
-                    else {
+                    } else {
                         $scope.status = 'Successfully uploaded';
-                        $scope.status_err = false;                    
+                        $scope.status_err = false;
                         // Also, clear
                         clearForm();
                     }
@@ -113,7 +118,7 @@ function addUploadController(ngApp) {
                 reader.onload = (function(fevent) {
                     var mtext = fevent.currentTarget.result;
                     $scope.uploading_now = false;
-                    if (validateMagres(file.name, mtext)) {
+                    if ($scope.upload_multi || validateMagres(file.name, mtext)) {
                         $scope.magres_file_name = file.name;
                         $scope.magres_file = mtext;
                         $scope.status_err = false;
@@ -127,12 +132,16 @@ function addUploadController(ngApp) {
                     $scope.$apply();
                 });
                 $scope.uploading_now = true;
-                reader.readAsText(file);
+                if ($scope.upload_multi) {
+                    reader.readAsArrayBuffer(file);
+                } else {
+                    reader.readAsText(file);
+                }
             }
         }
 
         $scope.edit_additional = function() {
-                $scope._edit_form = new editFormScope($scope);
+            $scope._edit_form = new editFormScope($scope);
         }
 
     });
