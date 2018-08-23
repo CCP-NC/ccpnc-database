@@ -2,7 +2,9 @@
 
 import sys
 import json
+import time
 import unittest
+import subprocess as sp
 sys.path.append('../../')
 
 import main as ccpnc_db
@@ -41,9 +43,14 @@ class CCPNCDBTest(unittest.TestCase):
         details_cookie = json.loads(tokresp.response.next())
         self.assertIsNone(details_cookie)
 
-    
-
-
 
 if __name__ == '__main__':
+
+    ps = sp.Popen(['ps', '-all'], stdout=sp.PIPE, stderr=sp.PIPE)
+
+    stdout, stderr = ps.communicate()
+    if 'mongod' not in stdout.split():
+        raise RuntimeError('Please run an instance of mongod in another shell'
+                           ' for testing')
+
     unittest.main()
