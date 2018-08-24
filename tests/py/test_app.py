@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import md5
 import sys
 import json
@@ -7,7 +8,10 @@ import time
 import unittest
 import subprocess as sp
 from datetime import datetime as dt
-sys.path.append('../../')
+
+file_path = os.path.split(__file__)[0]
+data_path = os.path.join(file_path, '../data')
+sys.path.append(os.path.abspath(os.path.join(file_path, '../../')))
 
 import main as ccpnc_db
 from orcid import FakeOrcidConnection
@@ -55,7 +59,7 @@ class CCPNCDBTest(unittest.TestCase):
     def testAddMagres(self):
 
         # Load a file as string
-        magres = open('../data/ethanol.magres').read()
+        magres = open(os.path.join(data_path, 'ethanol.magres')).read()
         orcid = {
             'path': '0000-0000-0000-0000',
             'host': 'none',
@@ -71,7 +75,7 @@ class CCPNCDBTest(unittest.TestCase):
 
     def testAddArchive(self):
 
-        testarchives = ['../data/test.tar', '../data/test.zip']
+        testarchives = ['test.tar', 'test.zip']
         orcid = {
             'path': '0000-0000-0000-0000',
             'host': 'none',
@@ -79,7 +83,7 @@ class CCPNCDBTest(unittest.TestCase):
         }
 
         for archf in testarchives:
-            archive = open(archf, 'rb').read()
+            archive = open(os.path.join(data_path, archf), 'rb').read()
 
             rndname = rndname_gen()
 
@@ -97,7 +101,7 @@ class CCPNCDBTest(unittest.TestCase):
                 removeMagresFiles(r['index_id'])
 
         # Now test for the one with a CSV inside
-        archive = open('../data/test.csv.zip', 'rb').read()
+        archive = open(os.path.join(data_path, 'test.csv.zip'), 'rb').read()
 
         rndname = rndname_gen()
 
@@ -121,7 +125,7 @@ class CCPNCDBTest(unittest.TestCase):
     def testAddMagresApp(self):
 
         # Load a file as string
-        magres = open('../data/ethanol.magres').read()
+        magres = open(os.path.join(data_path, 'ethanol.magres')).read()
         # "Log in"
         self.app.get('/gettokens/123456')
 
@@ -162,7 +166,7 @@ class CCPNCDBTest(unittest.TestCase):
         # "Log in"
         self.app.get('/gettokens/123456')
 
-        archive = open('../data/test.tar', 'rb').read()
+        archive = open(os.path.join(data_path, 'test.tar'), 'rb').read()
 
         rndname = rndname_gen()
         resp = self.app.post('/upload', data={
