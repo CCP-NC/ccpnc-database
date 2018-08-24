@@ -8,6 +8,7 @@ import numpy as np
 import zipfile
 import tarfile
 import StringIO
+from copy import deepcopy
 
 from ase import io
 from datetime import datetime
@@ -157,21 +158,24 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
 def addMagresArchive(archiveStr, chemname, orcid, data={}):
     """
     Uploads a full archive containing magres files.
-    Returns 0 for full success, 1 for some errors, 2 for total failure.
+    Returns 0 for full success, 1 for some errors, 2 for total failure;
+    then returns a dict of all ids for successfully added files
+    (False for failed ones)
     """
 
-    archive = StringIO.StringIO(archiveStr)
     fileList = {}
 
-    if zipfile.is_zipfile(archive):
+    try:
+        archive = StringIO.StringIO(archiveStr)
         with zipfile.ZipFile(archive) as z:
             for n in z.namelist():
                 name = os.path.basename(n)
                 if len(name) > 0:
                     with z.open(n) as f:
                         fileList.update({name: f.read()})
-    else:
+    except zipfile.BadZipfile:
         try:
+            archive = StringIO.StringIO(archiveStr)  # Re-open to clear
             with tarfile.open(fileobj=archive) as z:
                 for ti in z.getmembers():
                     if ti.isfile():
@@ -182,19 +186,22 @@ def addMagresArchive(archiveStr, chemname, orcid, data={}):
             raise RuntimeError(
                 'Uploaded archive file is not a valid zip or tar file.')
 
-    archive.close()
-
     # The passed data is used as a default
     # Anything else we get from the .csv
 
-    info = [f for name, f in fileList.items(
-    ) if os.path.splitext(name.lower)[1] == '.csv']
+    info = [f for name, f in fileList.items()
+            if os.path.splitext(name.lower())[1] == '.csv']
+    magresList = {name: f for name, f in fileList.items()
+                  if os.path.splitext(name.lower())[1] == '.magres'}
 
     if len(info) > 1:
         raise RuntimeError(
             'Uploaded archive file must contain at most a single .csv file')
+    elif len(info) == 0:
+        csvReader = []  # Dummy
+    else:
+        csvReader = csv.DictReader(info[0].splitlines())
 
-    csvReader = csv.DictReader(info[0].splitlines())
     default_args = {'orcid': orcid,
                     'chemname': chemname,
                     'data': data.copy()}
@@ -210,37 +217,27 @@ def addMagresArchive(archiveStr, chemname, orcid, data={}):
         # Is the file valid?
         if os.path.splitext(fname)[1] != '.magres':
             raise RuntimeError('File referenced in .csv is not a .magres file')
-        if fname not in fileList:
+        if fname not in magresList:
             raise RuntimeError(
                 'Could not find {0} in the archive'.format(fname))
 
         # Ok, we're ready to go
-        argdict[fname] = default_args.copy()
+        argdict[fname] = deepcopy(default_args)
         argdict[fname]['chemname'] = entry.pop('chemname', chemname)
         argdict[fname]['data'].update(entry)
 
-    for i in infoDict:
-        fileName = i['filename']
-        if len(fileName) > 0:
-            if os.path.splitext(fileName)[1] != '.magres':
-
-            try:
-                i.update({"magresStr": fileList.pop(fileName)})
-                magresDict.append(i)
-            except KeyError:
-                raise RuntimeError(
-                    "Could not find {:s} in the archive".format(fileName))
-
-    failed = []
-    for f, magresStr in fileList.items():
+    added_ids = {}
+    success_code = 0
+    for f, magresStr in magresList.items():
         args = argdict.get(f, default_args)
-        success = addMagresFile(magresStr, **args)
-        if not success:
-            failed.append(f)
+        ind_id = addMagresFile(magresStr, **args)
+        if not ind_id:
+            success_code = 1
+        added_ids[f] = ind_id
 
-    success_code = 1 - (len(failed) == 0) + (len(failed) == len(fileList))
+    success_code += (len(added_ids) == 0)
 
-    return success_code, failed
+    return success_code, added_ids
 
 
 def editMagresFile(index_id, orcid, data={}, magresStr=None):

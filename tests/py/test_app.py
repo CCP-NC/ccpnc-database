@@ -14,7 +14,12 @@ from orcid import FakeOrcidConnection
 from db_schema import magresVersionOptionals
 from db_interface import (addMagresFile, addMagresArchive, editMagresFile,
                           getMagresFile, databaseSearch, removeMagresFiles)
-# Launch app
+
+
+def rndname_gen():
+    m = md5.new()
+    m.update(str(dt.now()))
+    return m.hexdigest()
 
 
 class CCPNCDBTest(unittest.TestCase):
@@ -58,9 +63,7 @@ class CCPNCDBTest(unittest.TestCase):
         }
 
         # Add it
-        m = md5.new()
-        m.update(str(dt.now()))
-        rndname = m.hexdigest()
+        rndname = rndname_gen()
         ind_id = addMagresFile(magres, rndname, orcid)
         self.assertTrue(ind_id)
         # Now remove it
@@ -68,15 +71,52 @@ class CCPNCDBTest(unittest.TestCase):
 
     def testAddArchive(self):
 
-        archive = open('../data/test.tar.gz', 'rb').read()
+        testarchives = ['../data/test.tar', '../data/test.zip']
         orcid = {
             'path': '0000-0000-0000-0000',
             'host': 'none',
             'uri': '0000-0000-0000-0000'
         }
 
-        
+        for archf in testarchives:
+            archive = open(archf, 'rb').read()
 
+            rndname = rndname_gen()
+
+            succ, all_inds = addMagresArchive(archive, rndname, orcid)
+            self.assertEqual(succ, 0)
+
+            results = json.loads(databaseSearch([{'type': 'cname',
+                                                  'args': {
+                                                      'pattern': rndname
+                                                  }}]))
+            self.assertEqual(len(results), 2)
+
+            # Now delete them
+            for r in results:
+                removeMagresFiles(r['index_id'])
+
+        # Now test for the one with a CSV inside
+        archive = open('../data/test.csv.zip', 'rb').read()
+
+        rndname = rndname_gen()
+
+        succ, all_inds = addMagresArchive(archive, rndname, orcid,
+                                          data={'doi': '222'})
+        self.assertEqual(succ, 0)
+
+        results = json.loads(databaseSearch([{'type': 'cname',
+                                              'args': {
+                                                  'pattern': rndname
+                                              }}]))
+        dois = ','.join(sorted([r['version_history'][0]['doi']
+                                for r in results]))
+        self.assertEqual(dois, '111,222')
+        self.assertEqual(len(results), 2)
+
+        # Now delete them
+        for r in results:
+            removeMagresFiles(r['index_id'])
 
     def testAddMagresApp(self):
 
