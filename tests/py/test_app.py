@@ -66,6 +66,18 @@ class CCPNCDBTest(unittest.TestCase):
         # Now remove it
         removeMagresFiles(ind_id)
 
+    def testAddArchive(self):
+
+        archive = open('../data/test.tar.gz', 'rb').read()
+        orcid = {
+            'path': '0000-0000-0000-0000',
+            'host': 'none',
+            'uri': '0000-0000-0000-0000'
+        }
+
+        
+
+
     def testAddMagresApp(self):
 
         # Load a file as string

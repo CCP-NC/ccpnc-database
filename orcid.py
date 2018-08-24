@@ -119,4 +119,4 @@ class FakeOrcidConnection(OrcidConnection):
                 'host': 'none',
                 'uri': '0000-0000-0000-0000'
                 }
-        }
+                }

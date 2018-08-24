@@ -1,12 +1,12 @@
 import os
 import re
+import csv
 import json
 import inspect
 import tempfile
 import numpy as np
 import zipfile
 import tarfile
-import csv
 import StringIO
 
 from ase import io
@@ -154,7 +154,12 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
         return False
 
 
-def addMagresArchive(archiveStr, orcid):
+def addMagresArchive(archiveStr, chemname, orcid, data={}):
+    """
+    Uploads a full archive containing magres files.
+    Returns 0 for full success, 1 for some errors, 2 for total failure.
+    """
+
     archive = StringIO.StringIO(archiveStr)
     fileList = {}
 
@@ -175,25 +180,49 @@ def addMagresArchive(archiveStr, orcid):
                         f.close()
         except tarfile.ReadError:
             raise RuntimeError(
-                "Uploaded archive file is not a valid zip or tar file.")
+                'Uploaded archive file is not a valid zip or tar file.')
 
     archive.close()
 
-    info = [f for name, f in fileList.iteritems(
-    ) if name.lower().find(".csv", -4) > -1]
+    # The passed data is used as a default
+    # Anything else we get from the .csv
 
-    if len(info) != 1:
+    info = [f for name, f in fileList.items(
+    ) if os.path.splitext(name.lower)[1] == '.csv']
+
+    if len(info) > 1:
         raise RuntimeError(
-            "Uploaded archive file must contain a single .csv file")
+            'Uploaded archive file must contain at most a single .csv file')
 
-    infoDict = csv.DictReader(info[0].splitlines())
-    magresDict = []
+    csvReader = csv.DictReader(info[0].splitlines())
+    default_args = {'orcid': orcid,
+                    'chemname': chemname,
+                    'data': data.copy()}
+    argdict = {}
+
+    for entry in csvReader:
+        # File column is obligatory
+        try:
+            fname = entry.pop('filename')
+        except KeyError:
+            raise RuntimeError('Invalid CSV file used in archive')
+
+        # Is the file valid?
+        if os.path.splitext(fname)[1] != '.magres':
+            raise RuntimeError('File referenced in .csv is not a .magres file')
+        if fname not in fileList:
+            raise RuntimeError(
+                'Could not find {0} in the archive'.format(fname))
+
+        # Ok, we're ready to go
+        argdict[fname] = default_args.copy()
+        argdict[fname]['chemname'] = entry.pop('chemname', chemname)
+        argdict[fname]['data'].update(entry)
+
     for i in infoDict:
-        fileName = i['Filename']
+        fileName = i['filename']
         if len(fileName) > 0:
-            if fileName.lower().find(".magres", -7) < 0:
-                raise RuntimeError(
-                    "File referenced in .csv is not a .magres file")
+            if os.path.splitext(fileName)[1] != '.magres':
 
             try:
                 i.update({"magresStr": fileList.pop(fileName)})
@@ -202,17 +231,16 @@ def addMagresArchive(archiveStr, orcid):
                 raise RuntimeError(
                     "Could not find {:s} in the archive".format(fileName))
 
-    if len(fileList) > 1:  # we still have the info .csv file in the dictionary
-        raise RuntimeError(
-            "There were files in the archive not referenced in the .csv")
+    failed = []
+    for f, magresStr in fileList.items():
+        args = argdict.get(f, default_args)
+        success = addMagresFile(magresStr, **args)
+        if not success:
+            failed.append(f)
 
-    success = True
-    for m in magresDict:
-        magresStr = m.pop("magresStr")
-        chemname = m.pop("Chemical name")
-        success = success and addMagresFile(magresStr, chemname, orcid, data=m)
+    success_code = 1 - (len(failed) == 0) + (len(failed) == len(fileList))
 
-    return success
+    return success_code, failed
 
 
 def editMagresFile(index_id, orcid, data={}, magresStr=None):
