@@ -140,9 +140,7 @@ class CCPNCDBTest(unittest.TestCase):
         )
         self.assertEqual(resp._status_code, 500)
         # Test 3: succeed
-        m = md5.new()
-        m.update(str(dt.now()))
-        rndname = m.hexdigest()
+        rndname = rndname_gen()
         resp = self.app.post('/upload', data={
             'orcid': '0000-0000-0000-0000',
             'access_token': 'XXX',
@@ -158,6 +156,34 @@ class CCPNCDBTest(unittest.TestCase):
                                               }}]))
         ind_id = results[0]['index_id']
         removeMagresFiles(ind_id)
+
+    def testAddArchiveApp(self):
+
+        # "Log in"
+        self.app.get('/gettokens/123456')
+
+        archive = open('../data/test.tar', 'rb').read()
+
+        rndname = rndname_gen()
+        resp = self.app.post('/upload', data={
+            'orcid': '0000-0000-0000-0000',
+            'access_token': 'XXX',
+            'chemname': rndname,
+            'magres': archive, 
+            'upload_multi': 'true'}
+        )
+
+        self.assertEqual(resp._status_code, 200)
+
+        results = json.loads(databaseSearch([{'type': 'cname',
+                                              'args': {
+                                                  'pattern': rndname
+                                              }}]))
+        self.assertEqual(len(results), 2)
+
+        # Now delete them
+        for r in results:
+            removeMagresFiles(r['index_id'])
 
 
 if __name__ == '__main__':

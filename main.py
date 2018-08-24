@@ -11,7 +11,8 @@ import inspect
 from flask import Flask, Response, session, request, make_response
 from orcid import OrcidConnection, OrcidError
 from db_interface import (addMagresFile, databaseSearch,
-                          getMagresFile, editMagresFile)
+                          getMagresFile, editMagresFile,
+                          addMagresArchive)
 from db_schema import magresVersionOptionals
 
 filepath = os.path.abspath(os.path.dirname(__file__))
@@ -103,8 +104,11 @@ def upload():
         }
 
         if request.values.get('upload_multi', 'false') == 'true':
-            print('Archive')
-            success = True
+            succ_code, all_inds = addMagresArchive(request.values.get('magres'),
+                                                 chemname,
+                                                 orcid,
+                                                 data)
+            success = (succ_code == 0)
         else:
             success = addMagresFile(request.values.get('magres'),
                                     chemname,
