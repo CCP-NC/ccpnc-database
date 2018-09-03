@@ -29,12 +29,17 @@ function addUploadController(ngApp) {
         $scope.upload = function() {
 
             // Check required fields
+            $scope.status_err = false;
+            $scope.status = '';
             $('#upload-form input[required]').each(function(i, o) {
                 if ($(o).val() == '') {
                     $scope.status = 'Missing file or obligatory field';
-                    $scope.status_err = true;
+                    $scope.status_err = true;                    
                 }
             });
+            if ($scope.status_err) {
+                return;
+            }
 
             // Compile extra data
             var request_data = {
@@ -48,6 +53,8 @@ function addUploadController(ngApp) {
                 request_data.orcid = details['orcid'];
 
                 // Post form
+                $scope.uploading_now = true;    
+                $scope.$apply();            
                 $('#upload-form').ajaxSubmit({
                     data: request_data,
                     success: function(r) {
