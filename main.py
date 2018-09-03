@@ -80,6 +80,9 @@ def delete_tokens():
 @app.route('/upload', methods=['POST'])
 def upload():
 
+    print(request.files)
+    print(request.values)
+
     # Authenticate and retrieve user info
     try:
         user_info = user_info_auth(app.extensions['orcidlink'],
@@ -103,14 +106,16 @@ def upload():
                 len(request.values.get(k)) > 0)
         }
 
+        # Magres file
+        fd = request.files['magres-file']
+
         if request.values.get('upload_multi', 'false') == 'true':
-            succ_code, all_inds = addMagresArchive(request.values.get('magres'),
-                                                 chemname,
-                                                 orcid,
-                                                 data)
+            succ_code, all_inds = addMagresArchive(fd, chemname,
+                                                   orcid,
+                                                   data)
             success = (succ_code == 0)
         else:
-            success = addMagresFile(request.values.get('magres'),
+            success = addMagresFile(fd,
                                     chemname,
                                     orcid,
                                     data)

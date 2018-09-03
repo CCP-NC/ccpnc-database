@@ -59,7 +59,7 @@ class CCPNCDBTest(unittest.TestCase):
     def testAddMagres(self):
 
         # Load a file as string
-        magres = open(os.path.join(data_path, 'ethanol.magres')).read()
+        magres = open(os.path.join(data_path, 'ethanol.magres'))
         orcid = {
             'path': '0000-0000-0000-0000',
             'host': 'none',
@@ -83,7 +83,7 @@ class CCPNCDBTest(unittest.TestCase):
         }
 
         for archf in testarchives:
-            archive = open(os.path.join(data_path, archf), 'rb').read()
+            archive = open(os.path.join(data_path, archf), 'rb')
 
             rndname = rndname_gen()
 
@@ -101,7 +101,7 @@ class CCPNCDBTest(unittest.TestCase):
                 removeMagresFiles(r['index_id'])
 
         # Now test for the one with a CSV inside
-        archive = open(os.path.join(data_path, 'test.csv.zip'), 'rb').read()
+        archive = open(os.path.join(data_path, 'test.csv.zip'), 'rb')
 
         rndname = rndname_gen()
 
@@ -125,7 +125,7 @@ class CCPNCDBTest(unittest.TestCase):
     def testAddMagresApp(self):
 
         # Load a file as string
-        magres = open(os.path.join(data_path, 'ethanol.magres')).read()
+        magres = open(os.path.join(data_path, 'ethanol.magres'))
         # "Log in"
         self.app.get('/gettokens/123456')
 

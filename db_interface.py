@@ -94,13 +94,15 @@ def getDBCollections():
 ### UPLOADING ###
 
 
-def addMagresFile(magresStr, chemname, orcid, data={}):
+def addMagresFile(magresFd, chemname, orcid, data={}):
 
     # Inserts a file, returns index id if successful, otherwise False
 
     magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
-    magres = MagresStrCast(magresStr).atoms()
+    magres = read_magres(magresFd)
+    magresFd.seek(0)
+    magresStr = magresFd.read()
 
     # Validate metadata
     metadata = {
@@ -155,7 +157,7 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
         return False
 
 
-def addMagresArchive(archiveStr, chemname, orcid, data={}):
+def addMagresArchive(archive, chemname, orcid, data={}):
     """
     Uploads a full archive containing magres files.
     Returns 0 for full success, 1 for some errors, 2 for total failure;
@@ -166,7 +168,6 @@ def addMagresArchive(archiveStr, chemname, orcid, data={}):
     fileList = {}
 
     try:
-        archive = StringIO.StringIO(archiveStr)
         with zipfile.ZipFile(archive) as z:
             for n in z.namelist():
                 name = os.path.basename(n)
@@ -174,8 +175,8 @@ def addMagresArchive(archiveStr, chemname, orcid, data={}):
                     with z.open(n) as f:
                         fileList.update({name: f.read()})
     except zipfile.BadZipfile:
+        archive.seek(0) # Clear
         try:
-            archive = StringIO.StringIO(archiveStr)  # Re-open to clear
             with tarfile.open(fileobj=archive) as z:
                 for ti in z.getmembers():
                     if ti.isfile():
