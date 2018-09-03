@@ -2,16 +2,13 @@ function addUploadController(ngApp) {
     ngApp.controller('UploadController', function($scope, loginStatus, Upload) {
 
         var clearForm = function() {
+
             $scope.magres_file_name = '';
             $scope.magres_file = null; // Contents of the last uploaded file            
             $scope.uploading_now = false; // To show spinner if needed
 
-            $('#upload-form #chemname').val('');
-            $('#upload-form #chemform').val('');
+            $('#upload-form').resetForm();
 
-            for (var p in $scope._edit_table.get_props()) {
-                $('#upload-form #edit-' + p).val('');
-            }
         }
 
         // Form data
@@ -19,7 +16,7 @@ function addUploadController(ngApp) {
 
         // Status message
         $scope.status = '';
-        $scope.status_err = false; // Is the status an error?        
+        $scope.status_err = false; // Is the status an error?
 
         // Edit table
         $scope._edit_table = new editTable($scope, {});
@@ -31,11 +28,64 @@ function addUploadController(ngApp) {
 
         $scope.upload = function() {
 
+            // Check required fields
+            $('#upload-form input[required]').each(function(i, o) {
+                if ($(o).val() == '') {
+                    $scope.status = 'Missing file or obligatory field';
+                    $scope.status_err = true;
+                }
+            });
+
+            // Compile extra data
+            var request_data = {
+                'upload_multi': $scope.upload_multi
+            }
+
+            loginStatus.verify_token(function() {
+                // Package all the data
+                details = loginStatus.get_details()
+                request_data.access_token = details['access_token'];
+                request_data.orcid = details['orcid'];
+
+                // Post form
+                $('#upload-form').ajaxSubmit({
+                    data: request_data,
+                    success: function(r) {
+                        // Did anything go wrong?
+                        if (r != 'Success') {
+                            $scope.status = 'ERROR: ' + r;
+                            $scope.status_err = true;
+                        } else {
+                            $scope.status = 'Successfully uploaded';
+                            $scope.status_err = false;
+                            // Also, clear
+                            clearForm();
+                        }
+
+                        $scope.uploading_now = false;
+                        $scope.$apply();
+
+                    },
+                    error: function(e) {
+                        $scope.status = e;
+                        $scope.status_err = true;
+                        $scope.uploading_now = false;
+                        $scope.$apply();
+                    }
+                });
+
+            }, function() {
+                $scope.status = 'Could not authenticate ORCID details; please log in';
+                $scope.status_err = true;
+            });
+
+            /*
             if ($scope.magres_file == null) {
                 $scope.status = 'No file to upload';
                 $scope.status_err = true;
                 return;
             }
+
 
             // Check obligatory details
             var request_data = {
@@ -101,6 +151,9 @@ function addUploadController(ngApp) {
                 $scope.status = 'Could not authenticate ORCID details; please log in'
                 $scope.status_err = true;
             });
+            */
+
+
         }
 
         $scope.load_files = function(files) {
@@ -114,7 +167,28 @@ function addUploadController(ngApp) {
                 $scope.status = '';
                 $scope.status_err = false;
 
-                var reader = new FileReader();
+                if (!$scope.upload_multi) {
+                    var reader = new FileReader();
+                    reader.onload = (function(fevent) {
+                        var mtext = fevent.currentTarget.result;
+                        $scope.uploading_now = false;
+                        if (validateMagres(file.name, mtext)) {
+                            $scope.magres_file_name = file.name;
+                            $scope.status_err = false;
+                            $scope.status = 'File ready to upload';
+                        } else {
+                            $scope.magres_file_name = '';
+                            $scope.magres_file = null;
+                            $scope.status_err = true;
+                            $scope.status = 'The file is not in the Magres format';
+                        }
+                        $scope.$apply();
+                    });
+                    $scope.uploading_now = true;
+                    reader.readAsText(file);
+                }
+
+                /*
                 reader.onload = (function(fevent) {
                     var mtext = fevent.currentTarget.result;
                     $scope.uploading_now = false;
@@ -137,6 +211,7 @@ function addUploadController(ngApp) {
                 } else {
                     reader.readAsText(file);
                 }
+                */
             }
         }
 
