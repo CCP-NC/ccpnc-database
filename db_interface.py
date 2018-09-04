@@ -100,7 +100,7 @@ def addMagresFile(magresFile, chemname, orcid, data={}):
 
     magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
-    if type(magresFile) is file:
+    if hasattr(magresFile, 'read'):
         magres = read_magres(magresFile)
         magresFile.seek(0)
         magresStr = magresFile.read()
@@ -245,7 +245,7 @@ def addMagresArchive(archive, chemname, orcid, data={}):
     return success_code, added_ids
 
 
-def editMagresFile(index_id, orcid, data={}, magresStr=None):
+def editMagresFile(index_id, orcid, data={}, magresFile=None):
 
     magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
@@ -267,11 +267,17 @@ def editMagresFile(index_id, orcid, data={}, magresStr=None):
         raise RuntimeError('Metadata missing for requested entry')
 
     # Now, if there's a new file, upload it, otherwise use the last one
-    if magresStr is not None:
+    if magresFile is not None:
+
+        if hasattr(magresFile, 'read'):
+            magres = read_magres(magresFile)
+            magresFile.seek(0)
+            magresStr = magresFile.read()
+        else:
+            magresStr = magresFile
+            magres = read_magres(StringIO.StringIO(magresStr))
+
         # Check that the formula is right
-
-        magres = MagresStrCast(magresStr).atoms()
-
         formula = getFormula(magres)
         if index_entry['formula'] != formula:
             raise RuntimeError('Invalid Magres File for editing '
