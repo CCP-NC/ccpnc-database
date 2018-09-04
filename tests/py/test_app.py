@@ -124,8 +124,10 @@ class CCPNCDBTest(unittest.TestCase):
 
     def testAddMagresApp(self):
 
+        from StringIO import StringIO as sio
+
         # Load a file as string
-        magres = open(os.path.join(data_path, 'ethanol.magres'))
+        magres = open(os.path.join(data_path, 'ethanol.magres')).read()
         # "Log in"
         self.app.get('/gettokens/123456')
 
@@ -151,7 +153,7 @@ class CCPNCDBTest(unittest.TestCase):
             'orcid': '0000-0000-0000-0000',
             'access_token': 'XXX',
             'chemname': rndname,
-            'magres': magres}
+            'magres-file': (sio(magres), 'ethanol.magres')}
         )
         self.assertEqual(resp._status_code, 200)
 
@@ -168,14 +170,14 @@ class CCPNCDBTest(unittest.TestCase):
         # "Log in"
         self.app.get('/gettokens/123456')
 
-        archive = open(os.path.join(data_path, 'test.tar'), 'rb').read()
+        archive = open(os.path.join(data_path, 'test.tar'), 'rb')
 
         rndname = rndname_gen()
         resp = self.app.post('/upload', data={
             'orcid': '0000-0000-0000-0000',
             'access_token': 'XXX',
             'chemname': rndname,
-            'magres': archive, 
+            'magres-file': archive, 
             'upload_multi': 'true'}
         )
 
