@@ -145,7 +145,9 @@ class CCPNCDBTest(unittest.TestCase):
         self.assertEqual(resp._status_code, 500)
         # Test 3: succeed
         rndname = rndname_gen()
-        resp = self.app.post('/upload', data={
+        resp = self.app.post('/upload', 
+            content_type='multipart/form-data',
+            data={
             'orcid': '0000-0000-0000-0000',
             'access_token': 'XXX',
             'chemname': rndname,

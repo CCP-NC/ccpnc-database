@@ -94,15 +94,19 @@ def getDBCollections():
 ### UPLOADING ###
 
 
-def addMagresFile(magresFd, chemname, orcid, data={}):
+def addMagresFile(magresFile, chemname, orcid, data={}):
 
     # Inserts a file, returns index id if successful, otherwise False
 
     magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
-    magres = read_magres(magresFd)
-    magresFd.seek(0)
-    magresStr = magresFd.read()
+    if type(magresFile) is file:
+        magres = read_magres(magresFile)
+        magresFile.seek(0)
+        magresStr = magresFile.read()
+    else:
+        magresStr = magresFile
+        magres = read_magres(StringIO.StringIO(magresStr))
 
     # Validate metadata
     metadata = {

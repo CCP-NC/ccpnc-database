@@ -80,9 +80,6 @@ def delete_tokens():
 @app.route('/upload', methods=['POST'])
 def upload():
 
-    print(request.files)
-    print(request.values)
-
     # Authenticate and retrieve user info
     try:
         user_info = user_info_auth(app.extensions['orcidlink'],
