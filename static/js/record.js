@@ -42,6 +42,9 @@ function addRecordDirective(ngApp) {
                         if (this.magres_file_name != '')
                             request_data['magres'] = this.magres_file;
 
+                        var request_data = {
+                            index_id: index_id, 
+                        }
                         popup = this;
 
                         loginStatus.verify_token(function() {
@@ -52,33 +55,31 @@ function addRecordDirective(ngApp) {
 
                             // Send an Ajax request
                             popup.uploading_now = true;
+                            scope.$apply();
 
-                            $.ajax({
-                                url: ngApp.server_app + '/edit',
-                                type: 'POST',
-                                crossDomain: true,
-                                data: request_data
-                            }).done(function(r) {
-                                // Did anything go wrong?
-                                if (r != 'Success') {                        
-                                    popup.status = 'ERROR: ' + r;
+                            $('#edit-popup-form').ajaxSubmit({
+                                data: request_data,
+                                success: function(r) {
+                                    // Did anything go wrong?
+                                    if (r != 'Success') {
+                                        scope.status = 'ERROR: ' + r;
+                                        scope.status_err = true;
+                                    } else {
+                                        scope.$parent.$parent.refresh();
+                                        scope.cancel()
+                                    }
+
+                                    popup.uploading_now = false;
+                                    scope.$apply();
+
+                                },
+                                error: function(e) {
+                                    popup.status = 'ERROR: ' + e.responseText;
                                     popup.status_err = true;
+                                    popup.uploading_now = false;
+                                    scope.$apply();
                                 }
-                                else {
-                                    // Refresh and close
-                                    scope.$parent.$parent.refresh();
-                                    scope.cancel();
-                                }
-
-                                popup.uploading_now = false;
-                                scope.$apply();
-
-                            }).fail(function(e) {
-                                popup.status = 'ERROR: ' + e.responseText;
-                                popup.status_err = true;
-                                popup.uploading_now = false;
-                                scope.$apply();
-                            });
+                            });                            
 
                         }, function() {
                             popup.status = 'Could not authenticate ORCID details; please log in'

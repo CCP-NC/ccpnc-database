@@ -36,13 +36,13 @@ function addEditPopupDirective(ngApp) {
                         popup.status = '';
                         popup.status_err = false;
 
+
                         var reader = new FileReader();
                         reader.onload = (function(fevent) {
                             var mtext = fevent.currentTarget.result;
                             popup.uploading_now = false;
                             if (validateMagres(file.name, mtext)) {
                                 popup.magres_file_name = file.name;
-                                popup.magres_file = mtext;
                                 popup.status_err = false;
                                 popup.status = 'File ready to upload';
                             } else {
@@ -56,6 +56,7 @@ function addEditPopupDirective(ngApp) {
 
                         popup.uploading_now = true;
                         reader.readAsText(file);
+
                     }
                 }
             }

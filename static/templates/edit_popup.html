@@ -8,24 +8,40 @@
       <button class="delete" aria-label="close" ng-click="cancel()"></button>
     </header>
     <section class="modal-card-body">
-        <table class="table is-bordered is-striped is-fixed">
-          <tbody edit-table="editPopup._table">
-          </tbody>
-        </table>
+        <form id="edit-popup-form" enctype="multipart/form-data" action="/edit" method="post">
+          <table class="table is-bordered is-striped is-fixed">
+            <tbody edit-table="editPopup._table">
+            </tbody>
+          </table>
 
-    <div class="drag-drop-file ddrop-small" ngf-drop="load_files($files)" ngf-multiple="true">
-        <span id="noloaded" ng-show="editPopup.magres_file_name == '' && !editPopup.uploading_now">
-            <i class="fa fa-upload" aria-hidden="true"></i>
-            &nbsp;
-            Drop .magres file here 
-        </span>
-        <span ng-show="editPopup.uploading_now">
-            <div class="loader">Loading...</div>
-        </span>
-        <span id="loaded" ng-show="editPopup.magres_file_name !== '' && !editPopup.uploading_now">
-            {{editPopup.magres_file_name}}
-        </span><br>
-    </div>
+          <div class="file has-name is-boxed is-primary is-small is-centered">
+              <label class="file-label">
+                  <input class="file-input" type="file" id="magres-file" name="magres-file" ngf-select="load_files($files)" required>
+                  <span class="file-cta">
+                      <span class="file-icon">
+                          <span ng-show="!uploading_now">
+                              <i class="fa fa-upload"></i>
+                          </span>
+                          <span ng-show="uploading_now">
+                              <div class="loader">Loading...</div>
+                          </span>
+                      </span>
+                      <span class="file-label">
+                          <span ng-show="!uploading_now">
+                              Choose a file...
+                          </span>
+                          <span ng-show="uploading_now">
+                              Uploading...
+                          </span>
+                      </span>
+                  </span>
+                  <span class="file-name" ng-show="magres_file_name">
+                      {{magres_file_name}}
+                  </span>
+              </label>
+          </div>
+
+        </form>
 
     <span class="box" ng-show="editPopup.status !== ''" ng-class="{
             'has-text-danger': editPopup.status_err,

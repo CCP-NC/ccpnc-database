@@ -299,21 +299,7 @@
                 </div>
                 Fields marked with <sup class="has-text-danger">*</sup> are obligatory.
                 <span class="separator-2"></span>
-                <!--
-                <div class="drag-drop-file" ngf-drop="load_files($files)" ngf-multiple="true">
-                    <span id="noloaded" ng-show="magres_file_name == '' && !uploading_now">
-                        <i class="fa fa-upload" aria-hidden="true"></i>
-                        &nbsp;
-                        Drop {{ upload_multi? 'archive' : '.magres file' }} here 
-                    </span>
-                    <span ng-show="uploading_now">
-                        <div class="loader">Loading...</div>
-                    </span>
-                    <span id="loaded" ng-show="magres_file_name !== '' && !uploading_now">
-                        {{magres_file_name}}
-                    </span><br>
-                </div>
-                -->
+                
                 <div class="file has-name is-boxed is-primary is-medium is-centered">
                     <label class="file-label">
                         <input class="file-input" type="file" id="magres-file" name="magres-file" ngf-select="load_files($files)" required>
