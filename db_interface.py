@@ -459,7 +459,8 @@ def searchByOrcid(orcid):
 
 def searchByChemname(pattern):
 
-    regex = re.compile(pattern)
+    regex = re.compile(pattern.replace(".","\.").replace("*",".*").replace("?","."),re.IGNORECASE)
+    # escape ., convert * to any character, convert ? to a single character
 
     return [
         {'chemname': {'$regex': regex}}
