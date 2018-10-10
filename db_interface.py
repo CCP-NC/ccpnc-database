@@ -22,6 +22,7 @@ from bson.objectid import ObjectId
 from db_schema import (magresVersionSchema,
                        magresMetadataSchema,
                        magresIndexSchema)
+from db_indexing import (extractIndexingInfo, getFormula)
 
 try:
     config = json.load(open(os.path.join(
@@ -46,31 +47,6 @@ class MagresStrCast(object):
 
     def atoms(self):
         return read_magres(self)
-
-### METHODS FOR COMPILATION OF METADATA ###
-
-
-def getFormula(magres):
-
-    symbols = magres.get_chemical_symbols()
-    formula = [{'species': s, 'n': symbols.count(s)} for s in set(symbols)]
-    formula = sorted(formula, key=lambda x: x['species'])
-
-    return formula
-
-
-def getMSMetadata(magres):
-
-    # Chemical species
-    symbols = np.array(magres.get_chemical_symbols())
-    sp = {s: np.where(symbols == s) for s in set(symbols)}
-    isos = MSIsotropy.get(magres)
-
-    msdata = [{'species': s,
-               'iso': list(isos[inds])}
-              for s, inds in sp.iteritems()]
-
-    return msdata
 
 
 def getDBCollections():
@@ -144,8 +120,10 @@ def addMagresFile(magresFile, chemname, orcid, data={}):
         'orcid': metadata['orcid'],
         'metadataID': str(magresMetadataID),
     }
-    index['formula'] = getFormula(magres)
-    index['values'] = getMSMetadata(magres)
+
+    # Add all the computed information
+    index.update(extractIndexingInfo(magres))
+    print(index)
     index['latest_version'] = version
     index = magresIndexSchema.validate(index)
 
@@ -179,7 +157,7 @@ def addMagresArchive(archive, chemname, orcid, data={}):
                     with z.open(n) as f:
                         fileList.update({name: f.read()})
     except zipfile.BadZipfile:
-        archive.seek(0) # Clear
+        archive.seek(0)  # Clear
         try:
             with tarfile.open(fileobj=archive) as z:
                 for ti in z.getmembers():
@@ -459,7 +437,8 @@ def searchByOrcid(orcid):
 
 def searchByChemname(pattern):
 
-    regex = re.compile(pattern.replace(".","\.").replace("*",".*").replace("?","."),re.IGNORECASE)
+    regex = re.compile(pattern.replace(".", "\.").replace(
+        "*", ".*").replace("?", "."), re.IGNORECASE)
     # escape ., convert * to any character, convert ? to a single character
 
     return [

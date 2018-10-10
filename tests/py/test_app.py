@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Testing the Python app for the database (uploading, deleting, etc.)
+
 import os
 import md5
 import sys
@@ -24,6 +26,12 @@ def rndname_gen():
     m = md5.new()
     m.update(str(dt.now()))
     return m.hexdigest()
+
+
+class IndexingTest(unittest.TestCase):
+
+    def testFormula(self):
+        pass
 
 
 class CCPNCDBTest(unittest.TestCase):
@@ -147,14 +155,15 @@ class CCPNCDBTest(unittest.TestCase):
         self.assertEqual(resp._status_code, 500)
         # Test 3: succeed
         rndname = rndname_gen()
-        resp = self.app.post('/upload', 
-            content_type='multipart/form-data',
-            data={
-            'orcid': '0000-0000-0000-0000',
-            'access_token': 'XXX',
-            'chemname': rndname,
-            'magres-file': (sio(magres), 'ethanol.magres')}
-        )
+        resp = self.app.post('/upload',
+                             content_type='multipart/form-data',
+                             data={
+                                 'orcid': '0000-0000-0000-0000',
+                                 'access_token': 'XXX',
+                                 'chemname': rndname,
+                                 'magres-file': (sio(magres),
+                                                 'ethanol.magres')}
+                             )
         self.assertEqual(resp._status_code, 200)
 
         # Now remove it
@@ -177,7 +186,7 @@ class CCPNCDBTest(unittest.TestCase):
             'orcid': '0000-0000-0000-0000',
             'access_token': 'XXX',
             'chemname': rndname,
-            'magres-file': archive, 
+            'magres-file': archive,
             'upload_multi': 'true'}
         )
 
