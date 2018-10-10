@@ -59,6 +59,9 @@ def user_info_auth(orcid_link, client_at, client_id):
 def root():
     return app.send_static_file('index.html')
 
+@app.route('/cookies')
+def cookiepol():
+    return app.send_static_file('cookies.html')
 
 @app.route('/gettokens/', defaults={'code': None})
 @app.route('/gettokens/<code>')
