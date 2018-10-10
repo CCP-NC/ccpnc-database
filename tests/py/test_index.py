@@ -13,10 +13,17 @@ data_path = os.path.join(file_path, '../data')
 sys.path.append(os.path.abspath(os.path.join(file_path, '../../')))
 
 from ase import io
-from db_indexing import (getFormula, getMSMetadata)
+from db_indexing import (_prime_factors, getFormula, getMSMetadata,
+                         getStochiometry, getMolecules)
 
 
 class IndexingTest(unittest.TestCase):
+
+    def testPrimeFactors(self):
+        facs = _prime_factors(6)
+        self.assertEqual(facs, [2, 3])
+        facs = _prime_factors(21)
+        self.assertEqual(facs, [3, 7])
 
     def testFormula(self):
         eth = io.read(os.path.join(data_path, 'ethanol.magres'))
@@ -27,6 +34,17 @@ class IndexingTest(unittest.TestCase):
             {'species': 'O', 'n': 1}
         ]
         self.assertEqual(f, targ_f)
+
+    def testStochiometry(self):
+        ala = io.read(os.path.join(data_path, 'alanine.magres'))
+        f = getFormula(ala)
+        s = getStochiometry(f)
+        self.assertEqual(s[2]['n'], 1) # Nitrogen
+
+    def testMolecules(self):
+        ala = io.read(os.path.join(data_path, 'alanine.magres'))
+        m = getMolecules(ala)
+        print(m)
 
     def testMS(self):
         eth = io.read(os.path.join(data_path, 'ethanol.magres'))
