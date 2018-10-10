@@ -83,8 +83,7 @@
             <div class="navbar-item is-size-6" ng-if="logged_in">
                 Logged in as&nbsp;
                 <i class="ai ai-orcid orcid-green is-size-4" aria-hidden="true"></i>&nbsp;
-                <a href="https://orcid.org/{{orcid}}" class="has-text-primary" target="_blank"
-                   title="User: {{username}}">
+                <a href="https://orcid.org/{{orcid}}" class="has-text-primary" target="_blank">
                     orcid.org/{{orcid}}
                 </a>
             </div>
@@ -107,7 +106,7 @@
                     <p>
                         Success! You are now logged in with ORCID
                         <span class="orcid-green">{{orcid}}</span>
-                        and name {{username}}.
+                        and name {{just_logged_in}}.
                     </p>
                     <br>
                     <a class="button is-primary" ng-click="confirm()">Ok</a>
@@ -379,7 +378,8 @@
             <i class="ai ai-orcid orcid-green is-size-4" aria-hidden="true"></i> ORCID
         </a>
         Public API v2.0 for authentication.
-
+        <br>
+        For more information about cookies and data retention, see our <a href="/cookies">Privacy Policy</a>.
       </p>
     </div>
   </div>  
