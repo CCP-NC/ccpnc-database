@@ -20,18 +20,13 @@ from orcid import FakeOrcidConnection
 from db_schema import magresVersionOptionals
 from db_interface import (addMagresFile, addMagresArchive, editMagresFile,
                           getMagresFile, databaseSearch, removeMagresFiles)
+from db_indexing import (getFormula, getMSMetadata)
 
 
 def rndname_gen():
     m = md5.new()
     m.update(str(dt.now()))
     return m.hexdigest()
-
-
-class IndexingTest(unittest.TestCase):
-
-    def testFormula(self):
-        pass
 
 
 class CCPNCDBTest(unittest.TestCase):
