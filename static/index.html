@@ -144,12 +144,22 @@
                 In <b>Your Files</b>, which appears only if logged in, you can see the entries you uploaded. For each of them multiple versions, corresponding to different files and metadata, can exist. New versions can be uploaded by clicking the <b>Edit</b> button. They will be recorded with a timestamp and will become the new default.
             </p>
 
+            <p>
+                <a rel="license" href="http://creativecommons.org/licenses/by-nd/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nd/4.0/88x31.png" /></a><br>
+                All files found on this database are licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nd/4.0/">Creative Commons Attribution-NoDerivatives 4.0 International License</a>. This means they can be freely downloaded and used even for commercial purposes, but if shared they can <i>not</i> be modified or altered in any way. This is to guarantee the integrity of the data as it was originally uploaded. It is possible to use the data as starting point for use in other work as long as it is made clear that such results are distinct from it and not the responsibility of the author of the original data.
+            </p>
+
         </div>
     </div>
 
     <div id="div-search" class="section" ng-switch-when="search" ng-controller="SearchController" ng-cloak>
 
         <div class="container has-text-centered">
+
+            <div class="box">
+                <a rel="license" href="http://creativecommons.org/licenses/by-nd/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nd/4.0/88x31.png" /></a><br>
+                All files found on this database are licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nd/4.0/">Creative Commons Attribution-NoDerivatives 4.0 International License</a>. This means they can be freely downloaded and used even for commercial purposes, but if shared they can <i>not</i> be modified or altered in any way. This is to guarantee the integrity of the data as it was originally uploaded. It is possible to use the data as starting point for use in other work as long as it is made clear that such results are distinct from it and not the responsibility of the author of the original data.
+            </div>
 
             <div class="notification" ng-repeat="search_spec in search_specs">
 
@@ -334,6 +344,10 @@
                 </span>
                 <span class="separator-1"></span>
                 <a class="button is-primary is-large" ng-click="upload()">Upload</a>
+                <span class="separator-1"></span>
+                <div class="box">
+                    <a rel="license" href="http://creativecommons.org/licenses/by-nd/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nd/4.0/88x31.png" /></a><br />By uploading your files you consent to them being licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nd/4.0/">Creative Commons Attribution-NoDerivatives 4.0 International License</a>.
+                </div>
             </form>
         </div>        
     </div>
