@@ -364,7 +364,8 @@ def databaseSearch(search_spec):
         'msRange': searchByMS,
         'doi': searchByDOI,
         'orcid': searchByOrcid,
-        'cname': searchByChemname
+        'cname': searchByChemname,
+        'formula': searchByFormula
     }
 
     search_dict = {
@@ -409,6 +410,20 @@ def databaseSearch(search_spec):
 # Specific search functions
 
 
+def _formula_read(f):
+    cfre = re.compile('([A-Z][a-z]*)([0-9]*)')
+
+    if (cfre.match(f) is None):
+        raise ValueError('Invalid formula string')
+
+    match = []
+    for el in cfre.findall(f):
+        n = int(el[1]) if el[1] != '' else 1
+        match.append((el[0], n))
+
+    return match
+
+
 def searchByMS(sp, minms, maxms):
 
     return [
@@ -444,3 +459,12 @@ def searchByChemname(pattern):
     return [
         {'chemname': {'$regex': regex}}
     ]
+
+
+def searchByFormula(formula):
+
+    formula = _formula_read(formula)
+    # Check for stochiometry
+    
+
+    return [{'chemname': 'Ala_molecules'}]

@@ -67,6 +67,10 @@ magresIndexSchema = Schema({
         'iso': [float],
     }],
     'formula': [{'species': str,
-                 'n': int}]
-
+                 'n': int}],
+    'stochiometry': [{'species': str,
+                      'n': int}],
+    'Z': int,
+    'molecules': [[{'species': str,
+                      'n': int}]]
 })
