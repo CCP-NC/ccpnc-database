@@ -390,6 +390,8 @@ def databaseSearch(search_spec):
 
         search_dict['$and'] += search_func(**args)
 
+        print(search_dict)
+
     # Carry out the actual search
     resultsInd = magresIndex.find(search_dict)
     # Find the corresponding metadata
@@ -461,10 +463,27 @@ def searchByChemname(pattern):
     ]
 
 
-def searchByFormula(formula):
+def searchByFormula(formula, subset=False):
 
     formula = _formula_read(formula)
+    print(formula)
     # Check for stochiometry
-    
-
-    return [{'chemname': 'Ala_molecules'}]
+    if not subset:
+        return [{
+            'stochiometry': [{
+                'species': f[0],
+                'n': f[1]
+            }
+                for f in formula]
+        }]
+    else:
+        return [{
+            'stochiometry': {
+                '$elemMatch': {
+                    '$and': [
+                        {'species': f[0]},
+                        {'n': {'$gte': f[1]}}
+                    ]
+                }
+            }
+        } for f in formula]
