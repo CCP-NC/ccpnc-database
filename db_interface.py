@@ -22,7 +22,7 @@ from bson.objectid import ObjectId
 from db_schema import (magresVersionSchema,
                        magresMetadataSchema,
                        magresIndexSchema)
-from db_indexing import (extractIndexingInfo, getFormula)
+from db_indexing import (extractIndexingInfo, getFormula, getStochiometry)
 
 try:
     config = json.load(open(os.path.join(
@@ -123,7 +123,6 @@ def addMagresFile(magresFile, chemname, orcid, data={}):
 
     # Add all the computed information
     index.update(extractIndexingInfo(magres))
-    print(index)
     index['latest_version'] = version
     index = magresIndexSchema.validate(index)
 
@@ -365,7 +364,8 @@ def databaseSearch(search_spec):
         'doi': searchByDOI,
         'orcid': searchByOrcid,
         'cname': searchByChemname,
-        'formula': searchByFormula
+        'formula': searchByFormula,
+        'molecule': searchByMolecule
     }
 
     search_dict = {
@@ -389,8 +389,6 @@ def databaseSearch(search_spec):
             raise ValueError('Invalid search arguments')
 
         search_dict['$and'] += search_func(**args)
-
-        print(search_dict)
 
     # Carry out the actual search
     resultsInd = magresIndex.find(search_dict)
@@ -421,7 +419,10 @@ def _formula_read(f):
     match = []
     for el in cfre.findall(f):
         n = int(el[1]) if el[1] != '' else 1
-        match.append((el[0], n))
+        match.append({
+            'species': el[0],
+            'n': n
+        })
 
     return match
 
@@ -466,24 +467,29 @@ def searchByChemname(pattern):
 def searchByFormula(formula, subset=False):
 
     formula = _formula_read(formula)
-    print(formula)
+    stochio = getStochiometry(formula)
     # Check for stochiometry
     if not subset:
         return [{
-            'stochiometry': [{
-                'species': f[0],
-                'n': f[1]
-            }
-                for f in formula]
+            'stochiometry': stochio
         }]
     else:
         return [{
             'stochiometry': {
                 '$elemMatch': {
                     '$and': [
-                        {'species': f[0]},
-                        {'n': {'$gte': f[1]}}
+                        {'species': f['species']},
+                        {'n': {'$gte': f['n']}}
                     ]
                 }
             }
-        } for f in formula]
+        } for f in stochio]
+
+
+def searchByMolecule(formula):
+
+    formula = _formula_read(formula)
+
+    return [{'molecules': {
+        '$in': [formula]
+    }}]

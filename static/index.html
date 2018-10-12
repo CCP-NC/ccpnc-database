@@ -176,6 +176,7 @@
                                 <option value="msRange">Shielding</option>
                                 <option value="cname">Chemical name</option>
                                 <option value="formula">Chemical formula</option>
+                                <option value="molecule">Molecular formula</option>
                             </select>
                         </td>
                     </tr>
@@ -242,6 +243,16 @@
                             </td>
                         </tr>
                     </tbody>                    
+                    <tbody ng-if="search_spec.type == 'molecule'">
+                        <tr>
+                            <td colspan="1" rowspan="" headers="">
+                                Molecular formula
+                            </td>
+                            <td colspan="3" rowspan="" headers="">
+                                <input class="cc-ctrl cc-bulma" type="text" placeholder="Molecular formula" ng-model="search_spec.args.formula">
+                            </td>
+                        </tr>
+                    </tbody> 
                 </table>
 
                 <div class="plus-button" ng-show="$index == search_specs.length-1">
