@@ -32,6 +32,10 @@
                 <th class="width-1">DOI:</th>
                 <td class="width-3">{{databaseRecord.version_history[_selected_index].doi}}</td>
             </tr>
+            <tr ng-if="databaseRecord.version_history[_selected_index].csd-ref != null">
+                <th class="width-1">CSD Refcode:</th>
+                <td class="width-3">{{databaseRecord.version_history[_selected_index]['csd-ref']}}</td>
+            </tr>
         </tbody>
     </table>
     <a class="button is-primary" href="doc?id={{databaseRecord.version_history[_selected_index].magresFilesID}}" download="{{filename()}}">

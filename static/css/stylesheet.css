@@ -159,3 +159,12 @@ tt {
 #upload-form tr td {
     vertical-align: middle;
 }
+
+ul.discs {
+    list-style-position: inside;
+    padding: 1.1em 0;
+}
+
+ul.discs li {
+    list-style-type: disc;
+}

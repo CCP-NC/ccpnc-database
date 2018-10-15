@@ -177,6 +177,8 @@
                                 <option value="cname">Chemical name</option>
                                 <option value="formula">Chemical formula</option>
                                 <option value="molecule">Molecular formula</option>
+                                <option value="csdcode">CSD Refcode</option>
+                                <option value="csdnum">CSD Number</option>
                             </select>
                         </td>
                     </tr>
@@ -252,8 +254,28 @@
                                 <input class="cc-ctrl cc-bulma" type="text" placeholder="Molecular formula" ng-model="search_spec.args.formula">
                             </td>
                         </tr>
-                    </tbody> 
-                </table>
+                    </tbody>
+                    <tbody ng-if="search_spec.type == 'csdcode'">
+                        <tr>
+                            <td colspan="1" rowspan="" headers="">
+                                CSD Refcode
+                            </td>
+                            <td colspan="3" rowspan="" headers="">
+                                <input class="cc-ctrl cc-bulma" type="text" size="10" placeholder="ABCDEF01" ng-model="search_spec.args.csdref">
+                            </td>
+                        </tr>
+                    </tbody>                    
+                    <tbody ng-if="search_spec.type == 'csdnum'">
+                        <tr>
+                            <td colspan="1" rowspan="" headers="">
+                                CSD Number
+                            </td>
+                            <td colspan="3" rowspan="" headers="">
+                                <input class="cc-ctrl cc-bulma" type="text" size="10" placeholder="0123456" ng-model="search_spec.args.csdnum">
+                            </td>
+                        </tr>
+                    </tbody>
+                    </table>
 
                 <div class="plus-button" ng-show="$index == search_specs.length-1">
                     <button class="button is-primary is-small" ng-click="add_spec()">

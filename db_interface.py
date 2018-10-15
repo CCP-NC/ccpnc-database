@@ -365,7 +365,9 @@ def databaseSearch(search_spec):
         'orcid': searchByOrcid,
         'cname': searchByChemname,
         'formula': searchByFormula,
-        'molecule': searchByMolecule
+        'molecule': searchByMolecule,
+        'csdcode': searchByCSDrefcode,
+        'csdnum': searchByCSDnumber
     }
 
     search_dict = {
@@ -493,3 +495,17 @@ def searchByMolecule(formula):
     return [{'molecules': {
         '$in': [formula]
     }}]
+
+
+def searchByCSDrefcode(csdref):
+
+    return [
+        {'latest_version.csd-ref': csdref}
+    ]
+
+
+def searchByCSDnumber(csdnum):
+
+    return [
+        {'latest_version.csd-num': csdnum}
+    ]
