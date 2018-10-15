@@ -8,6 +8,7 @@ import os
 import sys
 import json
 import inspect
+from datetime import timedelta
 from flask import Flask, Response, session, request, make_response
 from orcid import OrcidConnection, OrcidError
 from db_interface import (addMagresFile, databaseSearch,
@@ -21,6 +22,9 @@ app = Flask('ccpnc-database', static_url_path='',
             static_folder=os.path.join(filepath, "static"))
 app.secret_key = open(os.path.join(filepath, 'secret',
                                    'secret.key')).read().strip()
+
+app.config['SESSION_COOKIE_NAME'] = 'CCPNCDBLOGIN'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30) # 1 month
 
 orcid_details = json.load(open(os.path.join(filepath, 'secret',
                                             'orcid_details.json')))
