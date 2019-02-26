@@ -1,6 +1,11 @@
 # Methods whose purpose is to compute additional indexing information for
 # magres files
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import numpy as np
 from soprano.properties.nmr import MSIsotropy
 from soprano.properties.linkage import Molecules
@@ -64,7 +69,7 @@ def getStochiometry(formula):
     for x in formula:
         sx = {}
         sx.update(x)
-        sx['n'] /= c
+        sx['n'] = int(sx['n']/c)
         stochio.append(sx)
 
     return stochio

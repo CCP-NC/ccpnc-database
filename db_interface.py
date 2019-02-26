@@ -1,3 +1,8 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import os
 import re
 import csv
@@ -7,8 +12,12 @@ import tempfile
 import numpy as np
 import zipfile
 import tarfile
-import StringIO
 from copy import deepcopy
+
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 from ase import io
 from datetime import datetime
@@ -83,6 +92,7 @@ def addMagresFile(magresFile, chemname, orcid, data={}):
     else:
         magresStr = magresFile
         magres = read_magres(StringIO.StringIO(magresStr))
+        print(magres)
 
     # Validate metadata
     metadata = {
