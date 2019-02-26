@@ -95,7 +95,7 @@ def getMSMetadata(magres):
 
     msdata = [{'species': s,
                'iso': list(isos[inds])}
-              for s, inds in sp.iteritems()]
+              for s, inds in sp.items()]
     msdata = sorted(msdata, key=lambda x: x['species'])
 
     return msdata

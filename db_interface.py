@@ -91,8 +91,7 @@ def addMagresFile(magresFile, chemname, orcid, data={}):
         magresStr = magresFile.read()
     else:
         magresStr = magresFile
-        magres = read_magres(StringIO.StringIO(magresStr))
-        print(magres)
+        magres = read_magres(StringIO(str(magresStr)))
 
     # Validate metadata
     metadata = {
@@ -181,9 +180,9 @@ def addMagresArchive(archive, chemname, orcid, data={}):
     # The passed data is used as a default
     # Anything else we get from the .csv
 
-    info = [f for name, f in fileList.items()
+    info = [f.decode('UTF-8') for name, f in fileList.items()
             if os.path.splitext(name.lower())[1] == '.csv']
-    magresList = {name: f for name, f in fileList.items()
+    magresList = {name: f.decode('UTF-8') for name, f in fileList.items()
                   if os.path.splitext(name.lower())[1] == '.magres'}
 
     if len(info) > 1:
@@ -262,7 +261,7 @@ def editMagresFile(index_id, orcid, data={}, magresFile=None):
             magresStr = magresFile.read()
         else:
             magresStr = magresFile
-            magres = read_magres(StringIO.StringIO(magresStr))
+            magres = read_magres(StringIO(magresStr))
 
         # Check that the formula is right
         formula = getFormula(magres)
