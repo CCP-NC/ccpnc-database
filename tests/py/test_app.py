@@ -161,7 +161,7 @@ class CCPNCDBTest(unittest.TestCase):
         self.assertEqual(resp._status_code, 500)
         # Test 3: succeed
         rndname = rndname_gen()
-        with open(os.path.join(data_path, 'ethanol.magres'), 'r') as magres:
+        with open(os.path.join(data_path, 'ethanol.magres'), 'rb') as magres:
             resp = self.app.post('/upload',
                                 content_type='multipart/form-data',
                                 data={
