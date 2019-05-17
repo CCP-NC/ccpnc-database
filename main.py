@@ -226,6 +226,11 @@ def get_csv():
 
     return resp
 
+@app.route('/pyversion', methods=['GET'])
+def get_version():
+
+    return sys.version
+
 
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!
