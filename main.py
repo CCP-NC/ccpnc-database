@@ -13,6 +13,8 @@ import os
 import sys
 import json
 import inspect
+import flask
+import ase, soprano
 from datetime import timedelta
 from flask import Flask, Response, session, request, make_response
 from orcid import OrcidConnection, OrcidError
@@ -229,7 +231,19 @@ def get_csv():
 @app.route('/pyversion', methods=['GET'])
 def get_version():
 
-    return sys.version
+    resp = """
+<ul>
+<li>Python:     {pyv}</li>
+<li>ASE:        {asev}</li>
+<li>Soprano:    {sprv}</li>
+<li>Flask:      {flkv}</li>
+</ul>
+""".format(pyv=sys.version, asev=ase.__version__, 
+    sprv=soprano.__version__, flkv=flask.__version__)
+
+    print('Version')
+
+    return resp
 
 
 if __name__ == '__main__':
