@@ -390,7 +390,8 @@ def databaseSearch(search_spec):
         'formula': searchByFormula,
         'molecule': searchByMolecule,
         'csdcode': searchByCSDrefcode,
-        'csdnum': searchByCSDnumber
+        'csdnum': searchByCSDnumber,
+        'license': searchByLicense,
     }
 
     search_dict = {
@@ -531,4 +532,9 @@ def searchByCSDnumber(csdnum):
 
     return [
         {'latest_version.csd-num': csdnum}
+    ]
+
+def searchByLicense(license):
+    return [
+        {'license': license}
     ]

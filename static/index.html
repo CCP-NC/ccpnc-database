@@ -196,6 +196,7 @@
                                     <option value="molecule">Molecular formula</option>
                                     <option value="csdcode">CSD Refcode</option>
                                     <option value="csdnum">CSD Number</option>
+                                    <option value="license">License</option>
                                 </select>
                             </td>
                         </tr>
@@ -302,6 +303,19 @@
                                 </td>
                             </tr>
                         </tbody>
+                        <tbody ng-if="search_spec.type == 'license'">
+                            <tr>
+                                <td colspan="1" rowspan="" headers="">
+                                    License
+                                </td>
+                                <td colspan="3" rowspan="" headers="">
+                                    <select class="cc-ctrl cc-bulma" selected="pddl" ng-model="search_spec.args.license">
+                                        <option value="pddl">PDDL v1.0</option>
+                                        <option value="odc-by">ODC-By v1.0</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
 
                     <div class="plus-button" ng-show="$index == search_specs.length-1">
@@ -398,7 +412,7 @@
                                         License
                                     </th>
                                     <td colspan="" rowspan="" headers="">
-                                        <select id="license" class="cc-ctrl cc-bulma" name="license" help="License to apply to the data (see bottom of the page for details)">
+                                        <select id="license" class="cc-ctrl cc-bulma" name="license" help="License to apply to the data (see bottom of the page for details)" selected="pddl">
                                             <option value="pddl">PDDL v1.0</option>
                                             <option value="odc-by">ODC-By v1.0</option>
                                         </select>
