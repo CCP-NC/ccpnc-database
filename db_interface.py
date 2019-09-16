@@ -387,6 +387,7 @@ def databaseSearch(search_spec):
         'doi': searchByDOI,
         'orcid': searchByOrcid,
         'cname': searchByChemname,
+        'cform': searchByChemform,
         'formula': searchByFormula,
         'molecule': searchByMolecule,
         'csdcode': searchByCSDrefcode,
@@ -489,6 +490,15 @@ def searchByChemname(pattern):
         {'chemname': {'$regex': regex}}
     ]
 
+def searchByChemform(pattern):
+
+    regex = re.compile(pattern.replace(".", "\.").replace(
+        "*", ".*").replace("?", "."), re.IGNORECASE)
+    # escape ., convert * to any character, convert ? to a single character
+
+    return [
+        {'chemform': {'$regex': regex}}
+    ]
 
 def searchByFormula(formula, subset=False):
 

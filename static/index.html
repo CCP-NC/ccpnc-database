@@ -192,6 +192,7 @@
                                     <option value="doi">doi</option>
                                     <option value="msRange">Shielding</option>
                                     <option value="cname">Chemical name</option>
+                                    <option value="cform">Form</option>
                                     <option value="formula">Chemical formula</option>
                                     <option value="molecule">Molecular formula</option>
                                     <option value="csdcode">CSD Refcode</option>
@@ -239,6 +240,18 @@
                             </tr>
                         </tbody>
                         <tbody ng-if="search_spec.type == 'cname'">
+                            <tr>
+                                <td colspan="1" rowspan="" headers="">
+                                    Search pattern
+                                </td>
+                                <td colspan="3" rowspan="" headers="">
+                                    <input class="cc-ctrl cc-bulma" type="text" size="50"
+                                        placeholder="Pattern (* and ? wildcards allowed)"
+                                        ng-model="search_spec.args.pattern">
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="search_spec.type == 'cform'">
                             <tr>
                                 <td colspan="1" rowspan="" headers="">
                                     Search pattern
