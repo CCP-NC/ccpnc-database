@@ -86,12 +86,13 @@ def addMagresFile(magresFile, chemname, orcid, data={}):
     magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
     if hasattr(magresFile, 'read'):
-        magres = read_magres(magresFile)
-        magresFile.seek(0)
         magresStr = magresFile.read()
     else:
         magresStr = magresFile
-        magres = read_magres(StringIO(str(magresStr)))
+    # Safety required for Python 3
+    if (hasattr(magresStr, 'decode')):
+        magresStr = magresStr.decode()
+    magres = read_magres(StringIO(str(magresStr)))
 
     # Validate metadata
     metadata = {

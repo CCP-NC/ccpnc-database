@@ -13,6 +13,8 @@ import os
 import sys
 import json
 import inspect
+import flask
+import ase, soprano
 from datetime import timedelta
 from flask import Flask, Response, session, request, make_response
 from orcid import OrcidConnection, OrcidError
@@ -223,6 +225,23 @@ def get_csv():
                          ','.join(magresVersionOptionals.keys()))
     resp.headers['Content-Type'] = 'text/plain'
     resp.headers.set('Content-Disposition', 'attachment', filename='info.csv')
+
+    return resp
+
+@app.route('/pyversion', methods=['GET'])
+def get_version():
+
+    resp = """
+<ul>
+<li>Python:     {pyv}</li>
+<li>ASE:        {asev}</li>
+<li>Soprano:    {sprv}</li>
+<li>Flask:      {flkv}</li>
+</ul>
+""".format(pyv=sys.version, asev=ase.__version__, 
+    sprv=soprano.__version__, flkv=flask.__version__)
+
+    print('Version')
 
     return resp
 

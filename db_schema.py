@@ -15,6 +15,12 @@ try:
 except NameError:
   basestring = str
 
+# Convenient tool for multiple values validation
+def oneOf(vals):
+    def f(d):
+        return (d in vals)
+    return f
+
 """Data schemas for entries to be uploaded to the Database."""
 
 orcid_path_re = re.compile('[0-9]{4}-'*3+r'[0-9]{3}[0-9X]{1}\Z')
@@ -83,5 +89,6 @@ magresIndexSchema = Schema({
                       'n': int}],
     'Z': int,
     'molecules': [[{'species': str,
-                      'n': int}]]
+                      'n': int}]],
+    'license': oneOf(['pddl', 'odc-by'])
 })
