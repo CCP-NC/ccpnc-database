@@ -5,6 +5,10 @@
                 <th class="width-1">Name:</th>
                 <td class="width-3 has-text-primary">{{databaseRecord.chemname}}</td>
             </tr>
+            <tr ng-if="databaseRecord.chemform != ''">
+                <th class="width-1">Form:</th>
+                <td class="width-3 has-text-primary">{{databaseRecord.chemform}}</td>
+            </tr>
             <tr>
                 <th class="width-1">ORCID:</th>
                 <td class="width-3"><a href="{{databaseRecord.orcid_uri}}" target="blank">{{databaseRecord.orcid}}</a></td>
@@ -12,6 +16,13 @@
             <tr>
                 <th class="width-1">Formula:</th>
                 <td class="width-3">{{databaseRecord.formula}}</td>
+            </tr>
+            <tr>
+                <th class="width-1">License:</th>
+                <td class="width-3" ng-switch="databaseRecord.license">
+                    <a class="has-text-weight-bold" href="http://www.opendatacommons.org/licenses/pddl/1.0/" ng-switch-when="pddl" target="_blank">PDDL</a>
+                    <a class="has-text-weight-bold" href="https://opendatacommons.org/licenses/by/1-0/index.html" ng-switch-when="odc-by" target="_blank">ODC-By</a>
+                </td>
             </tr>
             <tr>
                 <th colspan="2">
@@ -32,7 +43,7 @@
                 <th class="width-1">DOI:</th>
                 <td class="width-3">{{databaseRecord.version_history[_selected_index].doi}}</td>
             </tr>
-            <tr ng-if="databaseRecord.version_history[_selected_index].csd-ref != null">
+            <tr ng-if="databaseRecord.version_history[_selected_index]['csd-ref'] != null">
                 <th class="width-1">CSD Refcode:</th>
                 <td class="width-3">{{databaseRecord.version_history[_selected_index]['csd-ref']}}</td>
             </tr>

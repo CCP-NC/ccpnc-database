@@ -361,6 +361,8 @@ def makeEntry(ind, meta):
     try:
         entry = {
             'chemname': ind['chemname'],
+            'chemform': ind['chemform'],
+            'license': ind['license'],
             'orcid': ind['orcid']['path'],
             'formula': ''.join(map(lambda x: x['species'] + str(x['n']),
                                    ind['formula'])),
