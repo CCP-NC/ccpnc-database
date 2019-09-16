@@ -70,12 +70,16 @@ magresVersionSchema = Schema(magresVersionArguments)
 
 magresMetadataSchema = Schema({
     'chemname': And(basestring, len),
+    'chemform': basestring,
+    'license': oneOf(['pddl', 'odc-by']),
     'orcid': orcidSchema,
     'version_history': [magresVersionSchema]
 })
 
 magresIndexSchema = Schema({
     'chemname': And(basestring, len),
+    'chemform': basestring,
+    'license': oneOf(['pddl', 'odc-by']),
     'orcid': orcidSchema,
     'metadataID': str,
     'latest_version': magresVersionSchema,
@@ -89,6 +93,5 @@ magresIndexSchema = Schema({
                       'n': int}],
     'Z': int,
     'molecules': [[{'species': str,
-                      'n': int}]],
-    'license': oneOf(['pddl', 'odc-by'])
+                      'n': int}]]
 })

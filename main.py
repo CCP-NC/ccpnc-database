@@ -14,7 +14,8 @@ import sys
 import json
 import inspect
 import flask
-import ase, soprano
+import ase
+import soprano
 from datetime import timedelta
 from flask import Flask, Response, session, request, make_response
 from orcid import OrcidConnection, OrcidError
@@ -31,7 +32,7 @@ app.secret_key = open(os.path.join(filepath, 'secret',
                                    'secret.key')).read().strip()
 
 app.config['SESSION_COOKIE_NAME'] = 'CCPNCDBLOGIN'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30) # 1 month
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)  # 1 month
 
 orcid_details = json.load(open(os.path.join(filepath, 'secret',
                                             'orcid_details.json')))
@@ -70,9 +71,11 @@ def user_info_auth(orcid_link, client_at, client_id):
 def root():
     return app.send_static_file('index.html')
 
+
 @app.route('/cookies')
 def cookiepol():
     return app.send_static_file('cookies.html')
+
 
 @app.route('/gettokens/', defaults={'code': None})
 @app.route('/gettokens/<code>')
@@ -108,6 +111,8 @@ def upload():
 
         # Obligatory values
         chemname = request.values.get('chemname')
+        chemform = request.values.get('chemform', '')
+        license = request.values.get('license')
         orcid = user_info['orcid-identifier']
 
         # Optional ones
@@ -121,13 +126,18 @@ def upload():
         fd = request.files['magres-file']
 
         if request.values.get('upload_multi', 'false') == 'true':
-            succ_code, all_inds = addMagresArchive(fd, chemname,
+            succ_code, all_inds = addMagresArchive(fd,
+                                                   chemname,
+                                                   chemform,
+                                                   license,
                                                    orcid,
                                                    data)
             success = (succ_code == 0)
         else:
             success = addMagresFile(fd,
                                     chemname,
+                                    chemform,
+                                    license,
                                     orcid,
                                     data)
 
@@ -221,12 +231,13 @@ def get_optionals():
 @app.route('/csvtemplate', methods=['GET'])
 def get_csv():
 
-    resp = make_response('filename,chemname,chemform,' +
+    resp = make_response('filename,chemname,chemform,license,' +
                          ','.join(magresVersionOptionals.keys()))
     resp.headers['Content-Type'] = 'text/plain'
     resp.headers.set('Content-Disposition', 'attachment', filename='info.csv')
 
     return resp
+
 
 @app.route('/pyversion', methods=['GET'])
 def get_version():
@@ -238,8 +249,8 @@ def get_version():
 <li>Soprano:    {sprv}</li>
 <li>Flask:      {flkv}</li>
 </ul>
-""".format(pyv=sys.version, asev=ase.__version__, 
-    sprv=soprano.__version__, flkv=flask.__version__)
+""".format(pyv=sys.version, asev=ase.__version__,
+           sprv=soprano.__version__, flkv=flask.__version__)
 
     print('Version')
 

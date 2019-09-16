@@ -13,6 +13,8 @@ function addUploadController(ngApp) {
 
         // Form data
         $scope.chemname = '';
+        $scope.chemform = '';
+        $scope.license = 'pddl';
 
         // Status message
         $scope.status = '';
@@ -54,7 +56,7 @@ function addUploadController(ngApp) {
 
                 // Post form
                 $scope.uploading_now = true;    
-                $scope.$apply();            
+                $scope.$apply();         
                 $('#upload-form').ajaxSubmit({
                     data: request_data,
                     success: function(r) {

@@ -50,7 +50,7 @@ class CCPNCDBTest(unittest.TestCase):
 
         csvresp = self.app.get('/csvtemplate')
         header = next(csvresp.response).decode('UTF-8')
-        self.assertEqual(header, 'filename,chemname,chemform,' +
+        self.assertEqual(header, 'filename,chemname,chemform,license,' +
                          ','.join(magresVersionOptionals.keys()))
 
     def testTokens(self):
@@ -81,7 +81,7 @@ class CCPNCDBTest(unittest.TestCase):
 
             # Add it
             rndname = rndname_gen()
-            ind_id = addMagresFile(magres, rndname, orcid)
+            ind_id = addMagresFile(magres, rndname, '', 'pddl', orcid)
             self.assertTrue(ind_id)
             # Now remove it
             removeMagresFiles(ind_id)
@@ -100,7 +100,8 @@ class CCPNCDBTest(unittest.TestCase):
 
                 rndname = rndname_gen()
 
-                succ, all_inds = addMagresArchive(archive, rndname, orcid)
+                succ, all_inds = addMagresArchive(archive, rndname, 
+                                                  '', 'pddl', orcid)
                 self.assertEqual(succ, 0)
 
                 results = json.loads(databaseSearch([{'type': 'cname',
@@ -118,8 +119,9 @@ class CCPNCDBTest(unittest.TestCase):
 
             rndname = rndname_gen()
 
-            succ, all_inds = addMagresArchive(archive, rndname, orcid,
-                                            data={'doi': '222'})
+            succ, all_inds = addMagresArchive(archive, rndname, '', 
+                                              'odc-by', orcid,
+                                              data={'doi': '222'})
             self.assertEqual(succ, 0)
 
             results = json.loads(databaseSearch([{'type': 'cname',
@@ -168,6 +170,8 @@ class CCPNCDBTest(unittest.TestCase):
                                     'orcid': '0000-0000-0000-0000',
                                     'access_token': 'XXX',
                                     'chemname': rndname,
+                                    'chemform': '',
+                                    'license': 'pddl',
                                     'magres-file': (magres,
                                                     'ethanol.magres')}
                                 )
@@ -193,6 +197,8 @@ class CCPNCDBTest(unittest.TestCase):
                 'orcid': '0000-0000-0000-0000',
                 'access_token': 'XXX',
                 'chemname': rndname,
+                'chemform': 'failed',
+                'license': 'odc-by',
                 'magres-file': archive,
                 'upload_multi': 'true'}
             )

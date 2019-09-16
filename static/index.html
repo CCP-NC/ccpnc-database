@@ -156,13 +156,13 @@
                     and will become the new default.
                 </p>
 
-                <p>
+<!--                 <p>
                     The CCP-NC database and its contents are made available under the Public Domain Dedication and
                     License v1.0
                     whose full text can be found at: <a
                         href="http://www.opendatacommons.org/licenses/pddl/1.0/">http://www.opendatacommons.org/licenses/pddl/1.0/</a>.
                 </p>
-
+ -->
             </div>
         </div>
 
@@ -170,13 +170,13 @@
 
             <div class="container has-text-centered">
 
-                <div class="box">
-                    The CCP-NC database and its contents are made available under the Public Domain Dedication and
+<!--                 <div class="box">
+                    The contents of the CCP-NC database and its contents are made available under the Public Domain Dedication and
                     License v1.0
                     whose full text can be found at: <a
                         href="http://www.opendatacommons.org/licenses/pddl/1.0/">http://www.opendatacommons.org/licenses/pddl/1.0/</a>.
                 </div>
-
+ -->
                 <div class="notification" ng-repeat="search_spec in search_specs">
 
                     <button class="delete" ng-click="remove_spec($index)"></button>
@@ -393,6 +393,17 @@
                                             placeholder="Additional relevant descriptors (e.g.: phase, conformer, etc.)">
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th colspan="" rowspan="" headers="">
+                                        License
+                                    </th>
+                                    <td colspan="" rowspan="" headers="">
+                                        <select id="license" class="cc-ctrl cc-bulma" name="license" help="License to apply to the data (see bottom of the page for details)">
+                                            <option value="pddl">PDDL v1.0</option>
+                                            <option value="odc-by">ODC-By v1.0</option>
+                                        </select>
+                                    </td>
+                                </tr>
                             </thead>
                             <tbody edit-table="_edit_table">
                             </tbody>
@@ -439,10 +450,14 @@
                     <a class="button is-primary is-large" ng-click="upload()">Upload</a>
                     <span class="separator-1"></span>
                     <div class="box">
-                        By uploading your files you consent to them being released into the Public Domain by the terms
-                        of the Public Domain Dedication and License v1.0
-                        whose full text can be found at: <a
-                            href="http://www.opendatacommons.org/licenses/pddl/1.0/">http://www.opendatacommons.org/licenses/pddl/1.0/</a>.
+                        By uploading your files you consent to them being released under your chosen license. 
+                        The available options are:
+                        <ul>
+                            <li><span class="has-text-weight-bold">PDDL:</span> <a
+                            href="http://www.opendatacommons.org/licenses/pddl/1.0/">Public Domain Dedication and License v1.0</a>.</li>
+                            <li><span class="has-text-weight-bold">ODC-By:</span> <a href="https://opendatacommons.org/licenses/by/1-0/index.html">
+                                Open Data Commons Attribution License v1.0</a>.</li>
+                        </ul>
                     </div>
                 </form>
             </div>

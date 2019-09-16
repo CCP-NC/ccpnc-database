@@ -79,7 +79,7 @@ def getDBCollections():
 ### UPLOADING ###
 
 
-def addMagresFile(magresFile, chemname, orcid, data={}):
+def addMagresFile(magresFile, chemname, chemform, license, orcid, data={}):
 
     # Inserts a file, returns index id if successful, otherwise False
 
@@ -97,6 +97,8 @@ def addMagresFile(magresFile, chemname, orcid, data={}):
     # Validate metadata
     metadata = {
         'chemname': chemname,
+        'chemform': chemform,
+        'license': license,
         'orcid': orcid,
         'version_history': []
     }
@@ -127,6 +129,8 @@ def addMagresFile(magresFile, chemname, orcid, data={}):
     # Now create the searchable dictionary
     index = {
         'chemname': metadata['chemname'],
+        'chemform': metadata['chemform'],
+        'license': metadata['license'],
         'orcid': metadata['orcid'],
         'metadataID': str(magresMetadataID),
     }
@@ -148,7 +152,7 @@ def addMagresFile(magresFile, chemname, orcid, data={}):
         return False
 
 
-def addMagresArchive(archive, chemname, orcid, data={}):
+def addMagresArchive(archive, chemname, chemform, license, orcid, data={}):
     """
     Uploads a full archive containing magres files.
     Returns 0 for full success, 1 for some errors, 2 for total failure;
@@ -196,6 +200,8 @@ def addMagresArchive(archive, chemname, orcid, data={}):
 
     default_args = {'orcid': orcid,
                     'chemname': chemname,
+                    'chemform': chemform,
+                    'license': license,
                     'data': data.copy()}
     argdict = {}
 
@@ -215,7 +221,12 @@ def addMagresArchive(archive, chemname, orcid, data={}):
 
         # Ok, we're ready to go
         argdict[fname] = deepcopy(default_args)
-        argdict[fname]['chemname'] = entry.pop('chemname', chemname)
+        argdict[fname]['chemname'] = entry.pop('chemname',
+                                               default_args['chemname'])
+        argdict[fname]['chemform'] = entry.pop('chemform',
+                                               default_args['chemform'])
+        argdict[fname]['license'] = entry.pop('license',
+                                              default_args['license'])
         argdict[fname]['data'].update(entry)
 
     added_ids = {}
@@ -392,7 +403,7 @@ def databaseSearch(search_spec):
             raise ValueError('Invalid search type')
 
         # Find arguments
-        args = inspect.getargspec(search_func).args
+        args = inspect.getfullargspec(search_func).args
 
         # Get them as dict
         try:
