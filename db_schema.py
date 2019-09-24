@@ -27,6 +27,9 @@ orcid_path_re = re.compile('[0-9]{4}-'*3+r'[0-9]{3}[0-9X]{1}\Z')
 csd_refcode_re = re.compile(r'[A-Z]{6}([0-9]{2})?\Z')
 csd_number_re = re.compile(r'[0-9]{6,7}\Z')
 
+# License types
+lictypes = oneOf(['pddl', 'odc-by'])
+
 # Optional arguments for each magres version. These are useful also
 # client-side so we store them in their own definitions
 
@@ -71,7 +74,7 @@ magresVersionSchema = Schema(magresVersionArguments)
 magresMetadataSchema = Schema({
     'chemname': And(basestring, len),
     'chemform': basestring,
-    'license': oneOf(['pddl', 'odc-by']),
+    'license': lictypes,
     'orcid': orcidSchema,
     'version_history': [magresVersionSchema]
 })
@@ -79,7 +82,7 @@ magresMetadataSchema = Schema({
 magresIndexSchema = Schema({
     'chemname': And(basestring, len),
     'chemform': basestring,
-    'license': oneOf(['pddl', 'odc-by']),
+    'license': lictypes,
     'orcid': orcidSchema,
     'metadataID': str,
     'latest_version': magresVersionSchema,
