@@ -1,1 +1,1 @@
-{"pythonpath": ["/opt/rh/python27/root/usr/lib/python2.7/site-packages", "/opt/rh/python27/root/usr/lib64/python2.7/site-packages"], "db_url": "localhost", "db_port": 27017}
+{"pythonpath": ["/opt/rh/rh-python36/root/usr/lib/python3.6/site-packages", "/opt/rh/rh-python36/root/usr/lib64/python3.6/site-packages"], "db_url": "localhost", "db_port": 27017}
