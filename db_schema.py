@@ -28,7 +28,7 @@ csd_refcode_re = re.compile(r'[A-Z]{6}([0-9]{2})?\Z')
 csd_number_re = re.compile(r'[0-9]{6,7}\Z')
 
 # License types
-lictypes = oneOf(['pddl', 'odc-by'])
+lictypes = oneOf(['pddl', 'odc-by','cc-by'])
 
 # Optional arguments for each magres version. These are useful also
 # client-side so we store them in their own definitions
