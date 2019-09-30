@@ -196,7 +196,7 @@ def addMagresArchive(archive, chemname, chemform, license, orcid, data={}):
     elif len(info) == 0:
         csvReader = []  # Dummy
     else:
-        csvReader = csv.DictReader(info[0].splitlines())
+        csvReader = csv.DictReader(StringIO(info[0]))
 
     default_args = {'orcid': orcid,
                     'chemname': chemname,
