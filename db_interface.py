@@ -221,6 +221,10 @@ def addMagresArchive(archive, chemname, chemform, license, orcid, data={}):
 
         # Ok, we're ready to go
         argdict[fname] = deepcopy(default_args)
+
+        # Purge all empty values
+        entry = {k: v for k, v in entry.items() if v != ''}
+
         argdict[fname]['chemname'] = entry.pop('chemname',
                                                default_args['chemname'])
         argdict[fname]['chemform'] = entry.pop('chemform',
