@@ -4,10 +4,13 @@ from collections import namedtuple, OrderedDict
 from schema import Schema, And, Optional
 
 # Convenient tool for multiple values validation
+
+
 def oneOf(vals):
     def f(d):
         return (d in vals)
     return f
+
 
 """Data schemas for entries to be uploaded to the Database."""
 
@@ -16,7 +19,7 @@ csd_refcode_re = re.compile(r'[A-Z]{6}([0-9]{2})?\Z')
 csd_number_re = re.compile(r'[0-9]{6,7}\Z')
 
 # License types
-lictypes = oneOf(['pddl', 'odc-by','cc-by'])
+lictypes = oneOf(['pddl', 'odc-by', 'cc-by'])
 
 # Optional arguments for each magres version. These are useful also
 # client-side so we store them in their own definitions
@@ -84,5 +87,42 @@ magresIndexSchema = Schema({
                       'n': int}],
     'Z': int,
     'molecules': [[{'species': str,
-                      'n': int}]]
+                    'n': int}]]
+})
+
+# Two types of elements:
+#   - Records
+#   - Versions (multiple for each record)
+#
+# For each of them there's three types of possible arguments:
+#   - User input, mandatory
+#   - User input, optional
+#   - Automatically generated
+
+magresRecordSchema = Schema({
+    # User input, mandatory
+    'chemname': And(str, len),
+    'orcid': orcidSchema,
+    'license': lictypes,
+    'user_name': And(str, len),
+    'user_institution': And(str, len),
+    'doi': And(str, len),
+    # User input, optional
+    'csd_ref': csd_refcode_re.match,
+    'csd_num': csd_number_re.match,
+    'chemform': str,
+    # Automatically generated
+    'mdbref': int,
+    'version_history': [magresVersionSchema],
+    'values': [{
+        'species': str,
+        'iso': [float],
+    }],
+    'formula': [{'species': str,
+                 'n': int}],
+    'stochiometry': [{'species': str,
+                      'n': int}],
+    'Z': int,
+    'molecules': [[{'species': str,
+                    'n': int}]]        
 })

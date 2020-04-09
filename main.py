@@ -22,7 +22,7 @@ from orcid import OrcidConnection, OrcidError
 from db_interface import (addMagresFile, databaseSearch,
                           getMagresFile, editMagresFile,
                           addMagresArchive)
-from db_schema import magresVersionOptionals
+from ccpncdb.schemas import magresVersionOptionals
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 
