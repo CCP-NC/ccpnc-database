@@ -28,9 +28,9 @@ from pymongo import MongoClient
 from schema import SchemaError
 from gridfs import GridFS, NoFile
 from bson.objectid import ObjectId
-from db_schema import (magresVersionSchema,
-                       magresMetadataSchema,
-                       magresIndexSchema)
+from ccpncdb.schemas import (magresVersionSchema,
+                             magresMetadataSchema,
+                             magresIndexSchema)
 from db_indexing import (extractIndexingInfo, getFormula, getStochiometry)
 
 try:

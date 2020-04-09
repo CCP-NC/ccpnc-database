@@ -1,19 +1,7 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import re
 from datetime import datetime
 from collections import namedtuple, OrderedDict
-from ase.io.magres import read_magres
 from schema import Schema, And, Optional
-
-# Python3 compatibility
-try:
-  basestring
-except NameError:
-  basestring = str
 
 # Convenient tool for multiple values validation
 def oneOf(vals):
@@ -37,15 +25,15 @@ OptVArg = namedtuple('OptVArg', ['full_name', 'validator',
                                  'input_type', 'input_size'])
 
 magresVersionArguments = {
-    'magresFilesID': basestring,
+    'magresFilesID': str,
     'date': datetime
 }
 
 magresVersionOptionals = OrderedDict([
-    ('doi', OptVArg('DOI', basestring,
+    ('doi', OptVArg('DOI', str,
                     'text',
                     '35')),
-    ('notes', OptVArg('Notes', basestring,
+    ('notes', OptVArg('Notes', str,
                       'textarea',
                       None)),
     ('csd-ref', OptVArg('CSD Refcode', csd_refcode_re.match,
@@ -65,29 +53,29 @@ magresVersionArguments.update({
 
 orcidSchema = Schema({
     'path': orcid_path_re.match,
-    'host': basestring,
+    'host': str,
     'uri': orcid_path_re.search,
 })
 
 magresVersionSchema = Schema(magresVersionArguments)
 
 magresMetadataSchema = Schema({
-    'chemname': And(basestring, len),
-    'chemform': basestring,
+    'chemname': And(str, len),
+    'chemform': str,
     'license': lictypes,
     'orcid': orcidSchema,
     'version_history': [magresVersionSchema]
 })
 
 magresIndexSchema = Schema({
-    'chemname': And(basestring, len),
-    'chemform': basestring,
+    'chemname': And(str, len),
+    'chemform': str,
     'license': lictypes,
     'orcid': orcidSchema,
     'metadataID': str,
     'latest_version': magresVersionSchema,
     'values': [{
-        'species': basestring,
+        'species': str,
         'iso': [float],
     }],
     'formula': [{'species': str,
