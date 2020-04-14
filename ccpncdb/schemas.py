@@ -14,7 +14,6 @@ def _one_of(vals):
 def _merge_schemas(s1, s2):
     d = dict(s1.schema)
     d.update(s2.schema)
-
     return Schema(d)
 
 
@@ -113,6 +112,9 @@ magresVersionSchemaAutomatic = Schema({
     'magresFilesID': str
 })
 
+magresVersionSchema = _merge_schemas(magresVersionSchemaUser,
+                                     magresVersionSchemaAutomatic)
+
 magresRecordSchemaUser = Schema({
     # User input, mandatory
     'chemname': And(str, len),
@@ -122,18 +124,18 @@ magresRecordSchemaUser = Schema({
     'user_institution': And(str, len),
     'doi': And(str, len),
     # User input, optional
-    'csd_ref': Optional(csd_refcode_re.match, None),
-    'csd_num': Optional(csd_number_re.match, None),
-    'chemform': Optional(str, None)
+    Optional('csd_ref', ''): csd_refcode_re.match,
+    Optional('csd_num', ''): csd_number_re.match,
+    Optional('chemform', ''): str
 })
 
 magresRecordSchemaAutomatic = Schema({
     # Automatically generated
-    'mdbref': int,
+    'mdbref': str,
     'version_history': [magresVersionSchema],
-    'values': [{
+    'nmrdata': [{
         'species': str,
-        'iso': [float],
+        'msiso': [float],
     }],
     'formula': [{'species': str,
                  'n': int}],

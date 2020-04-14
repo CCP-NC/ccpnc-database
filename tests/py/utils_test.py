@@ -16,15 +16,18 @@ class UtilsTest(unittest.TestCase):
 
         # Test by using an open file
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
-            m = read_magres_file(f)
+            m = read_magres_file(f)['Atoms']
             self.assertEqual(m.get_chemical_formula(), 'C2H6O')
             self.assertTrue(m.has('ms'))
 
         # And using a string
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
-            m = read_magres_file(f.read())
+            mstr = f.read()
+            mdata = read_magres_file(mstr)
+            m = mdata['Atoms']
             self.assertEqual(m.get_chemical_formula(), 'C2H6O')
             self.assertTrue(m.has('ms'))
+            self.assertTrue(mdata['string'], mstr)
 
     def testPrimeFactors(self):
 
@@ -35,7 +38,7 @@ class UtilsTest(unittest.TestCase):
     def testFormula(self):
 
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
-            m = read_magres_file(f)
+            m = read_magres_file(f)['Atoms']
             s = m.get_chemical_symbols()
             self.assertEqual(extract_formula(m), [{'species': 'C', 'n': 2},
                                                   {'species': 'H', 'n': 6},
@@ -47,7 +50,7 @@ class UtilsTest(unittest.TestCase):
             
     def testStochiometry(self):
         with open(os.path.join(data_path, 'alanine.magres')) as f:
-            m = read_magres_file(f)
+            m = read_magres_file(f)['Atoms']
             formula = extract_formula(m)
             self.assertEqual(extract_stochiometry(formula), 
                                                  [{'species': 'C', 'n': 3},
@@ -57,7 +60,7 @@ class UtilsTest(unittest.TestCase):
 
     def testMolecules(self):
         with open(os.path.join(data_path, 'alanine.magres')) as f:
-            m = read_magres_file(f)
+            m = read_magres_file(f)['Atoms']
             mols = extract_molecules(m)
             for mf in mols:
                 self.assertEqual(mf, 
@@ -68,7 +71,7 @@ class UtilsTest(unittest.TestCase):
 
     def testNMR(self):
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
-            m = read_magres_file(f)
+            m = read_magres_file(f)['Atoms']
             symbols = m.get_chemical_symbols()
             ms = np.trace(m.get_array('ms'), axis1=1, axis2=2)/3
             nmrdata = extract_nmrdata(m)

@@ -1,4 +1,4 @@
-import numpy as np 
+import numpy as np
 from io import StringIO
 from ase.io.magres import read_magres
 from soprano.properties.linkage import Molecules
@@ -24,12 +24,9 @@ def read_magres_file(mfile):
         mstr = mfile.read()
     else:
         mstr = mfile
-    # Safety required for Python 3
-    if (hasattr(mstr, 'decode')):
-        mstr = mstr.decode()
-    magres = read_magres(StringIO(str(mstr)))
+    matoms = read_magres(StringIO(str(mstr)))
 
-    return magres
+    return {'string': mstr, 'Atoms': matoms}
 
 
 def extract_formula(magres=None, symbols=None):
@@ -76,6 +73,7 @@ def extract_molecules(magres):
 
     return mols_f
 
+
 def extract_nmrdata(magres):
 
     # Chemical species
@@ -89,5 +87,3 @@ def extract_nmrdata(magres):
     msdata = sorted(msdata, key=lambda x: x['species'])
 
     return msdata
-
-

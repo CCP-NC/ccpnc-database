@@ -11,6 +11,13 @@ data_path = os.path.join(file_path, '../data')
 sys.path.append(os.path.abspath(os.path.join(file_path, '../../')))
 
 
+_fake_orcid = {
+    'path': '0000-0000-0000-0000',
+    'host': 'none',
+    'uri': '0000-0000-0000-0000'
+}
+
+
 def rndname_gen():
     m = md5()
     m.update(bytes(str(dt.now()), 'UTF-8'))
@@ -34,7 +41,29 @@ class MagresDBTest(unittest.TestCase):
 
     @clean_db
     def testAddRecord(self):
-        pass
+        from ccpncdb.magresdb import MagresDBError
+
+        rdata = {
+            'chemname': 'ethanol',
+            'orcid': _fake_orcid,
+            'license': 'cc-by',
+            'user_name': 'John Smith',
+            'user_institution': 'Academia University',
+            'doi': 'N/A'
+        }
+
+        with open(os.path.join(data_path, 'ethanol.magres')) as f:
+            # This should work
+            res = self.mdb.add_record(f, rdata, {})
+            self.assertTrue(res.successful)
+            self.assertEqual(res.mdbref, '0000001')
+
+        with open(os.path.join(data_path, 'ethanol.magres')) as f:
+            # This should not
+            with self.assertRaises(MagresDBError):
+                self.mdb.add_record(f, {}, {})
+
+
 
     @clean_db
     def testUniqueID(self):
