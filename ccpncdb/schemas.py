@@ -3,13 +3,19 @@ from datetime import datetime
 from collections import namedtuple, OrderedDict
 from schema import Schema, And, Optional
 
-# Convenient tool for multiple values validation
 
-
-def oneOf(vals):
+def _one_of(vals):
+    # Convenient tool for multiple values validation
     def f(d):
         return (d in vals)
     return f
+
+
+def _merge_schemas(s1, s2):
+    d = dict(s1.schema)
+    d.update(s2.schema)
+
+    return Schema(d)
 
 
 """Data schemas for entries to be uploaded to the Database."""
@@ -19,7 +25,7 @@ csd_refcode_re = re.compile(r'[A-Z]{6}([0-9]{2})?\Z')
 csd_number_re = re.compile(r'[0-9]{6,7}\Z')
 
 # License types
-lictypes = oneOf(['pddl', 'odc-by', 'cc-by'])
+lictypes = _one_of(['pddl', 'odc-by', 'cc-by'])
 
 # Optional arguments for each magres version. These are useful also
 # client-side so we store them in their own definitions
@@ -99,7 +105,15 @@ magresIndexSchema = Schema({
 #   - User input, optional
 #   - Automatically generated
 
-magresRecordSchema = Schema({
+magresVersionSchemaUser = Schema({
+})
+
+magresVersionSchemaAutomatic = Schema({
+    'date': datetime,
+    'magresFilesID': str
+})
+
+magresRecordSchemaUser = Schema({
     # User input, mandatory
     'chemname': And(str, len),
     'orcid': orcidSchema,
@@ -108,9 +122,12 @@ magresRecordSchema = Schema({
     'user_institution': And(str, len),
     'doi': And(str, len),
     # User input, optional
-    'csd_ref': csd_refcode_re.match,
-    'csd_num': csd_number_re.match,
-    'chemform': str,
+    'csd_ref': Optional(csd_refcode_re.match, None),
+    'csd_num': Optional(csd_number_re.match, None),
+    'chemform': Optional(str, None)
+})
+
+magresRecordSchemaAutomatic = Schema({
     # Automatically generated
     'mdbref': int,
     'version_history': [magresVersionSchema],
@@ -124,5 +141,8 @@ magresRecordSchema = Schema({
                       'n': int}],
     'Z': int,
     'molecules': [[{'species': str,
-                    'n': int}]]        
+                    'n': int}]]
 })
+
+magresRecordSchema = _merge_schemas(magresRecordSchemaUser,
+                                    magresRecordSchemaAutomatic)
