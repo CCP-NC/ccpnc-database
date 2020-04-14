@@ -1,7 +1,7 @@
 from pymongo import MongoClient, ReturnDocument
 from gridfs import GridFS, NoFile
 from ccpncdb.config import Config
-from ccpncdb.utils import readMagres
+from ccpncdb.utils import read_magres_file
 from ccpncdb.schemas import (magresIndexSchema,
                              magresMetadataSchema,
                              magresVersionSchema)
@@ -31,16 +31,17 @@ class MagresDB(object):
         # 5. Logger
         self.magresLog = ccpnc.magresLog
 
-    def addRecord(self, mfile, record_data, version_data):
+    def add_record(self, mfile, record_data, version_data):
 
         # Read in magres file
-        magres = readMagres(mfile)
+        magres = read_magres_file(mfile)
 
-        # Validate data
-        data.update({'version_history': []})
-        data = magresMetadataSchema.validate(data)
 
-    def generateID(self):        
+        # # Validate data
+        # data.update({'version_history': []})
+        # data = magresMetadataSchema.validate(data)
+
+    def generate_id(self):        
         # Generate a new unique ID
         res = self.magresIDcount.find_one_and_update(
             filter={},

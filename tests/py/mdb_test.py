@@ -39,9 +39,9 @@ class MagresDBTest(unittest.TestCase):
     @clean_db
     def testUniqueID(self):
 
-        self.assertEqual(self.mdb.generateID(), '0000001')
-        self.assertEqual(self.mdb.generateID(), '0000002')
-        self.assertEqual(self.mdb.generateID(), '0000003')
+        self.assertEqual(self.mdb.generate_id(), '0000001')
+        self.assertEqual(self.mdb.generate_id(), '0000002')
+        self.assertEqual(self.mdb.generate_id(), '0000003')
 
 
 if __name__ == '__main__':
