@@ -12,6 +12,7 @@ from ccpncdb.schemas import (magresIndexSchema,
                              magresVersionSchema,
                              magresRecordSchema,
                              magresRecordSchemaUser)
+from ccpncdb.archive import MagresArchive
 
 MagresDBAddResult = namedtuple('MagresDBAddResult',
                                ['successful', 'id', 'mdbref'])
@@ -107,6 +108,20 @@ class MagresDB(object):
         if not res.acknowledged:
             raise MagresDBError('Could not push new version for record ' +
                                 str(record_id))
+
+    def add_archive(self, archive, record_data, version_data):
+
+        # Create an archive object
+        ma = MagresArchive(archive, record_data, version_data)
+        results = {}
+
+        # Iterate over files
+        for f in ma.files():
+            results[f.name] = self.add_record(f.contents,
+                                              f.record_data,
+                                              f.version_data)
+
+        return results
 
     def generate_id(self):
         # Generate a new unique ID

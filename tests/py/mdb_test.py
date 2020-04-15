@@ -63,7 +63,20 @@ class MagresDBTest(unittest.TestCase):
             with self.assertRaises(MagresDBError):
                 self.mdb.add_record(f, {}, {})
 
+    @clean_db
+    def testAddArchive(self):
 
+        rdata = {
+            'chemname': 'ethanol',
+            'orcid': _fake_orcid,
+            'license': 'cc-by',
+            'user_name': 'John Smith',
+            'user_institution': 'Academia University',
+            'doi': 'N/A'
+        }
+
+        with open(os.path.join(data_path, 'test.csv.zip'), 'rb') as a:
+            self.mdb.add_archive(a, rdata, {})
 
     @clean_db
     def testUniqueID(self):
