@@ -18,6 +18,19 @@ def prime_factors(num):
     return sorted(facs)
 
 
+def get_schema_keys(schema):
+    # Extract a list of keys from a given schema
+    raw_keys = schema.schema.keys()
+    keys = []
+    for k in raw_keys:
+        if hasattr(k, 'schema'):
+            keys.append(k.schema)
+        else:
+            keys.append(k)
+
+    return sorted(keys)
+
+
 def read_magres_file(mfile):
     # Read a magres file/string unifying the output into an ASE Atoms object
     if hasattr(mfile, 'read'):

@@ -3,6 +3,7 @@
 import os 
 import sys
 import unittest
+from schema import Schema, And, Optional
 
 file_path = os.path.split(__file__)[0]
 data_path = os.path.join(file_path, '../data')
@@ -34,6 +35,16 @@ class UtilsTest(unittest.TestCase):
         self.assertEqual(prime_factors(9), [3, 3])
         self.assertEqual(prime_factors(126), [2, 3, 3, 7])
         self.assertEqual(prime_factors(127), [127])
+
+    def testSchemaKeys(self):
+
+        testSchema = Schema({
+            'obligatory': str,
+            Optional('optional'): str
+            })
+
+        self.assertEqual(get_schema_keys(testSchema), ['obligatory', 
+            'optional'])
 
     def testFormula(self):
 

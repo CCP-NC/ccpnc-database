@@ -230,7 +230,7 @@ def addMagresArchive(archive, chemname, chemform, license, orcid, data={}):
         argdict[fname]['chemform'] = entry.pop('chemform',
                                                default_args['chemform'])
         argdict[fname]['license'] = entry.pop('license',
-                                              default_args['license'])
+                                               default_args['license'])
         argdict[fname]['data'].update(entry)
 
     added_ids = {}
