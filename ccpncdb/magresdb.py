@@ -159,6 +159,13 @@ class MagresDB(object):
 
         return results
 
+    def edit_record(self, record_id, update):
+
+        res = self.magresIndex.update_one({'_id': ObjectId(record_id)},
+                                          update=update)
+
+        return res.acknowledged
+
     def get_magres_file(self, fs_id, decode=False):
 
         try:
