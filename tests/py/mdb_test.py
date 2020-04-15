@@ -106,6 +106,22 @@ class MagresDBTest(unittest.TestCase):
             self.assertEqual(rec['version_count'], 2)
 
     @clean_db
+    def testGetFile(self):
+
+        with open(os.path.join(data_path, 'ethanol.magres')) as f:
+            fstr = f.read()
+            # This should work
+            res = self.mdb.add_record(fstr, _fake_rdata, {})
+            # Get record
+            rec = self.mdb.magresIndex.find_one({'_id': ObjectId(res.id)})
+            # Get file id
+            fs_id = rec['version_history'][-1]['magresFilesID']
+
+            fstr2 = self.mdb.get_magres_file(fs_id, True)
+
+            self.assertEqual(fstr, fstr2)
+
+    @clean_db
     def testUniqueID(self):
 
         self.assertEqual(self.mdb.generate_id(), '0000001')

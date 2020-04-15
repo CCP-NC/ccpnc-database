@@ -57,7 +57,7 @@ class MagresDB(object):
         record_autodata = {
             'visible': True,
             'mdbref': '0000000',            # Placeholder
-            'version_count': 0,             
+            'version_count': 0,
             'version_history': [],          # Empty for now
             'formula': formula,
             'stochiometry': extract_stochiometry(formula),
@@ -129,7 +129,7 @@ class MagresDB(object):
                                                   'version_history':
                                                   version_data
                                               },
-                                              '$inc': {'version_count': 1},
+                '$inc': {'version_count': 1},
                 '$set': to_set
             })
         else:
@@ -138,7 +138,7 @@ class MagresDB(object):
                                                   'version_history':
                                                   version_data
                                               },
-                                              '$inc': {'version_count': 1}                                              
+                '$inc': {'version_count': 1}
             })
 
         if not res.acknowledged:
@@ -158,6 +158,18 @@ class MagresDB(object):
                                               f.version_data)
 
         return results
+
+    def get_magres_file(self, fs_id, decode=False):
+
+        try:
+            mfile_ref = self.magresFilesFS.get(ObjectId(fs_id))
+        except NoFile:
+            raise MagresDBError('File not found')
+
+        if decode:
+            return mfile_ref.read().decode('utf-8')
+        else:
+            return mfile_ref.read()
 
     def generate_id(self):
         # Generate a new unique ID
