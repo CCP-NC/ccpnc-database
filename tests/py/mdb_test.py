@@ -3,8 +3,12 @@
 import os
 import sys
 import unittest
+import numpy as np
 import subprocess as sp
 from hashlib import md5
+from bson.objectid import ObjectId
+from soprano.selection import AtomSelection
+from soprano.properties.nmr import MSIsotropy
 
 file_path = os.path.split(__file__)[0]
 data_path = os.path.join(file_path, '../data')
@@ -15,6 +19,15 @@ _fake_orcid = {
     'path': '0000-0000-0000-0000',
     'host': 'none',
     'uri': '0000-0000-0000-0000'
+}
+
+_fake_rdata = {
+    'chemname': 'ethanol',
+    'orcid': _fake_orcid,
+    'license': 'cc-by',
+    'user_name': 'John Smith',
+    'user_institution': 'Academia University',
+    'doi': 'N/A'
 }
 
 
@@ -37,24 +50,19 @@ class MagresDBTest(unittest.TestCase):
 
     def setUp(self):
         from ccpncdb.magresdb import MagresDB
+        from ccpncdb.utils import read_magres_file
+
         self.mdb = MagresDB('ccpnc-test')
+        with open(os.path.join(data_path, 'ethanol.magres')) as f:
+            self.eth = read_magres_file(f)
 
     @clean_db
     def testAddRecord(self):
         from ccpncdb.magresdb import MagresDBError
 
-        rdata = {
-            'chemname': 'ethanol',
-            'orcid': _fake_orcid,
-            'license': 'cc-by',
-            'user_name': 'John Smith',
-            'user_institution': 'Academia University',
-            'doi': 'N/A'
-        }
-
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
             # This should work
-            res = self.mdb.add_record(f, rdata, {})
+            res = self.mdb.add_record(f, _fake_rdata, {})
             self.assertTrue(res.successful)
             self.assertEqual(res.mdbref, '0000001')
 
@@ -66,17 +74,34 @@ class MagresDBTest(unittest.TestCase):
     @clean_db
     def testAddArchive(self):
 
-        rdata = {
-            'chemname': 'ethanol',
-            'orcid': _fake_orcid,
-            'license': 'cc-by',
-            'user_name': 'John Smith',
-            'user_institution': 'Academia University',
-            'doi': 'N/A'
-        }
-
         with open(os.path.join(data_path, 'test.csv.zip'), 'rb') as a:
-            self.mdb.add_archive(a, rdata, {})
+            self.mdb.add_archive(a, _fake_rdata, {})
+
+    @clean_db
+    def testAddVersion(self):
+
+        r_id = None
+        with open(os.path.join(data_path, 'ethanol.fake.magres')) as f:
+            res = self.mdb.add_record(f, _fake_rdata, {})
+            r_id = res.id
+
+        # Now add a new version
+        with open(os.path.join(data_path, 'ethanol.magres')) as f:
+            self.mdb.add_version(f, r_id, {}, True)
+
+            rec = self.mdb.magresIndex.find_one({'_id': ObjectId(r_id)})
+
+            msiso = MSIsotropy.get(self.eth['Atoms'])
+
+            for data in rec['nmrdata']:
+                el = data['species']
+                ms = data['msiso']
+
+                inds = AtomSelection.from_element(self.eth['Atoms'],
+                                                  el).indices
+
+                self.assertTrue(np.isclose(np.sort(ms),
+                                           np.sort(msiso[inds])).all())
 
     @clean_db
     def testUniqueID(self):

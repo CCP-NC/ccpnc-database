@@ -1,6 +1,7 @@
 from datetime import datetime
 from collections import namedtuple
 from gridfs import GridFS, NoFile
+from bson.objectid import ObjectId
 from pymongo import MongoClient, ReturnDocument
 
 from ccpncdb.config import Config
@@ -63,6 +64,7 @@ class MagresDB(object):
             'nmrdata': extract_nmrdata(matoms)
         }
 
+        record_data = dict(record_data)
         record_data.update(record_autodata)
         try:
             magresRecordSchema.validate(record_data)
@@ -79,12 +81,17 @@ class MagresDB(object):
         # Now that it's all done, assign a unique identifier
         mdbref = self.generate_id()
         # Update the record
-        res = self.magresIndex.update_one({'_id': record_id},
+        res = self.magresIndex.update_one({'_id': ObjectId(record_id)},
                                           {'$set': {'mdbref': mdbref}})
 
         return MagresDBAddResult(res.acknowledged, str(record_id), mdbref)
 
-    def add_version(self, mstr, record_id, version_data):
+    def add_version(self, mfile, record_id, version_data, update_record=False):
+
+        # Read in magres file
+        magres = read_magres_file(mfile)
+        mstr = magres['string']
+        matoms = magres['Atoms']
 
         mfile_id = self.magresFilesFS.put(mstr,
                                           filename=record_id,
@@ -94,17 +101,42 @@ class MagresDB(object):
             'magresFilesID': str(mfile_id),
             'date': datetime.utcnow()
         }
+        version_data = dict(version_data)
         version_data.update(version_autodata)
         try:
             magresVersionSchema.validate(version_data)
         except Exception as e:
             raise MagresDBError('Trying to upload invalid version: ' + str(e))
 
-        res = self.magresIndex.update_one({'_id': record_id},
-                                          {'$push': {
-                                              'version_history': version_data
-                                          }
-        })
+        if update_record:
+            # Update the automatically generated elements in the record
+
+            # Generate automated data
+            formula = extract_formula(matoms)
+            mols = extract_molecules(matoms)
+            to_set = {
+                'formula': formula,
+                'stochiometry': extract_stochiometry(formula),
+                'molecules': mols,
+                'Z': len(mols),
+                'nmrdata': extract_nmrdata(matoms)
+            }
+
+            res = self.magresIndex.update_one({'_id': ObjectId(record_id)},
+                                              {'$push': {
+                                                  'version_history':
+                                                  version_data
+                                              },
+                '$set': to_set
+            })
+        else:
+            res = self.magresIndex.update_one({'_id': ObjectId(record_id)},
+                                              {'$push': {
+                                                  'version_history':
+                                                  version_data
+                                              }
+            })
+
         if not res.acknowledged:
             raise MagresDBError('Could not push new version for record ' +
                                 str(record_id))
