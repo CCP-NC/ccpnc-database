@@ -122,6 +122,63 @@ class MagresDBTest(unittest.TestCase):
             self.assertEqual(fstr, fstr2)
 
     @clean_db
+    def testSearch(self):
+
+        fstr = None
+        with open(os.path.join(data_path, 'ethanol.magres')) as f:
+            fstr = f.read()
+
+        # Add it twice
+        rdata_1 = dict(_fake_rdata)
+        rdata_1['chemname'] = 'ethanol_1'
+        res_1 = self.mdb.add_record(fstr, rdata_1, {})
+
+        rdata_2 = dict(_fake_rdata)
+        rdata_2['chemname'] = 'ethanol_2'
+        res_2 = self.mdb.add_record(fstr, rdata_2, {})
+
+        found = self.mdb.search_record([{
+            'type': 'chemname',
+            'args': {'pattern': 'ethanol_1'}
+        }])
+        found = list(found)
+
+        self.assertEqual(len(found), 1)
+        self.assertEqual(str(found[0]['_id']), res_1.id)
+
+        # Test by mdbref
+        found = self.mdb.search_record([{
+            'type': 'mdbref',
+            'args': {'mdbref': '0000002'}
+        }])
+        found = list(found)
+
+        self.assertEqual(len(found), 1)
+        self.assertEqual(str(found[0]['_id']), res_2.id)
+
+        # Test by formula
+        found = self.mdb.search_record([{
+            'type': 'formula',
+            'args': {'formula': 'C2H6O', 'subset': False}
+        }])
+        found = list(found)
+
+        self.assertEqual(len(found), 2)
+
+        # Now try obfuscating one
+        self.mdb.edit_record(res_1.id, {'$set': {'visible': False}})
+
+        # Test by license
+        found = self.mdb.search_record([{
+            'type': 'license',
+            'args': {'license': 'cc-by'}
+        }])
+        found = list(found)
+
+        self.assertEqual(len(found), 1)
+        self.assertEqual(str(found[0]['_id']), res_2.id)
+
+    @clean_db
     def testUniqueID(self):
 
         self.assertEqual(self.mdb.generate_id(), '0000001')

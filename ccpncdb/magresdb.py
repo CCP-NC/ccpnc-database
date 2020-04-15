@@ -14,6 +14,7 @@ from ccpncdb.schemas import (magresIndexSchema,
                              magresRecordSchema,
                              magresRecordSchemaUser)
 from ccpncdb.archive import MagresArchive
+from ccpncdb.search import build_search
 
 MagresDBAddResult = namedtuple('MagresDBAddResult',
                                ['successful', 'id', 'mdbref'])
@@ -177,6 +178,13 @@ class MagresDB(object):
             return mfile_ref.read().decode('utf-8')
         else:
             return mfile_ref.read()
+
+    def search_record(self, query):
+        query = build_search(query)
+
+        results = self.magresIndex.find(query)
+
+        return results
 
     def generate_id(self):
         # Generate a new unique ID
