@@ -131,7 +131,9 @@ magresRecordSchemaUser = Schema({
 
 magresRecordSchemaAutomatic = Schema({
     # Automatically generated
+    'visible': bool,
     'mdbref': str,
+    'version_count': int,
     'version_history': [magresVersionSchema],
     'nmrdata': [{
         'species': str,

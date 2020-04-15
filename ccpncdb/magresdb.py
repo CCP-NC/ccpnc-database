@@ -55,7 +55,9 @@ class MagresDB(object):
         formula = extract_formula(matoms)
         mols = extract_molecules(matoms)
         record_autodata = {
+            'visible': True,
             'mdbref': '0000000',            # Placeholder
+            'version_count': 0,             
             'version_history': [],          # Empty for now
             'formula': formula,
             'stochiometry': extract_stochiometry(formula),
@@ -127,6 +129,7 @@ class MagresDB(object):
                                                   'version_history':
                                                   version_data
                                               },
+                                              '$inc': {'version_count': 1},
                 '$set': to_set
             })
         else:
@@ -134,7 +137,8 @@ class MagresDB(object):
                                               {'$push': {
                                                   'version_history':
                                                   version_data
-                                              }
+                                              },
+                                              '$inc': {'version_count': 1}                                              
             })
 
         if not res.acknowledged:

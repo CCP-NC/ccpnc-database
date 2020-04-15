@@ -103,6 +103,8 @@ class MagresDBTest(unittest.TestCase):
                 self.assertTrue(np.isclose(np.sort(ms),
                                            np.sort(msiso[inds])).all())
 
+            self.assertEqual(rec['version_count'], 2)
+
     @clean_db
     def testUniqueID(self):
 
