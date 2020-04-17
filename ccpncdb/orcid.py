@@ -5,26 +5,37 @@ from __future__ import unicode_literals
 
 import re
 import requests
-from flask import session
 from requests.exceptions import ConnectionError
+
+
+class NoOrcidTokens(Exception):
+    # Raised only when login was made impossible by connection errors
+    # or other issues
+    pass
 
 
 class OrcidError(Exception):
     pass
 
 
-class OrcidConnection:
+class OrcidConnection(object):
     """ Provides an interface to connect with
     ORCID, given the relevant app data."""
 
-    def __init__(self, details, login_url='https://orcid.org/',
+    def __init__(self, details, session=None,
+                 login_url='https://orcid.org/',
                  api_url='https://pub.orcid.org/v2.0/'):
 
+        if session is None:
+            # Use the global one
+            from flask import session
+
+        self._session = session
         self._details = details
         self._login_url = login_url
         self._api_url = api_url
 
-    def retrieve_tokens(self, code):
+    def request_tokens(self, code):
         # Get tokens from ORCID given a request code
         headers = {'Accept': 'application/json'}
         payload = dict(self._details)
@@ -37,39 +48,54 @@ class OrcidConnection:
             r = requests.post(self._login_url + 'oauth/token',
                               data=payload, headers=headers)
         except ConnectionError:
-            return None
+            raise NoOrcidTokens('Connection to oauth/token failed')
 
         # Save them (if no error has occurred)
         rjson = r.json()
         if 'error' not in rjson:
-            session.permanent = True
-            session['login_details'] = rjson
-
-        return r.json()
+            self._session.permanent = True
+            self._session['login_details'] = rjson
+        else:
+            raise NoOrcidTokens('Connection to oauth/token returned error: ' +
+                                rjson['error'])
 
     def get_tokens(self, code=None):
         # Retrieve existing tokens, or ask for new ones
-        if 'login_details' in session and code is None:
-            return session['login_details']
-        elif code is not None:
-            # Retrieve them
-            return self.retrieve_tokens(code)
-        else:
-            # Something went wrong
-            return None
+        if code is not None:
+            self.request_tokens(code)
+
+        tk = self._session.get('login_details', None)
+
+        if tk is None:
+            raise NoOrcidTokens('No login details found')
+
+        return tk
 
     def delete_tokens(self):
-        try:
-            session.pop('login_details', None)
-        except KeyError:
-            pass
+        session.pop('login_details', None)
 
-    def retrieve_info(self):
+    def authenticate(self, client_details):
+        # Check client details vs. internally stored tokens
 
         tk = self.get_tokens()
 
-        if tk is None:
-            return None
+        try:
+            auth = True
+            for k in ('orcid', 'access_token'):
+                auth = auth and (client_details[k] == tk[k])
+        except KeyError:
+            raise ValueError('Incomplete client details')
+
+        return auth
+
+    def request_info(self, client_details):
+
+        # Start by authenticating
+        auth = self.authenticate(client_details)
+        if not auth:
+            raise OrcidError('Could not authenticate')
+
+        tk = self.get_tokens()
 
         # Prepare a get request
         headers = {
@@ -95,13 +121,13 @@ class FakeOrcidConnection(OrcidConnection):
     """ Provides a fake interface imitating ORCID, for debugging purposes."""
 
     def __init__(self):
-        pass
+        self._session = {}
 
-    def retrieve_tokens(self, session, code):
+    def request_tokens(self, code):
 
         if code != '123456':
-            raise RuntimeError('Invalid fake code! '
-                               'The right fake code is 123456')
+            raise NoOrcidTokens('Invalid fake code! '
+                                'The right fake code is 123456')
 
         fake_details = {
             'name': 'Johnny B. Goode',
@@ -110,16 +136,15 @@ class FakeOrcidConnection(OrcidConnection):
             'scope': '/authenticate'
         }
 
-        session['login_details'] = fake_details
+        self._session['login_details'] = fake_details
 
         return fake_details
 
-    def retrieve_info(self, session):
+    def request_info(self, client_details):
 
-        tk = self.get_tokens(session)
+        self.authenticate(client_details)
 
-        if tk is None:
-            return None
+        tk = self.get_tokens()
 
         return {'orcid-identifier': {
                 'path': '0000-0000-0000-0000',

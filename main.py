@@ -17,7 +17,7 @@ import flask
 import ase
 import soprano
 from datetime import timedelta
-from flask import Flask, Response, session, request, make_response
+from flask import Flask, Response, request, make_response
 from orcid import OrcidConnection, OrcidError
 from db_interface import (addMagresFile, databaseSearch,
                           getMagresFile, editMagresFile,
@@ -55,14 +55,14 @@ def user_info_auth(orcid_link, client_at, client_id):
     # Return user info if all tokens check out, otherwise raise OrcidError
 
     # First, check that the details are valid
-    tk = orcid_link.get_tokens(session)
+    tk = orcid_link.get_tokens()
 
     if (tk is None or
             client_id != tk['orcid'] or
             client_at != tk['access_token']):
         raise OrcidError('Error: invalid login')
 
-    return orcid_link.retrieve_info(session)
+    return orcid_link.retrieve_info()
 
 
 ### APP ROUTES ###
@@ -80,7 +80,7 @@ def cookiepol():
 @app.route('/gettokens/', defaults={'code': None})
 @app.route('/gettokens/<code>')
 def get_tokens(code):
-    tk = app.extensions['orcidlink'].get_tokens(session, code)
+    tk = app.extensions['orcidlink'].get_tokens(code)
     # If they are None, return null
     if tk is None:
         return 'null'
@@ -90,7 +90,7 @@ def get_tokens(code):
 
 @app.route('/logout')
 def delete_tokens():
-    app.extensions['orcidlink'].delete_tokens(session)
+    app.extensions['orcidlink'].delete_tokens()
     return 'Logged out', HTTP_200_OK
 
 
