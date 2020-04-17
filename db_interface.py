@@ -28,9 +28,9 @@ from pymongo import MongoClient
 from schema import SchemaError
 from gridfs import GridFS, NoFile
 from bson.objectid import ObjectId
-from ccpncdb.schemas import (magresVersionSchema,
-                             magresMetadataSchema,
-                             magresIndexSchema)
+from db_schema import (magresVersionSchema,
+                       magresMetadataSchema,
+                       magresIndexSchema)
 from db_indexing import (extractIndexingInfo, getFormula, getStochiometry)
 
 try:
@@ -230,7 +230,7 @@ def addMagresArchive(archive, chemname, chemform, license, orcid, data={}):
         argdict[fname]['chemform'] = entry.pop('chemform',
                                                default_args['chemform'])
         argdict[fname]['license'] = entry.pop('license',
-                                               default_args['license'])
+                                              default_args['license'])
         argdict[fname]['data'].update(entry)
 
     added_ids = {}

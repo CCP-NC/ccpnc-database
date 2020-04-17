@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 
 import re
 import requests
-from flask import session
 from requests.exceptions import ConnectionError
 
 
@@ -24,7 +23,7 @@ class OrcidConnection:
         self._login_url = login_url
         self._api_url = api_url
 
-    def retrieve_tokens(self, code):
+    def retrieve_tokens(self, session, code):
         # Get tokens from ORCID given a request code
         headers = {'Accept': 'application/json'}
         payload = dict(self._details)
@@ -47,26 +46,26 @@ class OrcidConnection:
 
         return r.json()
 
-    def get_tokens(self, code=None):
+    def get_tokens(self, session, code=None):
         # Retrieve existing tokens, or ask for new ones
         if 'login_details' in session and code is None:
             return session['login_details']
         elif code is not None:
             # Retrieve them
-            return self.retrieve_tokens(code)
+            return self.retrieve_tokens(session, code)
         else:
             # Something went wrong
             return None
 
-    def delete_tokens(self):
+    def delete_tokens(self, session):
         try:
             session.pop('login_details', None)
         except KeyError:
             pass
 
-    def retrieve_info(self):
+    def retrieve_info(self, session):
 
-        tk = self.get_tokens()
+        tk = self.get_tokens(session)
 
         if tk is None:
             return None

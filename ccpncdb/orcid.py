@@ -72,7 +72,7 @@ class OrcidConnection(object):
         return tk
 
     def delete_tokens(self):
-        session.pop('login_details', None)
+        self._session.pop('login_details', None)
 
     def authenticate(self, client_details):
         # Check client details vs. internally stored tokens
