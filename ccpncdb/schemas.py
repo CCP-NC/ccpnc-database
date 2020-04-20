@@ -26,73 +26,11 @@ csd_number_re = re.compile(r'[0-9]{6,7}\Z')
 # License types
 lictypes = _one_of(['pddl', 'odc-by', 'cc-by'])
 
-# Optional arguments for each magres version. These are useful also
-# client-side so we store them in their own definitions
-
-OptVArg = namedtuple('OptVArg', ['full_name', 'validator',
-                                 'input_type', 'input_size'])
-
-magresVersionArguments = {
-    'magresFilesID': str,
-    'date': datetime
-}
-
-magresVersionOptionals = OrderedDict([
-    ('doi', OptVArg('DOI', str,
-                    'text',
-                    '35')),
-    ('notes', OptVArg('Notes', str,
-                      'textarea',
-                      None)),
-    ('csd-ref', OptVArg('CSD Refcode', csd_refcode_re.match,
-                        'text',
-                        30)),
-    ('csd-num', OptVArg('CSD Number', csd_number_re.match,
-                        'text',
-                        30))
-])
-
-magresVersionArguments.update({
-    Optional(k): opt.validator
-    for (k, opt) in magresVersionOptionals.items()
-})
-
 # Schemas
-
 orcidSchema = Schema({
     'path': orcid_path_re.match,
     'host': str,
     'uri': orcid_path_re.search,
-})
-
-magresVersionSchema = Schema(magresVersionArguments)
-
-magresMetadataSchema = Schema({
-    'chemname': And(str, len),
-    'chemform': str,
-    'license': lictypes,
-    'orcid': orcidSchema,
-    'version_history': [magresVersionSchema]
-})
-
-magresIndexSchema = Schema({
-    'chemname': And(str, len),
-    'chemform': str,
-    'license': lictypes,
-    'orcid': orcidSchema,
-    'metadataID': str,
-    'latest_version': magresVersionSchema,
-    'values': [{
-        'species': str,
-        'iso': [float],
-    }],
-    'formula': [{'species': str,
-                 'n': int}],
-    'stochiometry': [{'species': str,
-                      'n': int}],
-    'Z': int,
-    'molecules': [[{'species': str,
-                    'n': int}]]
 })
 
 # Two types of elements:
@@ -105,9 +43,19 @@ magresIndexSchema = Schema({
 #   - Automatically generated
 
 magresVersionSchemaUser = Schema({
+    # User input, mandatory
+    'license': lictypes,
+    # User input, optional
+    Optional('user_institution', ''): str,
+    Optional('doi', ''): str,
+    Optional('csd_ref', ''): csd_refcode_re.match,
+    Optional('csd_num', ''): csd_number_re.match,
+    Optional('chemform', ''): str,
+    Optional('notes', ''): str
 })
 
 magresVersionSchemaAutomatic = Schema({
+    # Automatically generated
     'date': datetime,
     'magresFilesID': str
 })
@@ -119,22 +67,14 @@ magresRecordSchemaUser = Schema({
     # User input, mandatory
     'chemname': And(str, len),
     'orcid': orcidSchema,
-    'license': lictypes,
-    'user_name': And(str, len),
-    'user_institution': And(str, len),
-    'doi': And(str, len),
     # User input, optional
-    Optional('csd_ref', ''): csd_refcode_re.match,
-    Optional('csd_num', ''): csd_number_re.match,
-    Optional('chemform', ''): str
 })
 
 magresRecordSchemaAutomatic = Schema({
     # Automatically generated
     'visible': bool,
     'mdbref': str,
-    'version_count': int,
-    'version_history': [magresVersionSchema],
+    'user_name': And(str, len),
     'nmrdata': [{
         'species': str,
         'msiso': [float],
@@ -145,7 +85,10 @@ magresRecordSchemaAutomatic = Schema({
                       'n': int}],
     'Z': int,
     'molecules': [[{'species': str,
-                    'n': int}]]
+                    'n': int}]],
+    'version_count': int,
+    'version_history': [magresVersionSchema],
+    Optional('last_version', None): magresVersionSchema,
 })
 
 magresRecordSchema = _merge_schemas(magresRecordSchemaUser,

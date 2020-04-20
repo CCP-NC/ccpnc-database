@@ -8,11 +8,8 @@ from ccpncdb.config import Config
 from ccpncdb.utils import (read_magres_file, extract_formula,
                            extract_stochiometry, extract_molecules,
                            extract_nmrdata)
-from ccpncdb.schemas import (magresIndexSchema,
-                             magresMetadataSchema,
-                             magresVersionSchema,
-                             magresRecordSchema,
-                             magresRecordSchemaUser)
+from ccpncdb.schemas import (magresVersionSchema,
+                             magresRecordSchema)
 from ccpncdb.archive import MagresArchive
 from ccpncdb.search import build_search
 
@@ -118,6 +115,7 @@ class MagresDB(object):
             formula = extract_formula(matoms)
             mols = extract_molecules(matoms)
             to_set = {
+                'last_version': version_data,
                 'formula': formula,
                 'stochiometry': extract_stochiometry(formula),
                 'molecules': mols,
@@ -139,7 +137,8 @@ class MagresDB(object):
                                                   'version_history':
                                                   version_data
                                               },
-                '$inc': {'version_count': 1}
+                '$inc': {'version_count': 1},
+                '$set': {'last_version': version_data}
             })
 
         if not res.acknowledged:

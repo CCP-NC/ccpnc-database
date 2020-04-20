@@ -44,6 +44,8 @@ class OrcidConnection:
             session.permanent = True
             session['login_details'] = rjson
 
+        print(rjson)
+
         return r.json()
 
     def get_tokens(self, session, code=None):

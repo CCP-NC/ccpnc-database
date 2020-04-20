@@ -19,10 +19,6 @@ def _formula_read(f):
     return match
 
 
-def build_search(search_spec):
-    pass
-
-
 def search_by_ms(sp, minms, maxms):
 
     return [
@@ -38,7 +34,7 @@ def search_by_ms(sp, minms, maxms):
 def search_by_doi(doi):
 
     return [
-        {'doi': doi}
+        {'last_version.doi': doi}
     ]
 
 
@@ -67,7 +63,7 @@ def search_by_chemform(pattern):
     # escape ., convert * to any character, convert ? to a single character
 
     return [
-        {'chemform': {'$regex': regex}}
+        {'last_version.chemform': {'$regex': regex}}
     ]
 
 
@@ -105,20 +101,20 @@ def search_by_molecule(formula):
 def search_by_csdref(csdref):
 
     return [
-        {'csd_ref': csdref}
+        {'last_version.csd_ref': csdref}
     ]
 
 
 def search_by_csdnum(csdnum):
 
     return [
-        {'csd_num': csdnum}
+        {'last_version.csd_num': csdnum}
     ]
 
 
 def search_by_license(license):
     return [
-        {'license': license}
+        {'last_version.license': license}
     ]
 
 

@@ -24,10 +24,11 @@ _fake_orcid = {
 _fake_rdata = {
     'chemname': 'ethanol',
     'orcid': _fake_orcid,
+    'user_name': 'John Smith'
+}
+
+_fake_vdata = {
     'license': 'cc-by',
-    'user_name': 'John Smith',
-    'user_institution': 'Academia University',
-    'doi': 'N/A'
 }
 
 
@@ -62,7 +63,7 @@ class MagresDBTest(unittest.TestCase):
 
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
             # This should work
-            res = self.mdb.add_record(f, _fake_rdata, {})
+            res = self.mdb.add_record(f, _fake_rdata, _fake_vdata)
             self.assertTrue(res.successful)
             self.assertEqual(res.mdbref, '0000001')
 
@@ -75,19 +76,19 @@ class MagresDBTest(unittest.TestCase):
     def testAddArchive(self):
 
         with open(os.path.join(data_path, 'test.csv.zip'), 'rb') as a:
-            self.mdb.add_archive(a, _fake_rdata, {})
+            self.mdb.add_archive(a, _fake_rdata, _fake_vdata)
 
     @clean_db
     def testAddVersion(self):
 
         r_id = None
         with open(os.path.join(data_path, 'ethanol.fake.magres')) as f:
-            res = self.mdb.add_record(f, _fake_rdata, {})
+            res = self.mdb.add_record(f, _fake_rdata, _fake_vdata)
             r_id = res.id
 
         # Now add a new version
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
-            self.mdb.add_version(f, r_id, {}, True)
+            self.mdb.add_version(f, r_id, _fake_vdata, True)
 
             rec = self.mdb.magresIndex.find_one({'_id': ObjectId(r_id)})
 
@@ -111,7 +112,7 @@ class MagresDBTest(unittest.TestCase):
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
             fstr = f.read()
             # This should work
-            res = self.mdb.add_record(fstr, _fake_rdata, {})
+            res = self.mdb.add_record(fstr, _fake_rdata, _fake_vdata)
             # Get record
             rec = self.mdb.magresIndex.find_one({'_id': ObjectId(res.id)})
             # Get file id
@@ -131,11 +132,11 @@ class MagresDBTest(unittest.TestCase):
         # Add it twice
         rdata_1 = dict(_fake_rdata)
         rdata_1['chemname'] = 'ethanol_1'
-        res_1 = self.mdb.add_record(fstr, rdata_1, {})
+        res_1 = self.mdb.add_record(fstr, rdata_1, _fake_vdata)
 
         rdata_2 = dict(_fake_rdata)
         rdata_2['chemname'] = 'ethanol_2'
-        res_2 = self.mdb.add_record(fstr, rdata_2, {})
+        res_2 = self.mdb.add_record(fstr, rdata_2, _fake_vdata)
 
         found = self.mdb.search_record([{
             'type': 'chemname',
