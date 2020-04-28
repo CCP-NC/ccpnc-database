@@ -11,17 +11,9 @@ function addUploadController(ngApp) {
 
         }
 
-        // Form data
-        $scope.chemname = '';
-        $scope.chemform = '';
-        $scope.license = 'pddl';
-
         // Status message
         $scope.status = '';
         $scope.status_err = false; // Is the status an error?
-
-        // Edit table
-        $scope._edit_table = new editTable($scope, {});
 
         // Upload mode
         $scope.upload_multi = false;
@@ -36,7 +28,7 @@ function addUploadController(ngApp) {
             $('#upload-form input[required]').each(function(i, o) {
                 if ($(o).val() == '') {
                     $scope.status = 'Missing file or obligatory field';
-                    $scope.status_err = true;                    
+                    $scope.status_err = true;
                 }
             });
             if ($scope.status_err) {
@@ -45,18 +37,18 @@ function addUploadController(ngApp) {
 
             // Compile extra data
             var request_data = {
-                'upload_multi': $scope.upload_multi
+                '_upload_multi': $scope.upload_multi
             }
 
             loginStatus.verify_token(function() {
                 // Package all the data
                 details = loginStatus.get_details()
-                request_data.access_token = details['access_token'];
-                request_data.orcid = details['orcid'];
+                request_data['_auth_id'] = details['orcid'];
+                request_data['_auth_tk'] = details['access_token'];
 
                 // Post form
-                $scope.uploading_now = true;    
-                $scope.$apply();         
+                $scope.uploading_now = true;
+                $scope.$apply();
                 $('#upload-form').ajaxSubmit({
                     data: request_data,
                     success: function(r) {
@@ -84,7 +76,8 @@ function addUploadController(ngApp) {
                 });
 
             }, function() {
-                $scope.status = 'Could not authenticate ORCID details; please log in';
+                $scope.status = 'Could not authenticate ORCID details; '
+                'please log in';
                 $scope.status_err = true;
             });
 

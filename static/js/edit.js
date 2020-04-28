@@ -74,7 +74,6 @@ function addEditTableDirective(ngApp) {
             },
         }
     })
-
 }
 
 // Table property

@@ -21,6 +21,7 @@
 
     <script src="js/config.js"></script>
     <script src="js/edit.js"></script>
+    <script src="js/directives.js"></script>
     <script src="js/record.js"></script>
     <script src="js/login.js"></script>
     <script src="js/search.js"></script>
@@ -398,43 +399,10 @@
 
             <form id="upload-form" enctype="multipart/form-data" action="upload" method="post">
                 <div class="table-container" >
-                        <table class="table is-fullwidth">
-                            <thead>
-                                <tr>
-                                    <th colspan="" rowspan="" headers="">
-                                        Chemical name<sup class="has-text-danger">*</sup>
-                                    </th>
-                                    <td colspan="" rowspan="" headers="">
-                                        <input id="chemname" class="cc-ctrl cc-bulma" type="text" size="80"
-                                            name="chemname"
-                                            placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)"
-                                            required>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th colspan="" rowspan="" headers="">
-                                        Form
-                                    </th>
-                                    <td colspan="" rowspan="" headers="">
-                                        <input id="chemform" class="cc-ctrl cc-bulma" type="text" size="80"
-                                            name="chemform"
-                                            placeholder="Additional relevant descriptors (e.g.: phase, conformer, etc.)">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th colspan="" rowspan="" headers="">
-                                        License
-                                    </th>
-                                    <td colspan="" rowspan="" headers="">
-                                        <select id="license" class="cc-ctrl cc-bulma" name="license" help="License to apply to the data (see bottom of the page for details)" selected="pddl">
-                                            <option value="pddl">PDDL v1.0</option>
-                                            <option value="odc-by">ODC-By v1.0</option>
-					    <option value="cc-by">CC-By v4.0</option>
-                                        </select>
-                                    </td>
-                                </tr>
+                        <table class="table is-fullwidth is-narrow">
+                            <thead record-table>
                             </thead>
-                            <tbody edit-table="_edit_table">
+                            <tbody version-table>
                             </tbody>
                         </table>
                     </div>

@@ -30,6 +30,18 @@ def get_schema_keys(schema):
 
     return sorted(keys)
 
+def split_data(data, s1, s2):
+    # Split data between two schemas
+    sd1, sd2 = {}, {}
+    sk1 = get_schema_keys(s1)
+    sk2 = get_schema_keys(s2)
+    for k, v in data.items():
+        if k in sk1:
+            sd1[k] = v
+        elif k in sk2:
+            sd2[k] = v
+
+    return sd1, sd2
 
 def read_magres_file(mfile):
     # Read a magres file/string unifying the output into an ASE Atoms object
@@ -37,7 +49,7 @@ def read_magres_file(mfile):
         mstr = mfile.read()
     else:
         mstr = mfile
-    matoms = read_magres(StringIO(str(mstr)))
+    matoms = read_magres(StringIO(mstr.decode('utf-8')))
 
     return {'string': mstr, 'Atoms': matoms}
 

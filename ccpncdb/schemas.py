@@ -16,7 +16,6 @@ def _merge_schemas(s1, s2):
     d.update(s2.schema)
     return Schema(d)
 
-
 """Data schemas for entries to be uploaded to the Database."""
 
 orcid_path_re = re.compile('[0-9]{4}-'*3+r'[0-9]{3}[0-9X]{1}\Z')
@@ -48,6 +47,7 @@ magresVersionSchemaUser = Schema({
     # User input, optional
     Optional('user_institution', ''): str,
     Optional('doi', ''): str,
+    Optional('extref', ''): str,
     Optional('csd_ref', ''): csd_refcode_re.match,
     Optional('csd_num', ''): csd_number_re.match,
     Optional('chemform', ''): str,
@@ -93,3 +93,4 @@ magresRecordSchemaAutomatic = Schema({
 
 magresRecordSchema = _merge_schemas(magresRecordSchemaUser,
                                     magresRecordSchemaAutomatic)
+
