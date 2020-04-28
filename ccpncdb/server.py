@@ -108,7 +108,8 @@ class MainServer(object):
             # And upload
             res = self._db.add_record(fd, rdata, vdata)
 
-            return 'Not Implemented Yet', self.HTTP_400_BAD_REQUEST
+            if not res.successful:
+                return 'Uploading failed', self.HTTP_500_INTERNAL_SERVER_ERROR
 
         return 'Success', self.HTTP_200_OK
 
