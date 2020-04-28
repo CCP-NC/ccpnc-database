@@ -29,14 +29,34 @@ def root():
 def cookiepol():
     return serv.send_static('cookies.html')
 
+
 @serv.app.route('/logout')
 def logout():
     return serv.logout()
+
 
 @serv.app.route('/gettokens/', defaults={'code': None})
 @serv.app.route('/gettokens/<code>')
 def get_tokens(code):
     return serv.get_tokens(code)
+
+
+@serv.app.route('/upload', methods=['POST'])
+def upload():
+    return serv.upload()
+
+
+@serv.app.route('/search', methods=['POST'])
+def search():
+    return serv.search()
+
+    # try:
+    #     results = databaseSearch(request.json['search_spec'])
+    # except ValueError as e:
+    #     return ('ERROR: search parameters are wrong or incomplete '
+    #             '({0})').format(e), HTTP_400_BAD_REQUEST
+
+    # return results, HTTP_200_OK
 
 
 """

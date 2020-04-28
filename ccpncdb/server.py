@@ -3,6 +3,8 @@ import json
 from datetime import timedelta
 from flask import Flask, Response, session, request, make_response
 
+from ccpncdb.config import Config
+from ccpncdb.magresdb import MagresDB
 from ccpncdb.orcid import OrcidConnection, NoOrcidTokens, OrcidError
 
 
@@ -18,9 +20,10 @@ class MainServer(object):
 
         self._path = path
         self._static_folder = os.path.join(path, 'static')
+        self._config_folder = os.path.join(path, 'config')
+
         self._app = Flask('ccpnc-database', static_url_path='',
                           static_folder=self._static_folder)
-
         # Load secret key
         self._app.secret_key = open(os.path.join(path, 'secret',
                                                  'secret.key')).read().strip()
@@ -39,12 +42,27 @@ class MainServer(object):
             self._orcid_details, session)
         self._orcid = self._app.extensions['orcidlink']
 
+        self._config = Config(os.path.join(self._config_folder,
+                                           'config.json'))
+        self._db = MagresDB(config=self._config)
+
     @property
     def app(self):
         return self._app
 
     def send_static(self, url):
         return self._app.send_static_file(url)
+
+    def authenticate(self):
+
+        client_details = {
+            'orcid': request.values.get('orcid', None),
+            'access_token': request.values.get('access_token', None)
+        }
+
+        auth = self._orcid.authenticate(client_details)
+
+        return auth
 
     def logout(self):
         self._orcid.delete_tokens()
@@ -57,3 +75,24 @@ class MainServer(object):
             return str(e), self.HTTP_401_UNAUTHORIZED
 
         return json.dumps(tk), self.HTTP_200_OK
+
+    def upload(self):
+
+        # First, authenticate
+        if not self.authenticate():
+            return 'Failed', self.HTTP_401_UNAUTHORIZED
+
+        # Now fetch the actual magres file
+        
+
+        return 'Success', self.HTTP_200_OK
+
+    def search(self):
+        query = request.json['search_spec']
+        results = self._db.search_record(query)
+
+        print(results)
+        for r in results:
+            print(r)
+
+        return '{}', self.HTTP_200_OK

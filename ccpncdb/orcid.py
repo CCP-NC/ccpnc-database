@@ -82,7 +82,7 @@ class OrcidConnection(object):
         try:
             auth = True
             for k in ('orcid', 'access_token'):
-                auth = auth and (client_details[k] == tk[k])
+                auth = (auth and (client_details[k] == tk[k]))
         except KeyError:
             raise ValueError('Incomplete client details')
 

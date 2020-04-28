@@ -23,9 +23,11 @@ class MagresDBError(Exception):
 
 class MagresDB(object):
 
-    def __init__(self, dbname='ccpnc'):
+    def __init__(self, dbname='ccpnc', config=None):
 
-        self.config = Config()
+        if config is None:
+            config = Config()
+        self.config = config
         self.client = MongoClient(host=self.config.db_url,
                                   port=self.config.db_port)
         ccpnc = self.client[dbname]
