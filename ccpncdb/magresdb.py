@@ -2,7 +2,7 @@ from datetime import datetime
 from collections import namedtuple
 from gridfs import GridFS, NoFile
 from bson.objectid import ObjectId
-from pymongo import MongoClient, ReturnDocument
+from pymongo import ReturnDocument
 
 from ccpncdb.utils import (read_magres_file, extract_formula,
                            extract_stochiometry, extract_molecules,

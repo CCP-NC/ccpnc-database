@@ -5,10 +5,12 @@ from flask import Flask, Response, session, request, make_response
 
 from ccpncdb.config import Config
 from ccpncdb.magresdb import MagresDB
+from ccpncdb.log import Logger
 from ccpncdb.orcid import OrcidConnection, NoOrcidTokens, OrcidError
 from ccpncdb.utils import split_data
 from ccpncdb.schemas import (magresRecordSchemaUser,
                              magresVersionSchemaUser)
+from ccpncdb.archive import MagresArchive, MagresArchiveError
 
 
 class MainServer(object):
@@ -18,6 +20,11 @@ class MainServer(object):
     HTTP_400_BAD_REQUEST = 400
     HTTP_401_UNAUTHORIZED = 401
     HTTP_500_INTERNAL_SERVER_ERROR = 500
+
+    # Log types
+    LOG_ADDRECORD = 0
+    LOG_ADDARCHIVE = 1
+    LOG_ADDVERSION = 2
 
     def __init__(self, path=''):
 
@@ -49,6 +56,7 @@ class MainServer(object):
                                            'config.json'))
         self._client = self._config.client()
         self._db = MagresDB(client=self._client)
+        self._logger = Logger(client=self._client)
 
     @property
     def app(self):
@@ -93,24 +101,75 @@ class MainServer(object):
         # Upload: single, or multiple?
         is_multi = request.values.get('_upload_multi', 'false') == 'true'
 
+        # Fetch the actual magres file
+        fd = request.files['magres-file']
+
+        # Now extract the record information
+        rdata, vdata = split_data(dict(request.values),
+                                  magresRecordSchemaUser,
+                                  magresVersionSchemaUser)
+        # Add user details
+        rdata['orcid'] = user_info['orcid-identifier']
+        rdata['user_name'] = (user_info['person']['name']
+                              ['credit-name']['value'])
+
         if not is_multi:
-            # Fetch the actual magres file
-            fd = request.files['magres-file']
-
-            # Now extract the record information
-            rdata, vdata = split_data(dict(request.values),
-                                      magresRecordSchemaUser,
-                                      magresVersionSchemaUser)
-            # Add user details
-            rdata['orcid'] = user_info['orcid-identifier']
-            rdata['user_name'] = (user_info['person']['name']
-                                  ['credit-name']['value'])
-
             # And upload
             res = self._db.add_record(fd, rdata, vdata)
 
             if not res.successful:
                 return 'Uploading failed', self.HTTP_500_INTERNAL_SERVER_ERROR
+
+            # Log the operation
+            logdata = {
+                'type': self.LOG_ADDRECORD,
+                'mdbref': res.mdbref,
+                'id': res.id
+            }
+
+            self._logger.log('Added record', rdata['orcid']['path'], logdata)
+
+        else:
+            # It's an archive!
+            try:
+                archive = MagresArchive(fd, record_data=rdata,
+                                        version_data=vdata)
+            except MagresArchiveError as e:
+                return ('Invalid archive: {0}'.format(e),
+                        self.HTTP_400_BAD_REQUEST)
+
+            successful = []
+            mdbrefs = []
+            ids = []
+
+            for f in archive.files():
+
+                res = self._db.add_record(f.contents,
+                                          f.record_data,
+                                          f.version_data)
+
+                successful.append(res.successful)
+                if res.successful:
+                    mdbrefs.append(res.mdbref)
+                    ids.append(res.id)
+
+            # How many were successful?
+            n = sum(successful)
+            N = len(successful)
+
+            if n == 0:
+                return 'Uploading failed', self.HTTP_500_INTERNAL_SERVER_ERROR
+            elif n < N:
+                return 'Uploaded {0}/{1} files from archive'.format(n, N)
+
+            # Log the operation
+            logdata = {
+                'type': self.LOG_ADDARCHIVE,
+                'mdbrefs': mdbrefs,
+                'ids': ids
+            }
+
+            self._logger.log('Added archive', rdata['orcid']['path'], logdata)
 
         return 'Success', self.HTTP_200_OK
 
