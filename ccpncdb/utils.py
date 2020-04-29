@@ -49,7 +49,10 @@ def read_magres_file(mfile):
         mstr = mfile.read()
     else:
         mstr = mfile
-    matoms = read_magres(StringIO(mstr.decode('utf-8')))
+
+    if hasattr(mstr, 'decode'):
+        mstr = mstr.decode('utf-8')
+    matoms = read_magres(StringIO(mstr))
 
     return {'string': mstr, 'Atoms': matoms}
 
