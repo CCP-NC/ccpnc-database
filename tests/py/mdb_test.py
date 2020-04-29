@@ -32,12 +32,6 @@ _fake_vdata = {
 }
 
 
-def rndname_gen():
-    m = md5()
-    m.update(bytes(str(dt.now()), 'UTF-8'))
-    return m.hexdigest()
-
-
 def clean_db(method):
     def clean_method(self):
         # Start with a clean database
