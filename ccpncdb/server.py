@@ -47,7 +47,8 @@ class MainServer(object):
 
         self._config = Config(os.path.join(self._config_folder,
                                            'config.json'))
-        self._db = MagresDB(config=self._config)
+        self._client = self._config.client()
+        self._db = MagresDB(client=self._client)
 
     @property
     def app(self):

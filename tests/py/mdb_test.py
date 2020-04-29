@@ -50,10 +50,14 @@ def clean_db(method):
 class MagresDBTest(unittest.TestCase):
 
     def setUp(self):
+        from ccpncdb.config import Config
         from ccpncdb.magresdb import MagresDB
         from ccpncdb.utils import read_magres_file
 
-        self.mdb = MagresDB('ccpnc-test')
+        config = Config()
+        client = config.client()
+
+        self.mdb = MagresDB(client, 'ccpnc-test')
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
             self.eth = read_magres_file(f)
 

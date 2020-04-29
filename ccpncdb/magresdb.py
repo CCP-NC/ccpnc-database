@@ -4,7 +4,6 @@ from gridfs import GridFS, NoFile
 from bson.objectid import ObjectId
 from pymongo import MongoClient, ReturnDocument
 
-from ccpncdb.config import Config
 from ccpncdb.utils import (read_magres_file, extract_formula,
                            extract_stochiometry, extract_molecules,
                            extract_nmrdata)
@@ -23,13 +22,9 @@ class MagresDBError(Exception):
 
 class MagresDB(object):
 
-    def __init__(self, dbname='ccpnc', config=None):
+    def __init__(self, client, dbname='ccpnc'):
 
-        if config is None:
-            config = Config()
-        self.config = config
-        self.client = MongoClient(host=self.config.db_url,
-                                  port=self.config.db_port)
+        self.client = client
         ccpnc = self.client[dbname]
 
         # Grab the collections
@@ -41,8 +36,6 @@ class MagresDB(object):
         self.magresIndex = ccpnc.magresIndex
         # 3. Unique ID counter
         self.magresIDcount = ccpnc.magresIDcount
-        # 4. Logger
-        self.magresLog = ccpnc.magresLog
 
     def add_record(self, mfile, record_data, version_data):
 

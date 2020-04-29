@@ -1,6 +1,7 @@
 import os
 import json
 import ccpncdb
+from pymongo import MongoClient
 
 
 class Config(object):
@@ -24,3 +25,7 @@ class Config(object):
     @property
     def db_port(self):
         return self.data.get('db_port', 27017)
+
+    def client(self):
+        return MongoClient(host=self.db_url,
+                           port=self.db_port)
