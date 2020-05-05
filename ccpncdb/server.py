@@ -4,7 +4,7 @@ from datetime import timedelta
 from flask import Flask, Response, session, request, make_response
 
 from ccpncdb.config import Config
-from ccpncdb.magresdb import MagresDB
+from ccpncdb.magresdb import MagresDB, MagresDBError
 from ccpncdb.log import Logger
 from ccpncdb.orcid import OrcidConnection, NoOrcidTokens, OrcidError
 from ccpncdb.utils import split_data
@@ -115,7 +115,10 @@ class MainServer(object):
 
         if not is_multi:
             # And upload
-            res = self._db.add_record(fd, rdata, vdata)
+            try:
+                res = self._db.add_record(fd, rdata, vdata)
+            except MagresDBError as e:
+                return str(e), self.HTTP_400_BAD_REQUEST
 
             if not res.successful:
                 return 'Uploading failed', self.HTTP_500_INTERNAL_SERVER_ERROR
@@ -172,6 +175,55 @@ class MainServer(object):
             self._logger.log('Added archive', rdata['orcid']['path'], logdata)
 
         return 'Success', self.HTTP_200_OK
+
+    def upload_version(self):
+        
+        # First, authenticate
+        user_info = self.request_user_info()
+        if user_info is None:
+            return 'Failed', self.HTTP_401_UNAUTHORIZED
+
+        fd = request.files.get('magres-file', None)
+
+        print(request.values)
+
+        """# Authenticate and retrieve user info
+            try:
+                user_info = user_info_auth(app.extensions['orcidlink'],
+                                           request.values.get('access_token'),
+                                           request.values.get('orcid'))
+            except OrcidError as e:
+                # Something went wrong in the request itself
+                return str(e), HTTP_401_UNAUTHORIZED
+
+            # Compile everything
+            try:
+                # Obligatory values
+                index_id = request.values.get('index_id')
+                orcid = user_info['orcid-identifier']
+
+                # Optional ones
+                data = {
+                    k: request.values.get(k) for k in magresVersionOptionals
+                    if (request.values.get(k) is not None and
+                        len(request.values.get(k)) > 0)
+                }
+
+                success = editMagresFile(index_id, orcid,
+                                         data, request.files.get('magres-file'))
+
+            except Exception as e:
+                return (e.__class__.__name__ + ': ' + str(e),
+                        HTTP_500_INTERNAL_SERVER_ERROR)
+
+            if success:
+                return 'Success', HTTP_200_OK
+            else:
+                return 'Failed', HTTP_500_INTERNAL_SERVER_ERROR
+
+
+        [description]
+        """
 
     def search(self):
         query = request.json['search_spec']

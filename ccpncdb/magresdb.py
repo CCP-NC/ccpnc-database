@@ -1,8 +1,10 @@
+import re
 from datetime import datetime
 from collections import namedtuple
 from gridfs import GridFS, NoFile
 from bson.objectid import ObjectId
 from pymongo import ReturnDocument
+from schema import SchemaError
 
 from ccpncdb.utils import (read_magres_file, extract_formula,
                            extract_stochiometry, extract_molecules,
@@ -63,8 +65,11 @@ class MagresDB(object):
         record_data.update(record_autodata)
         try:
             magresRecordSchema.validate(record_data)
-        except Exception as e:
-            raise MagresDBError('Trying to upload invalid record: ' + str(e))
+        except SchemaError as e:
+            # Identify key
+            kmatch = re.compile(r'Key \'([a-zA-Z\-]+)\'').match(str(e))
+            raise MagresDBError('Invalid value for field: '
+                '[{0}]'.format(kmatch.groups()[0]))
 
         # Add the record to the database
         res = self.magresIndex.insert_one(record_data)
@@ -100,8 +105,11 @@ class MagresDB(object):
         version_data.update(version_autodata)
         try:
             magresVersionSchema.validate(version_data)
-        except Exception as e:
-            raise MagresDBError('Trying to upload invalid version: ' + str(e))
+        except SchemaError as e:
+            # Identify key
+            kmatch = re.compile(r'Key \'([a-zA-Z\-]+)\'').match(str(e))
+            raise MagresDBError('Invalid value for field: '
+                '[{0}]'.format(kmatch.groups()[0]))
 
         if update_record:
             # Update the automatically generated elements in the record

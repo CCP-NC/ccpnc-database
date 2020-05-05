@@ -45,6 +45,10 @@ def get_tokens(code):
 def upload():
     return serv.upload()
 
+@serv.app.route('/edit', methods=['POST'])
+def edit():
+    return serv.upload_version()
+
 
 @serv.app.route('/search', methods=['POST'])
 def search():
