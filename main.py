@@ -54,14 +54,6 @@ def edit():
 def search():
     return serv.search()
 
-    # try:
-    #     results = databaseSearch(request.json['search_spec'])
-    # except ValueError as e:
-    #     return ('ERROR: search parameters are wrong or incomplete '
-    #             '({0})').format(e), HTTP_400_BAD_REQUEST
-
-    # return results, HTTP_200_OK
-
 
 """
 

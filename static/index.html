@@ -209,7 +209,7 @@
                                 </td>
                                 <td colspan="3" rowspan="" headers="">
                                     <input class="cc-ctrl cc-bulma" type="text" placeholder="doi"
-                                        ng-model="search_spec.args.doi">
+                                        ng-model="search_spec.args.doi" ng-init="search_spec.args.doi = null">
                                 </td>
                             </tr>
                         </tbody>
@@ -220,7 +220,7 @@
                                 </td>
                                 <td colspan="3" rowspan="" headers="">
                                     <input class="cc-ctrl cc-bulma" type="text" placeholder="Element symbol"
-                                        ng-model="search_spec.args.sp">
+                                        ng-model="search_spec.args.sp" ng-init="search_spec.args.sp = null">
                                 </td>
                             </tr>
                             <tr>
@@ -229,14 +229,14 @@
                                 </td>
                                 <td colspan="1" rowspan="" headers="">
                                     <input class="cc-ctrl cc-bulma" type="text" placeholder="Minimum shielding (ppm)"
-                                        ng-model="search_spec.args.minms">
+                                        ng-model="search_spec.args.minms" ng-init="search_spec.args.minms = 0">
                                 </td>
                                 <td colspan="1" rowspan="" headers="">
                                     Max. MS value
                                 </td>
                                 <td colspan="1" rowspan="" headers="">
                                     <input class="cc-ctrl cc-bulma" type="text" placeholder="Maximum shielding (ppm)"
-                                        ng-model="search_spec.args.maxms">
+                                        ng-model="search_spec.args.maxms" ng-init="search_spec.args.maxms = 0">
                                 </td>
                             </tr>
                         </tbody>
@@ -248,7 +248,8 @@
                                 <td colspan="3" rowspan="" headers="">
                                     <input class="cc-ctrl cc-bulma" type="text" size="50"
                                         placeholder="Pattern (* and ? wildcards allowed)"
-                                        ng-model="search_spec.args.pattern">
+                                        ng-model="search_spec.args.pattern"
+                                        ng-init="search_spec.args.pattern = null">
                                 </td>
                             </tr>
                         </tbody>
@@ -260,7 +261,8 @@
                                 <td colspan="3" rowspan="" headers="">
                                     <input class="cc-ctrl cc-bulma" type="text" size="50"
                                         placeholder="Pattern (* and ? wildcards allowed)"
-                                        ng-model="search_spec.args.pattern">
+                                        ng-model="search_spec.args.pattern"
+                                        ng-init="search_spec.args.pattern = null">
                                 </td>
                             </tr>
                         </tbody>
@@ -271,7 +273,8 @@
                                 </td>
                                 <td colspan="3" rowspan="" headers="">
                                     <input class="cc-ctrl cc-bulma" type="text" placeholder="Chemical formula"
-                                        ng-model="search_spec.args.formula">
+                                        ng-model="search_spec.args.formula"
+                                        ng-init="search_spec.args.formula = null">
                                 </td>
                             </tr>
                             <tr>
@@ -280,7 +283,7 @@
                                 </td>
                                 <td colspan="3" rowspan="" headers="">
                                     <input id="formula-subset-check-$index" class="cc-ctrl cc-bulma" type="checkbox"
-                                        ng-model="search_spec.args.subset" ng-init="search_spec.args.subset = false;">
+                                        ng-model="search_spec.args.subset" ng-init="search_spec.args.subset = false">
                                 </td>
                             </tr>
                         </tbody>
@@ -291,7 +294,8 @@
                                 </td>
                                 <td colspan="3" rowspan="" headers="">
                                     <input class="cc-ctrl cc-bulma" type="text" placeholder="Molecular formula"
-                                        ng-model="search_spec.args.formula">
+                                        ng-model="search_spec.args.formula"
+                                        ng-init="search_spec.args.formula = null">
                                 </td>
                             </tr>
                         </tbody>
@@ -302,7 +306,8 @@
                                 </td>
                                 <td colspan="3" rowspan="" headers="">
                                     <input class="cc-ctrl cc-bulma" type="text" size="10" placeholder="ABCDEF01"
-                                        ng-model="search_spec.args.csdref">
+                                        ng-model="search_spec.args.csdref"
+                                        ng-init="search_spec.args.csdref = null">
                                 </td>
                             </tr>
                         </tbody>
@@ -313,7 +318,8 @@
                                 </td>
                                 <td colspan="3" rowspan="" headers="">
                                     <input class="cc-ctrl cc-bulma" type="text" size="10" placeholder="0123456"
-                                        ng-model="search_spec.args.csdnum">
+                                        ng-model="search_spec.args.csdnum"
+                                        ng-init="search_spec.args.csdnum = null">
                                 </td>
                             </tr>
                         </tbody>
@@ -323,7 +329,9 @@
                                     License
                                 </td>
                                 <td colspan="3" rowspan="" headers="">
-                                    <select class="cc-ctrl cc-bulma" selected="pddl" ng-model="search_spec.args.license">
+                                    <select class="cc-ctrl cc-bulma" 
+                                        ng-model="search_spec.args.license"
+                                        ng-init="search_spec.args.license = 'pddl'">
                                         <option value="pddl">PDDL v1.0</option>
                                         <option value="odc-by">ODC-By v1.0</option>
                                         <option value="cc-by">CC-By v4.0</option>

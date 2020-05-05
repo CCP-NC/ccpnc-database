@@ -227,10 +227,6 @@ class MainServer(object):
 
     def search(self):
         query = request.json['search_spec']
-        results = self._db.search_record(query)
+        results = list(self._db.search_record(query))
 
-        print(results)
-        for r in results:
-            print(r)
-
-        return '{}', self.HTTP_200_OK
+        return json.dumps(results, default=str), self.HTTP_200_OK

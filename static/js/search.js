@@ -8,6 +8,8 @@ function parseSearchResults(s) {
         console.log(s);
     }
 
+    console.log(results);
+
     return results
 }
 
@@ -33,7 +35,8 @@ function addSearchController(ngApp) {
 
         $scope.add_spec = function() {
             $scope.search_specs.push({
-                'type': 'doi'
+                'type': 'doi',
+                'args': {}
             });
         }
 
@@ -44,9 +47,6 @@ function addSearchController(ngApp) {
 
         $scope.reset_search_args = function(new_type) {
             $scope.search_args = {};
-            for (var argname in searchTypes[new_type]) {
-                $scope.search_args[argname] = null;
-            }
         }
 
         $scope.add_spec();
@@ -55,7 +55,6 @@ function addSearchController(ngApp) {
         var last_query = null;
 
         $scope.search = function() {
-            // For now just a test thing to keep in mind how it's done
             $scope.message = '';
             query = {
                 url: ngApp.server_app + '/search',

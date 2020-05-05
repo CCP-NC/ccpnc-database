@@ -4,13 +4,13 @@ from collections import namedtuple
 from gridfs import GridFS, NoFile
 from bson.objectid import ObjectId
 from pymongo import ReturnDocument
-from schema import SchemaError
 
 from ccpncdb.utils import (read_magres_file, extract_formula,
                            extract_stochiometry, extract_molecules,
                            extract_nmrdata)
 from ccpncdb.schemas import (magresVersionSchema,
-                             magresRecordSchema)
+                             magresRecordSchema,
+                             validate_with)
 from ccpncdb.archive import MagresArchive
 from ccpncdb.search import build_search
 
@@ -63,13 +63,15 @@ class MagresDB(object):
 
         record_data = dict(record_data)
         record_data.update(record_autodata)
-        try:
-            magresRecordSchema.validate(record_data)
-        except SchemaError as e:
-            # Identify key
-            kmatch = re.compile(r'Key \'([a-zA-Z\-]+)\'').match(str(e))
-            raise MagresDBError('Invalid value for field: '
-                '[{0}]'.format(kmatch.groups()[0]))
+        valres = validate_with(record_data, magresRecordSchema)
+        if not valres.result:
+            if valres.invalid is None:
+                # Missing keys
+                raise MagresDBError('Missing keys: ' +
+                                    ', '.join(valres.missing))
+            else:
+                # Invalid key
+                raise MagresDBError('Invalid key: ' + valres.invalid)
 
         # Add the record to the database
         res = self.magresIndex.insert_one(record_data)
@@ -103,13 +105,15 @@ class MagresDB(object):
         }
         version_data = dict(version_data)
         version_data.update(version_autodata)
-        try:
-            magresVersionSchema.validate(version_data)
-        except SchemaError as e:
-            # Identify key
-            kmatch = re.compile(r'Key \'([a-zA-Z\-]+)\'').match(str(e))
-            raise MagresDBError('Invalid value for field: '
-                '[{0}]'.format(kmatch.groups()[0]))
+        valres = validate_with(version_data, magresVersionSchema)
+        if not valres.result:
+            if valres.invalid is None:
+                # Missing keys
+                raise MagresDBError('Missing keys: ' +
+                                    ', '.join(valres.missing))
+            else:
+                # Invalid key
+                raise MagresDBError('Invalid key: ' + valres.invalid)
 
         if update_record:
             # Update the automatically generated elements in the record

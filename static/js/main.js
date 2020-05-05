@@ -14,6 +14,7 @@
   // Add directives
   console.log('Loading directives...');
   addTemplateDirectives(ccpncApp);
+  addRecordDirective(ccpncApp);
 
   // Add controllers
   console.log('Loading controllers...');
