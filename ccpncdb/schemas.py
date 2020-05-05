@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 from collections import namedtuple, OrderedDict
 from schema import Schema, And, Optional
+from schema import (SchemaError, SchemaMissingKeyError)
 
 
 def _one_of(vals):
@@ -16,12 +17,13 @@ def _merge_schemas(s1, s2):
     d.update(s2.schema)
     return Schema(d)
 
+
 """Data schemas for entries to be uploaded to the Database."""
 
 orcid_path_re = re.compile('[0-9]{4}-'*3+r'[0-9]{3}[0-9X]{1}\Z')
 csd_refcode_re = re.compile(r'[A-Z]{6}([0-9]{2})?\Z')
 csd_number_re = re.compile(r'[0-9]{6,7}\Z')
-namestr_re = re.compile(r'[a-zA-Z0-9-_\.\s]*\Z')
+namestr_re = re.compile(r'[a-zA-Z0-9\-_\.\s]*\Z')
 
 # License types
 lictypes = _one_of(['pddl', 'odc-by', 'cc-by'])
@@ -47,11 +49,11 @@ magresVersionSchemaUser = Schema({
     'license': lictypes,
     # User input, optional
     Optional('doi', ''): str,
-    Optional('extref', ''): namestr_re,
+    Optional('extref', ''): namestr_re.match,
     Optional('csd_ref', ''): csd_refcode_re.match,
     Optional('csd_num', ''): csd_number_re.match,
-    Optional('chemform', ''): namestr_re,
-    Optional('notes', ''): namestr_re
+    Optional('chemform', ''): namestr_re.match,
+    Optional('notes', ''): namestr_re.match
 })
 
 magresVersionSchemaAutomatic = Schema({
@@ -65,7 +67,7 @@ magresVersionSchema = _merge_schemas(magresVersionSchemaUser,
 
 magresRecordSchemaUser = Schema({
     # User input, mandatory
-    'chemname': And(namestr_re, len),
+    'chemname': And(namestr_re.match, len),
     'orcid': orcidSchema,
     # User input, optional
 })
@@ -94,3 +96,30 @@ magresRecordSchemaAutomatic = Schema({
 magresRecordSchema = _merge_schemas(magresRecordSchemaUser,
                                     magresRecordSchemaAutomatic)
 
+ValidationResult = namedtuple('ValidationResult',
+                              ['result', 'missing', 'invalid'])
+
+
+def validate_with(data, schema):
+
+    # Validate the data with the given schema, but return extracted info
+    # on what has gone wrong (if anything)
+
+    result = True
+    missing = []
+    invalid = None
+
+    try:
+        schema.validate(data)
+    except SchemaMissingKeyError as e:
+        # Parse which ones are missing
+        kw = str(e).split('Missing keys:')[1].split(',')
+        kw = list(map(lambda s: s.strip()[1:-1], kw))
+        missing = kw
+        result = False
+    except SchemaError as e:
+        result = False
+        invalid = re.compile('Key \'([a-zA-Z0-9_]+)\''
+                             ).match(str(e)).groups()[0]
+
+    return ValidationResult(result, missing, invalid)
