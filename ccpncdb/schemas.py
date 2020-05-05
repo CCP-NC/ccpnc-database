@@ -45,7 +45,6 @@ magresVersionSchemaUser = Schema({
     # User input, mandatory
     'license': lictypes,
     # User input, optional
-    Optional('user_institution', ''): str,
     Optional('doi', ''): str,
     Optional('extref', ''): str,
     Optional('csd_ref', ''): csd_refcode_re.match,
