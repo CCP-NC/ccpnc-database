@@ -21,7 +21,7 @@ def _merge_schemas(s1, s2):
 orcid_path_re = re.compile('[0-9]{4}-'*3+r'[0-9]{3}[0-9X]{1}\Z')
 csd_refcode_re = re.compile(r'[A-Z]{6}([0-9]{2})?\Z')
 csd_number_re = re.compile(r'[0-9]{6,7}\Z')
-namestr_re = re.compile(r'[a-zA-Z0-9-_\.]*')
+namestr_re = re.compile(r'[a-zA-Z0-9-_\.\s]*\Z')
 
 # License types
 lictypes = _one_of(['pddl', 'odc-by', 'cc-by'])
