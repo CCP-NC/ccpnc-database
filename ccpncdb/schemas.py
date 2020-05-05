@@ -21,6 +21,7 @@ def _merge_schemas(s1, s2):
 orcid_path_re = re.compile('[0-9]{4}-'*3+r'[0-9]{3}[0-9X]{1}\Z')
 csd_refcode_re = re.compile(r'[A-Z]{6}([0-9]{2})?\Z')
 csd_number_re = re.compile(r'[0-9]{6,7}\Z')
+namestr_re = re.compile(r'[a-zA-Z0-9-_\.]*')
 
 # License types
 lictypes = _one_of(['pddl', 'odc-by', 'cc-by'])
@@ -46,11 +47,11 @@ magresVersionSchemaUser = Schema({
     'license': lictypes,
     # User input, optional
     Optional('doi', ''): str,
-    Optional('extref', ''): str,
+    Optional('extref', ''): namestr_re,
     Optional('csd_ref', ''): csd_refcode_re.match,
     Optional('csd_num', ''): csd_number_re.match,
-    Optional('chemform', ''): str,
-    Optional('notes', ''): str
+    Optional('chemform', ''): namestr_re,
+    Optional('notes', ''): namestr_re
 })
 
 magresVersionSchemaAutomatic = Schema({
@@ -64,7 +65,7 @@ magresVersionSchema = _merge_schemas(magresVersionSchemaUser,
 
 magresRecordSchemaUser = Schema({
     # User input, mandatory
-    'chemname': And(str, len),
+    'chemname': And(namestr_re, len),
     'orcid': orcidSchema,
     # User input, optional
 })
