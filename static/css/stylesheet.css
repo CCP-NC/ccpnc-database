@@ -168,3 +168,36 @@ ul.discs {
 ul.discs li {
     list-style-type: disc;
 }
+
+.expandable {
+    position: relative;
+    max-height: 30px;
+    overflow-y: hidden;
+    transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+    background-color: rgb(230, 230, 230);
+}
+
+.expandable::after {
+    position: absolute;
+    padding-top: 10px;
+    display: block;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    font-weight: bold;
+    content: '▼ Hover to expand ▼';
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255 ,255,1) 100%);
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+.expandable:hover {
+    max-height: 1000px;
+    transition: max-height 1s ease-in-out;
+}
+
+.expandable:hover::after {
+    opacity: 0;
+}

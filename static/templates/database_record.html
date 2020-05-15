@@ -30,7 +30,7 @@
             <tr>
                 <th class="width-1">Version:</th>
                 <td class="width-3" colspan="3">
-                    <select class="cc-ctrl cc-bulma" ng-model="_selected_index" ng-init="_selected_index=(databaseRecord.version_history.length-1)+''">
+                    <select class="cc-ctrl cc-bulma" ng-model="_selected_index" ng-init="_selected_index=(databaseRecord.version_history.length-1)+'';">
                         <option ng-repeat="v in databaseRecord.version_history" value="{{$index}}"
                         ng-selected="$last">Version {{$index+1}} [{{v.date}}]</option>
                     </select>                                        
@@ -56,6 +56,14 @@
             <tr ng-if="databaseRecord.version_history[_selected_index]['csd-ref']">
                 <th class="width-1">CSD Refcode:</th>
                 <td class="width-3" colspan="3">{{databaseRecord.version_history[_selected_index]['csd-ref']}}</td>
+            </tr>
+            <tr ng-if="databaseRecord.version_history[_selected_index].magres_calc">
+                <th class="width-1">Calculation details:</th>
+                <td class="width-3" colspan="3">
+                    <pre class="expandable">
+                        <p ng-repeat="(name, value) in mcalc_blocks[_selected_index]">{{name}}: {{value[0]}}</p>
+                    </pre>
+                </td>
             </tr>
         </tbody>
     </table>
