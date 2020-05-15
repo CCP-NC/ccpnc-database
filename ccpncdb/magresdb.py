@@ -39,6 +39,22 @@ class MagresDB(object):
         # 3. Unique ID counter
         self.magresIDcount = ccpnc.magresIDcount
 
+    def _auto_recdata(self, matoms):
+        # Compute a dictionary of all data that needs to be extracted
+        # automatically from a magres Atoms object
+        formula = extract_formula(matoms)
+        mols = extract_molecules(matoms)
+
+        autodata = {
+            'formula': formula,
+            'stochiometry': extract_stochiometry(formula),
+            'molecules': mols,
+            'Z': len(mols),
+            'nmrdata': extract_nmrdata(matoms)
+        }
+
+        return autodata
+
     def add_record(self, mfile, record_data, version_data):
 
         # Read in magres file
@@ -47,19 +63,14 @@ class MagresDB(object):
         matoms = magres['Atoms']
 
         # Generate automated data
-        formula = extract_formula(matoms)
-        mols = extract_molecules(matoms)
         record_autodata = {
             'visible': True,
             'mdbref': '0000000',            # Placeholder
             'version_count': 0,
-            'version_history': [],          # Empty for now
-            'formula': formula,
-            'stochiometry': extract_stochiometry(formula),
-            'molecules': mols,
-            'Z': len(mols),
-            'nmrdata': extract_nmrdata(matoms)
+            'version_history': []          # Empty for now
         }
+
+        record_autodata.update(self._auto_recdata(matoms))
 
         record_data = dict(record_data)
         record_data.update(record_autodata)
@@ -115,38 +126,20 @@ class MagresDB(object):
                 # Invalid key
                 raise MagresDBError('Invalid key: ' + valres.invalid)
 
+        to_set = {'last_version': version_data}
+
         if update_record:
             # Update the automatically generated elements in the record
+            to_set.update(self._auto_recdata(matoms))
 
-            # Generate automated data
-            formula = extract_formula(matoms)
-            mols = extract_molecules(matoms)
-            to_set = {
-                'last_version': version_data,
-                'formula': formula,
-                'stochiometry': extract_stochiometry(formula),
-                'molecules': mols,
-                'Z': len(mols),
-                'nmrdata': extract_nmrdata(matoms)
-            }
-
-            res = self.magresIndex.update_one({'_id': ObjectId(record_id)},
-                                              {'$push': {
-                                                  'version_history':
-                                                  version_data
-                                              },
-                '$inc': {'version_count': 1},
-                '$set': to_set
-            })
-        else:
-            res = self.magresIndex.update_one({'_id': ObjectId(record_id)},
-                                              {'$push': {
-                                                  'version_history':
-                                                  version_data
-                                              },
-                '$inc': {'version_count': 1},
-                '$set': {'last_version': version_data}
-            })
+        res = self.magresIndex.update_one({'_id': ObjectId(record_id)},
+                                          {'$push': {
+                                              'version_history':
+                                              version_data
+                                          },
+            '$inc': {'version_count': 1},
+            '$set': to_set
+        })
 
         if not res.acknowledged:
             raise MagresDBError('Could not push new version for record ' +

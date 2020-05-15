@@ -11,15 +11,17 @@
             </tr>
             <tr>
                 <th class="width-1">ORCID:</th>
-                <td class="width-3"><a href="{{databaseRecord.orcid_uri}}" target="blank">{{databaseRecord.orcid}}</a></td>
+                <td class="width-3"><a href="{{databaseRecord.orcid.uri}}" target="blank">{{databaseRecord.orcid.path}}</a></td>
             </tr>
             <tr>
                 <th class="width-1">Formula:</th>
-                <td class="width-3">{{databaseRecord.formula}}</td>
+                <td class="width-3">
+                    <span ng-repeat="el in databaseRecord.formula">{{el.species}}<sub>{{el.n}}</sub></span>
+                </td>
             </tr>
             <tr>
                 <th class="width-1">License:</th>
-                <td class="width-3" ng-switch="databaseRecord.license">
+                <td class="width-3" ng-switch="databaseRecord.last_version.license">
                     <a class="has-text-weight-bold" href="http://www.opendatacommons.org/licenses/pddl/1.0/" ng-switch-when="pddl" target="_blank">PDDL</a>
                     <a class="has-text-weight-bold" href="https://opendatacommons.org/licenses/by/1-0/index.html" ng-switch-when="odc-by" target="_blank">ODC-By</a>
                     <a class="has-text-weight-bold" href="https://creativecommons.org/licenses/by/4.0" ng-switch-when="cc-by" target="_blank">CC-By</a>
