@@ -59,7 +59,8 @@ magresVersionSchemaUser = Schema({
 magresVersionSchemaAutomatic = Schema({
     # Automatically generated
     'date': datetime,
-    'magresFilesID': str
+    'magresFilesID': str,
+    'magres_calc': str,
 })
 
 magresVersionSchema = _merge_schemas(magresVersionSchemaUser,

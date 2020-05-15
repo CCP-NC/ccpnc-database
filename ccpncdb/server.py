@@ -177,7 +177,7 @@ class MainServer(object):
         return 'Success', self.HTTP_200_OK
 
     def upload_version(self):
-        
+
         # First, authenticate
         user_info = self.request_user_info()
         if user_info is None:
@@ -230,3 +230,38 @@ class MainServer(object):
         results = list(self._db.search_record(query))
 
         return json.dumps(results, default=str), self.HTTP_200_OK
+
+    def get_record(self):
+        mdbref = request.json['mdbref']
+        query = [{'type': 'mdbref', 'args': {'mdbref': mdbref}}]
+        results = list(self._db.search_record(query))
+
+        n = len(results)
+
+        if n == 1:
+            return json.dumps(results[0], default=str), self.HTTP_200_OK
+        elif n == 0:
+            return '{}', self.HTTP_400_BAD_REQUEST
+        elif n > 1:
+            # What? Should not happen
+            return '{}', self.HTTP_500_INTERNAL_SERVER_ERROR
+            self._logger.log('Duplicate MDBREF found', 'N/A',
+                             {'mdbref': mdbref})
+
+    def get_magres(self):
+        fs_id = request.args.get('magres_id')
+
+        try:  
+            mfile = self._db.get_magres_file(fs_id)
+        except MagresDBError:
+            return 'File not found', self.HTTP_400_BAD_REQUEST
+        except:
+            return 'Invalid ID', self.HTTP_400_BAD_REQUEST
+
+        resp = make_response(mfile)
+        resp.headers['Content-Type'] = 'text/plain'
+        resp.headers['Content-Disposition'] = 'attachment'
+
+        return resp, self.HTTP_200_OK
+
+

@@ -7,5 +7,10 @@ function addNavigateController(ngApp) {
         $scope.show_menu_mobile = function() {
             $scope.menu_display = !$scope.menu_display;
         }
+
+        // Is there any record MDBREF in the url parameters?
+        var sp = new URLSearchParams(window.location.search.slice(1));
+        $scope.recordref = sp.get('mdbref');
+
     });
 }

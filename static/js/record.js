@@ -8,10 +8,12 @@ function addRecordDirective(ngApp) {
             templateUrl: 'templates/database_record.html',
             scope: {
                 databaseRecord: '=',
+                makePage: '@'
             },
             link: function(scope, elem, attr) {
 
                 scope._edit_popup = {};
+                scope.is_page = attr['makePage'] != null;
 
                 // It's important to use "var" here and keep the scope local
                 // or there's some reference shenanigans...
@@ -91,6 +93,17 @@ function addRecordDirective(ngApp) {
 
                 scope.filename = function() {
                     return this.databaseRecord.chemname + '_v' + (parseInt(this._selected_index)+1) + '.magres';
+                }
+
+                scope.lastdate = function() {
+                    // Prettify the date
+                    var sdate = this.databaseRecord.last_version.date.split(' ');
+                    date = sdate[0].split('-');
+                    time = sdate[1].split('.')[0]; // Discard fractions of second
+                    // Reorder year, month, day
+                    date = date[2] + '-' + date[1] + '-' + date[0];
+
+                    return date + ' ' + time;
                 }
             }
         };

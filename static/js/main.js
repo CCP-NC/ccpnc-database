@@ -24,6 +24,7 @@
   addUploadController(ccpncApp);
   addSearchController(ccpncApp);
   addFileListerController(ccpncApp);
+  addRecordController(ccpncApp);
 
   // Manual bootstrap (automatic one creates problem with order in which scripts are loaded)
   console.log('Bootstrapping app...');

@@ -1,58 +1,65 @@
 <div class="database-record">
     <table class="table is-fullwidth is-bordered is-striped is-fixed">
-        <tbody>
+        <thead ng-if="!is_page">
             <tr>
-                <th class="width-1">Name:</th>
-                <td class="width-3 has-text-primary">{{databaseRecord.chemname}}</td>
-            </tr>
-            <tr ng-if="databaseRecord.chemform != ''">
-                <th class="width-1">Form:</th>
-                <td class="width-3 has-text-primary">{{databaseRecord.chemform}}</td>
+                <th class="width-1">Name: {{makePage}}</th>
+                <td class="width-3 has-text-primary" colspan="3">{{databaseRecord.chemname}}</td>
             </tr>
             <tr>
                 <th class="width-1">ORCID:</th>
-                <td class="width-3"><a href="{{databaseRecord.orcid.uri}}" target="blank">{{databaseRecord.orcid.path}}</a></td>
+                <td class="width-1"><a href="{{databaseRecord.orcid.uri}}" target="blank">{{databaseRecord.orcid.path}}</a></td>
+                <th class="width-1">MDBREF:</th>
+                <td class="width-1"><a href="?mdbref={{databaseRecord.mdbref}}" target="blank">{{databaseRecord.mdbref}}</a></td>
             </tr>
+        </thead>
+        <tbody>
             <tr>
                 <th class="width-1">Formula:</th>
-                <td class="width-3">
-                    <span ng-repeat="el in databaseRecord.formula">{{el.species}}<sub>{{el.n}}</sub></span>
+                <td class="width-3" colspan="3">
+                    <span ng-repeat="el in databaseRecord.formula">
+                        {{el.species}}<sub>{{el.n}}</sub>
+                    </span>
                 </td>
             </tr>
             <tr>
+                <th class="width-1">Number of versions: </th>
+                <td class="width-1">{{databaseRecord.version_history.length}}</td>
+                <th class="width-1">Date of latest version: </th>
+                <td class="width-1">{{lastdate()}}</td>
+            </tr>
+            <tr>
+                <th class="width-1">Version:</th>
+                <td class="width-3" colspan="3">
+                    <select class="cc-ctrl cc-bulma" ng-model="_selected_index" ng-init="_selected_index=(databaseRecord.version_history.length-1)+''">
+                        <option ng-repeat="v in databaseRecord.version_history" value="{{$index}}"
+                        ng-selected="$last">Version {{$index+1}} [{{v.date}}]</option>
+                    </select>                                        
+                </td>
+            </tr>
+        </tbody>
+        <tbody ng-if="is_page">
+            <tr>
+                <td colspan="4"></td>
+            </tr>
+            <tr>
                 <th class="width-1">License:</th>
-                <td class="width-3" ng-switch="databaseRecord.last_version.license">
+                <td class="width-3" ng-switch="databaseRecord.version_history[_selected_index].license" colspan="3">
                     <a class="has-text-weight-bold" href="http://www.opendatacommons.org/licenses/pddl/1.0/" ng-switch-when="pddl" target="_blank">PDDL</a>
                     <a class="has-text-weight-bold" href="https://opendatacommons.org/licenses/by/1-0/index.html" ng-switch-when="odc-by" target="_blank">ODC-By</a>
                     <a class="has-text-weight-bold" href="https://creativecommons.org/licenses/by/4.0" ng-switch-when="cc-by" target="_blank">CC-By</a>
                 </td>
             </tr>
-            <tr>
-                <th colspan="2">
-                    Version specific information
-                </th>
-            </tr>
-            <tr>
-                <th class="width-1">Version:</th>
-                <td class="width-3">
-                    <!-- Note that the ng-init value is cast to a string in order to be detected immediately and avoid an ugly 'blank' option -->
-                    <select class="cc-ctrl cc-bulma" ng-model="_selected_index" ng-init="_selected_index=(databaseRecord.version_history.length-1)+''">
-                        <option ng-repeat="v in databaseRecord.version_history" value="{{$index}}"
-                        ng-selected="$last">Version {{$index+1}} [{{v.date}}]</option>
-                    </select>
-                </td>
-            </tr>
-            <tr ng-if="databaseRecord.version_history[_selected_index].doi != null">
+            <tr ng-if="databaseRecord.version_history[_selected_index].doi">
                 <th class="width-1">DOI:</th>
-                <td class="width-3">{{databaseRecord.version_history[_selected_index].doi}}</td>
+                <td class="width-3" colspan="3">{{databaseRecord.version_history[_selected_index].doi}}</td>
             </tr>
-            <tr ng-if="databaseRecord.version_history[_selected_index]['csd-ref'] != null">
+            <tr ng-if="databaseRecord.version_history[_selected_index]['csd-ref']">
                 <th class="width-1">CSD Refcode:</th>
-                <td class="width-3">{{databaseRecord.version_history[_selected_index]['csd-ref']}}</td>
+                <td class="width-3" colspan="3">{{databaseRecord.version_history[_selected_index]['csd-ref']}}</td>
             </tr>
         </tbody>
     </table>
-    <a class="button is-primary" href="doc?id={{databaseRecord.version_history[_selected_index].magresFilesID}}" download="{{filename()}}">
+    <a class="button is-primary" href="get_magres?magres_id={{databaseRecord.version_history[_selected_index].magresFilesID}}" download="{{filename()}}">
         Download&nbsp;<i class="fa fa-download"></i>
     </a>
     <div class="button is-primary is-pulled-right" ng-click="edit()" ng-show="isown()" download>

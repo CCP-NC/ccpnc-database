@@ -54,6 +54,13 @@ def edit():
 def search():
     return serv.search()
 
+@serv.app.route('/get_record', methods=['POST'])
+def get_record():
+    return serv.get_record()
+
+@serv.app.route('/get_magres', methods=['GET'])
+def get_magres():
+    return serv.get_magres()
 
 """
 

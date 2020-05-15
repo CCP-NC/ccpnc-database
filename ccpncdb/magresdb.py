@@ -1,4 +1,5 @@
 import re
+import json
 from datetime import datetime
 from collections import namedtuple
 from gridfs import GridFS, NoFile
@@ -90,7 +91,7 @@ class MagresDB(object):
             raise MagresDBError('Unknown error while uploading record')
         record_id = res.inserted_id
         # Finally, the version data
-        self.add_version(mstr, record_id, version_data)
+        self.add_version(mstr, record_id, version_data, False)
         # Now that it's all done, assign a unique identifier
         mdbref = self.generate_id()
         # Update the record
@@ -99,7 +100,7 @@ class MagresDB(object):
 
         return MagresDBAddResult(res.acknowledged, str(record_id), mdbref)
 
-    def add_version(self, mfile, record_id, version_data, update_record=False):
+    def add_version(self, mfile, record_id, version_data, update_record=True):
 
         # Read in magres file
         magres = read_magres_file(mfile)
@@ -112,7 +113,10 @@ class MagresDB(object):
 
         version_autodata = {
             'magresFilesID': str(mfile_id),
-            'date': datetime.utcnow()
+            'date': datetime.utcnow(),
+            'magres_calc': json.dumps(matoms.info.get(
+                'magresblock_calculation',
+                {}))
         }
         version_data = dict(version_data)
         version_data.update(version_autodata)
