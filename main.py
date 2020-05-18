@@ -40,7 +40,6 @@ def logout():
 def get_tokens(code):
     return serv.get_tokens(code)
 
-
 @serv.app.route('/upload', methods=['POST'])
 def upload():
     return serv.upload()
@@ -48,7 +47,6 @@ def upload():
 @serv.app.route('/edit', methods=['POST'])
 def edit():
     return serv.upload_version()
-
 
 @serv.app.route('/search', methods=['POST'])
 def search():

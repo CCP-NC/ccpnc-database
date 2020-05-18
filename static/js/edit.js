@@ -64,28 +64,6 @@ function addEditPopupDirective(ngApp) {
     });
 }
 
-function addEditTableDirective(ngApp) {
-
-    ngApp.directive('editTable', function() {
-        return {
-            templateUrl: 'templates/edit_table.html',
-            scope: {
-                editTable: '=',
-            },
-        }
-    })
-}
-
-// Table property
-var TableProperty = function(name, short_name, value, size, type, hidden) {
-    this.name = name;
-    this.short_name = short_name;
-    this.value = value;
-    this.size = size || 35;
-    this.type = type || 'text';
-    this.hidden = hidden;
-}
-
 // The edit table template is retrieved from the server
 var edit_table_template = [];
 $.ajax({
@@ -113,41 +91,6 @@ var editPopup = function(parent, name, properties, submit, close_onsub) {
     this.magres_file = null;
     this.uploading_now = false;
 
-    this._table = new editTable(this, properties);
-}
+    this.properties = properties;
 
-var editTable = function(parent, properties) {
-    this.parent = parent;
-
-    // Gather all the editable properties
-    this._props = [];
-    for (var i = 0; i < edit_table_template.length; ++i) {
-        var opt = edit_table_template[i];
-        this._props.push(new TableProperty(opt.full_name, opt.short_name,
-            '', opt.input_size, opt.input_type));
-    }
-
-    if (properties == null) { // Passes any previously existing values
-        properties = {};
-    }
-
-    for (var p in properties) {
-        for (var i = 0; i < this._props.length; ++i) {
-            var prop = this._props[i];
-            if (prop.short_name == p) {
-                prop.value = properties[p];
-            }
-        }
-    }
-
-    this.get_props = function() {
-        var prop_dict = {};
-
-        for (var i = 0; i < this._props.length; ++i) {
-            var p = this._props[i];
-            prop_dict[p.short_name] = p.value;
-        }
-
-        return prop_dict;
-    }
 }

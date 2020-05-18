@@ -499,7 +499,7 @@
             <div class="container">
                 <div ng-if="found">
                     <h1 class="title">{{record.chemname}}</h1>
-                    <h2 class="subtitle"><span class="has-text-weight-bold">MDBREF</span>: {{record.mdbref}} &nbsp; <span class="has-text-weight-bold">Uploader ORCID</span>: <a href="{{record.orcid.uri}}" target="blank">{{record.orcid.path}}</a></h2>
+                    <h2 class="subtitle"><span class="has-text-weight-bold">MRD number</span>: {{record.mdbref}} &nbsp; <span class="has-text-weight-bold">Uploader ORCID</span>: <a href="{{record.orcid.uri}}" target="blank">{{record.orcid.path}}</a></h2>
                     <databaseRecord database-record="record" make-page></databaseRecord>
                 </div>
                 <div class="card has-background-warning" ng-if="!found">
@@ -509,7 +509,7 @@
                         </span>
                     </div>
                     <div class="card-content">
-                        No record with <span class="has-text-weight-bold">MDBREF</span>{{recordref}} was found.
+                        No record with <span class="has-text-weight-bold">MRD number</span>{{recordref}} was found.
                     </div>
                 </div>
             </div>

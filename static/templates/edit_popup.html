@@ -1,6 +1,6 @@
 <div class="edit-popup modal" ng-class="editPopup.is_open? 'is-active' : ''">
   <div class="modal-background"></div>
-  <div class="modal-card">
+  <div class="modal-card edit-modal-card">
     <header class="modal-card-head">
       <p class="modal-card-title" ng-if="editPopup.name">
         Editable data for {{editPopup.name}}
@@ -8,12 +8,11 @@
       <button class="delete" aria-label="close" ng-click="cancel()"></button>
     </header>
     <section class="modal-card-body">
-        <form id="edit-popup-form" enctype="multipart/form-data" action="edit" method="post">
+      <form id="edit-popup-form" enctype="multipart/form-data" action="edit" method="post">
           <table class="table is-bordered is-striped is-fixed">
-            <tbody edit-table="editPopup._table">
+            <tbody version-table="editPopup.properties">
             </tbody>
           </table>
-
           <div class="file has-name is-boxed is-primary is-small is-centered">
               <label class="file-label">
                   <input class="file-input" type="file" id="magres-file" name="magres-file" ngf-select="load_files($files)" required>
