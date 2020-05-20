@@ -6,7 +6,7 @@ function addTemplateDirectives(ngApp) {
         return {
             templateUrl: 'templates/record_table.html',
             scope: {
-                versionTable: '=',
+                recordTable: '=',
             },
         }
     });

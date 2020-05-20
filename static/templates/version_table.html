@@ -6,12 +6,11 @@
         <select id="license" 
                 class="cc-ctrl cc-bulma" 
                 name="license" 
-                ng-value="versionTable.license"
-                help="License to apply to the data (see bottom of the page for details)" 
-                selected="pddl">
+                ng-model="versionTable.license"
+                help="License to apply to the data (see bottom of the page for details)" >
             <option value="pddl">PDDL v1.0</option>
             <option value="odc-by">ODC-By v1.0</option>
-            <option value="cc-by">CC-By v4.0</option>
+            <option value="cc-by">CC-By v4.0</option>        
         </select>
     </td>
 </tr>
@@ -23,7 +22,7 @@
     <td colspan="" rowspan="" headers="">
         <input id="doi" class="cc-ctrl cc-bulma" type="text" size="80"
             name="doi"
-            ng-value="versionTable.doi"
+            ng-model="versionTable.doi"
             placeholder="A valid DOI code for published work referencing this data">
     </td>
 </tr>
@@ -34,7 +33,7 @@
     </th>
     <td colspan="" rowspan="" headers="">
         <input id="extref" class="cc-ctrl cc-bulma" type="text" size="80"
-            name="extref" ng-value="versionTable.extref"
+            name="extref" ng-model="versionTable.extref"
             placeholder="A code or number referencing an external database">
     </td>    
 </tr>
@@ -47,7 +46,7 @@
     <td colspan="" rowspan="" headers="">
         <input id="chemform" class="cc-ctrl cc-bulma" type="text" size="80"
             name="chemform"
-            ng-value="versionTable.chemform"
+            ng-model="versionTable.chemform"
             placeholder="Additional relevant descriptors (e.g.: phase, conformer, etc.)">
     </td>    
 </tr>
@@ -59,7 +58,7 @@
     <td colspan="" rowspan="" headers="">
         <input id="notes" class="cc-ctrl cc-bulma" type="text" size="80"
             name="notes"
-            ng-value="versionTable.notes"
+            ng-model="versionTable.notes"
             placeholder="Any other useful notes">
     </td>    
 </tr>
