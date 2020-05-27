@@ -189,7 +189,7 @@ class MainServer(object):
                               magresVersionSchemaUser)
 
         fd = request.files.get('magres-file', None)
-        r_id = request.values.get('record_id')
+        r_id = request.values.get('_record_id')
 
         if r_id is None:
             return 'Missing record_id', self.HTTP_400_BAD_REQUEST

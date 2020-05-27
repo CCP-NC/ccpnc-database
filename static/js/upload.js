@@ -38,13 +38,11 @@ function addUploadController(ngApp) {
             // Compile extra data
             var request_data = {
                 '_upload_multi': $scope.upload_multi
-            }
+            };
 
             loginStatus.verify_token(function() {
                 // Package all the data
-                details = loginStatus.get_details()
-                request_data['_auth_id'] = details['orcid'];
-                request_data['_auth_tk'] = details['access_token'];
+                $.extend(request_data, loginStatus.get_ajax_id());
 
                 // Post form
                 $scope.uploading_now = true;
