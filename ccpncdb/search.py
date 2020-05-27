@@ -19,7 +19,7 @@ def _formula_read(f):
     return match
 
 
-def search_by_ms(sp, minms, maxms):
+def search_by_msRange(sp, minms, maxms):
 
     return [
         {'nmrdata': {'$elemMatch': {'species': sp}}},
@@ -27,9 +27,22 @@ def search_by_ms(sp, minms, maxms):
                      {'$nor': [{'msiso': {'$lt': float(minms)}},
                                {'msiso': {'$gt': float(maxms)}}]}
                      }
-         }
+         },
+        {'nmrdata': {'msiso': {'$exists': True}}}
     ]
 
+
+def search_by_efgRange(sp, minefg, maxefg):
+
+    return [
+        {'nmrdata': {'$elemMatch': {'species': sp}}},
+        {'nmrdata': {'$elemMatch':
+                     {'$nor': [{'efgvzz': {'$lt': float(minefg)}},
+                               {'efgvzz': {'$gt': float(maxefg)}}]}
+                     }
+         },
+        {'nmrdata': {'efgvzz': {'$exists': True}}}         
+    ]
 
 def search_by_doi(doi):
 

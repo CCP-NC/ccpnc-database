@@ -8,24 +8,10 @@ function parseSearchResults(s) {
         console.log(s);
     }
 
-    console.log(results);
-
     return results
 }
 
 function addSearchController(ngApp) {
-
-    /* SEARCH TYPES and arguments */
-    var searchTypes = {
-        'doi': {
-            'doi': String,
-        },
-        'msRange': {
-            'sp': String,
-            'minms': parseFloat,
-            'maxms': parseFloat
-        }
-    }
 
     ngApp.controller('SearchController', function($scope) {
 
@@ -66,6 +52,7 @@ function addSearchController(ngApp) {
                 }),
                 success: function(d, statusText, xhr) {
                     $scope.search_results = parseSearchResults(d);
+                    $scope.message = '';
                     if ($scope.search_results == null) {
                         // Should NEVER happen, but you never know...
                         $scope.message = 'An unknown error has occurred';

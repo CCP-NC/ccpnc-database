@@ -39,12 +39,12 @@ function addRecordDirective(ngApp) {
                         
                         var request_data = {'_record_id': record_id};
                         var popup = this;
-
+        
                         loginStatus.verify_token(function() {
 
                             $.extend(request_data, loginStatus.get_ajax_id());
 
-                            $('#edit-popup-form').ajaxSubmit({
+                            elem.find('#edit-popup-form').ajaxSubmit({
                                 data: request_data,
                                 success: function(msg, status) {
 
