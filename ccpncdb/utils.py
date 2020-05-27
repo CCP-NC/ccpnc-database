@@ -107,11 +107,17 @@ def extract_nmrdata(magres):
     # Chemical species
     symbols = np.array(magres.get_chemical_symbols())
     sp = {s: np.where(symbols == s) for s in set(symbols)}
-    isos = MSIsotropy.get(magres)
 
-    msdata = [{'species': s,
-               'msiso': list(isos[inds])}
-              for s, inds in sp.items()]
-    msdata = sorted(msdata, key=lambda x: x['species'])
+    species = sorted(sp.keys())
+    msdata = [{'species': s} for s in species]
+
+    # Try adding individual nmr data
+    try:
+        msiso = MSIsotropy.get(magres)
+        for i, s in enumerate(species):
+            inds = sp[s]
+            msdata[i] = list(msiso[inds])
+    except RuntimeError:
+        pass
 
     return msdata

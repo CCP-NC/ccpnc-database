@@ -60,8 +60,8 @@ function addRecordDirective(ngApp) {
                                     popup.uploading_now = false;
                                     scope.$apply();
                                 },
-                                error: function(e) {
-                                    popup.status = 'ERROR: ' + e.responseText;
+                                error: function(err) {
+                                    popup.status = 'ERROR: ' + err.responseText;
                                     popup.status_err = true;
                                     popup.uploading_now = false;
                                     scope.$apply();

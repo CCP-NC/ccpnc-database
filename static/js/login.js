@@ -70,6 +70,7 @@ LoginStatus.prototype = {
     },
 
     get_ajax_id: function() {
+        details = this.get_details();
         ajid = {};
         ajid['_auth_id'] = details['orcid'];
         ajid['_auth_tk'] = details['access_token'];

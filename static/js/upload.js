@@ -49,10 +49,10 @@ function addUploadController(ngApp) {
                 $scope.$apply();
                 $('#upload-form').ajaxSubmit({
                     data: request_data,
-                    success: function(r) {
+                    success: function(msg, status) {
                         // Did anything go wrong?
-                        if (r != 'Success') {
-                            $scope.status = 'ERROR: ' + r;
+                        if (status != 'success') {
+                            $scope.status = 'ERROR: ' + msg;
                             $scope.status_err = true;
                         } else {
                             $scope.status = 'Successfully uploaded';
@@ -65,8 +65,8 @@ function addUploadController(ngApp) {
                         $scope.$apply();
 
                     },
-                    error: function(e) {
-                        $scope.status = e;
+                    error: function(err) {
+                        $scope.status = 'ERROR: ' + err.responseText;
                         $scope.status_err = true;
                         $scope.uploading_now = false;
                         $scope.$apply();
