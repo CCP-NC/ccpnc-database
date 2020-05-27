@@ -81,6 +81,7 @@ magresRecordSchemaAutomatic = Schema({
     'nmrdata': [{
         'species': str,
         Optional('msiso'): [float],
+        Optional('efgvzz'): [float]
     }],
     'formula': [{'species': str,
                  'n': int}],

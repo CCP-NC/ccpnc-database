@@ -3,6 +3,7 @@ from io import StringIO
 from ase.io.magres import read_magres
 from soprano.properties.linkage import Molecules
 from soprano.properties.nmr.ms import MSIsotropy
+from soprano.properties.nmr.efg import EFGVzz
 
 
 def prime_factors(num):
@@ -109,15 +110,24 @@ def extract_nmrdata(magres):
     sp = {s: np.where(symbols == s) for s in set(symbols)}
 
     species = sorted(sp.keys())
-    msdata = [{'species': s} for s in species]
+    nmrdata = [{'species': s} for s in species]
 
     # Try adding individual nmr data
     try:
         msiso = MSIsotropy.get(magres)
         for i, s in enumerate(species):
             inds = sp[s]
-            msdata[i] = list(msiso[inds])
+            nmrdata[i]['msiso'] = list(msiso[inds])
     except RuntimeError:
         pass
 
-    return msdata
+    try:
+        efgvzz = EFGVzz.get(magres)
+        for i, s in enumerate(species):
+            inds = sp[s]
+            nmrdata[i]['efgvzz'] = list(efgvzz[inds])
+    except RuntimeError:
+        pass
+
+
+    return nmrdata

@@ -8,6 +8,8 @@ function parseSearchResults(s) {
         console.log(s);
     }
 
+    console.log(results);
+
     return results
 }
 
