@@ -96,9 +96,9 @@ class MagresDBTest(unittest.TestCase):
 
         # Now add a new version
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
-            self.mdb.add_version(f, r_id, _fake_vdata, True)
+            self.mdb.add_version(r_id, f, _fake_vdata)
 
-            rec = self.mdb.magresIndex.find_one({'_id': ObjectId(r_id)})
+            rec = self.mdb.get_record(r_id)
 
             msiso = MSIsotropy.get(self.eth['Atoms'])
 
@@ -113,6 +113,17 @@ class MagresDBTest(unittest.TestCase):
                                            np.sort(msiso[inds])).all())
 
             self.assertEqual(rec['version_count'], 2)
+
+        # And now try what happens when you add a new version with no magres
+        # file - just metadata
+        vdata = {
+            'license': 'odc-by' 
+        }
+        self.mdb.add_version(r_id, version_data=vdata)
+
+        rec = self.mdb.get_record(r_id)
+        
+        self.assertEqual(rec['last_version']['license'], 'odc-by')
 
     @clean_db
     def testGetFile(self):

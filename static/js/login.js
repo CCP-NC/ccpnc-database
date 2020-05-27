@@ -69,6 +69,14 @@ LoginStatus.prototype = {
         window.localStorage.removeItem('login_details');
     },
 
+    get_ajax_id: function() {
+        ajid = {};
+        ajid['_auth_id'] = details['orcid'];
+        ajid['_auth_tk'] = details['access_token'];
+
+        return ajid;
+    },
+
     get_login_status: function() {
         return window.localStorage.hasOwnProperty('login_details');
     },

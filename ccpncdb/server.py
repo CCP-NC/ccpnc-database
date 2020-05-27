@@ -183,47 +183,24 @@ class MainServer(object):
         if user_info is None:
             return 'Failed', self.HTTP_401_UNAUTHORIZED
 
+        # Get the data
+        _, vdata = split_data(dict(request.values),
+                              magresRecordSchemaUser,
+                              magresVersionSchemaUser)
+
         fd = request.files.get('magres-file', None)
+        r_id = request.values.get('record_id')
 
-        print(request.values)
+        if r_id is None:
+            return 'Missing record_id', self.HTTP_400_BAD_REQUEST
 
-        """# Authenticate and retrieve user info
-            try:
-                user_info = user_info_auth(app.extensions['orcidlink'],
-                                           request.values.get('access_token'),
-                                           request.values.get('orcid'))
-            except OrcidError as e:
-                # Something went wrong in the request itself
-                return str(e), HTTP_401_UNAUTHORIZED
+        # Update
+        try:
+            self._db.add_version(r_id, fd, vdata)
+        except MagresDBError as e:
+            return str(e), self.HTTP_500_INTERNAL_SERVER_ERROR
 
-            # Compile everything
-            try:
-                # Obligatory values
-                index_id = request.values.get('index_id')
-                orcid = user_info['orcid-identifier']
-
-                # Optional ones
-                data = {
-                    k: request.values.get(k) for k in magresVersionOptionals
-                    if (request.values.get(k) is not None and
-                        len(request.values.get(k)) > 0)
-                }
-
-                success = editMagresFile(index_id, orcid,
-                                         data, request.files.get('magres-file'))
-
-            except Exception as e:
-                return (e.__class__.__name__ + ': ' + str(e),
-                        HTTP_500_INTERNAL_SERVER_ERROR)
-
-            if success:
-                return 'Success', HTTP_200_OK
-            else:
-                return 'Failed', HTTP_500_INTERNAL_SERVER_ERROR
-
-
-        [description]
-        """
+        return 'Success', self.HTTP_200_OK
 
     def search(self):
         query = request.json['search_spec']
@@ -251,7 +228,7 @@ class MainServer(object):
     def get_magres(self):
         fs_id = request.args.get('magres_id')
 
-        try:  
+        try:
             mfile = self._db.get_magres_file(fs_id)
         except MagresDBError:
             return 'File not found', self.HTTP_400_BAD_REQUEST
@@ -263,5 +240,3 @@ class MainServer(object):
         resp.headers['Content-Disposition'] = 'attachment'
 
         return resp, self.HTTP_200_OK
-
-

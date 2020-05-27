@@ -92,7 +92,7 @@ class MagresDB(object):
             raise MagresDBError('Unknown error while uploading record')
         record_id = res.inserted_id
         # Finally, the version data
-        self.add_version(mstr, record_id, version_data, False)
+        self.add_version(record_id, mstr, version_data, False)
         # Now that it's all done, assign a unique identifier
         mdbref = self.generate_id()
         # Update the record
@@ -101,25 +101,36 @@ class MagresDB(object):
 
         return MagresDBAddResult(res.acknowledged, str(record_id), mdbref)
 
-    def add_version(self, mfile, record_id, version_data, update_record=True):
+    def add_version(self, record_id,
+                    mfile=None, version_data={}, update_record=True):
 
         # Read in magres file
-        magres = read_magres_file(mfile)
-        mstr = magres['string']
-        matoms = magres['Atoms']
+        if mfile is None:
+            # Just get the contents from the record
+            rec = self.get_record(record_id)
+            if rec['version_count'] == 0:
+                raise MagresDBError('A magres file must be passed for the '
+                                    'first version of a record')
+            mfile_id = rec['last_version']['magresFilesID']
+            calc_block = rec['last_version']['magres_calc']
+        else:
+            magres = read_magres_file(mfile)
+            mstr = magres['string']
+            matoms = magres['Atoms']
 
-        mfile_id = self.magresFilesFS.put(mstr,
-                                          filename=record_id,
-                                          encoding='UTF-8')
+            mfile_id = self.magresFilesFS.put(mstr,
+                                              filename=record_id,
+                                              encoding='UTF-8')
+            calc_block = json.dumps(matoms.info.get(
+                'magresblock_calculation',
+                {}))
 
         version_autodata = {
             'magresFilesID': str(mfile_id),
             'date': datetime.utcnow(),
-            'magres_calc': json.dumps(matoms.info.get(
-                'magresblock_calculation',
-                {})
-            )
+            'magres_calc': calc_block
         }
+
         version_data = dict(version_data)
         version_data.update(version_autodata)
         valres = validate_with(version_data, magresVersionSchema)
@@ -134,7 +145,7 @@ class MagresDB(object):
 
         to_set = {'last_version': version_data}
 
-        if update_record:
+        if update_record and mfile is not None:
             # Update the automatically generated elements in the record
             to_set.update(self._auto_recdata(matoms))
 

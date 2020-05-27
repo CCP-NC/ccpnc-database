@@ -91,6 +91,6 @@ var editPopup = function(parent, name, properties, submit, close_onsub) {
     this.magres_file = null;
     this.uploading_now = false;
 
-    this.properties = properties;
+    this.properties = Object.assign({}, properties);
 
 }
