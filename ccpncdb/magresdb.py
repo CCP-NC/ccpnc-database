@@ -4,6 +4,7 @@ from datetime import datetime
 from collections import namedtuple
 from gridfs import GridFS, NoFile
 from bson.objectid import ObjectId
+from bson.errors import InvalidId
 from pymongo import ReturnDocument
 
 from ccpncdb.utils import (read_magres_file, extract_formula,
@@ -116,7 +117,8 @@ class MagresDB(object):
             'date': datetime.utcnow(),
             'magres_calc': json.dumps(matoms.info.get(
                 'magresblock_calculation',
-                {}))
+                {})
+            )
         }
         version_data = dict(version_data)
         version_data.update(version_autodata)
@@ -169,6 +171,18 @@ class MagresDB(object):
                                           update=update)
 
         return res.acknowledged
+
+    def get_record(self, record_id):
+
+        try:
+            mrec = self.magresIndex.find_one({'_id': ObjectId(record_id)})
+        except InvalidId:
+            raise MagresDBError('Invalid ID requested')
+
+        if mrec is None:
+            raise MagresDBError('Record not found')
+
+        return mrec
 
     def get_magres_file(self, fs_id, decode=False):
 

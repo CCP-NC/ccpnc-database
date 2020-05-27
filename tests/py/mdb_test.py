@@ -70,6 +70,16 @@ class MagresDBTest(unittest.TestCase):
             with self.assertRaises(MagresDBError):
                 self.mdb.add_record(f, {}, {})
 
+        # Test getting the record back
+        rec = self.mdb.get_record(res.id)
+        self.assertEqual(rec['mdbref'], res.mdbref)
+
+        with self.assertRaises(MagresDBError):
+            self.mdb.get_record('Invalid ID')
+
+        with self.assertRaises(MagresDBError):
+            self.mdb.get_record('0'*24)
+
     @clean_db
     def testAddArchive(self):
 
