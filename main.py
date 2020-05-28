@@ -9,6 +9,7 @@ import sys
 import json
 import inspect
 import ase
+import flask
 import soprano
 from ccpncdb.server import MainServer
 
@@ -59,6 +60,21 @@ def get_record():
 @serv.app.route('/get_magres', methods=['GET'])
 def get_magres():
     return serv.get_magres()
+
+@serv.app.route('/pyversion', methods=['GET'])
+def get_version():
+
+    resp = """
+<ul>
+<li>Python:     {pyv}</li>
+<li>ASE:        {asev}</li>
+<li>Soprano:    {sprv}</li>
+<li>Flask:      {flkv}</li>
+</ul>
+""".format(pyv=sys.version, asev=ase.__version__,
+           sprv=soprano.__version__, flkv=flask.__version__)
+
+    return resp
 
 """
 
@@ -207,24 +223,6 @@ def get_csv():
     return resp
 
 """
-
-# @app.route('/pyversion', methods=['GET'])
-# def get_version():
-
-#     resp = """
-# <ul>
-# <li>Python:     {pyv}</li>
-# <li>ASE:        {asev}</li>
-# <li>Soprano:    {sprv}</li>
-# <li>Flask:      {flkv}</li>
-# </ul>
-# """.format(pyv=sys.version, asev=ase.__version__,
-#            sprv=soprano.__version__, flkv=flask.__version__)
-
-#     print('Version')
-
-#     return resp
-
 
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!

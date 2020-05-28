@@ -40,8 +40,20 @@ class OrcidTest(unittest.TestCase):
         info = self.c.request_info(client_info)
 
         self.assertEqual(info['orcid-identifier']['path'], 
-                         client_info['orcid'])
+                         client_info['orcid'])        
 
+    def testLists(self):
+        # Test ban/admin list checks
+        
+        # Hijack the proper banpath
+        self.c._banpath = os.path.join(os.path.split(__file__)[0], '../data/fakelist.yaml')
+        self.c._adminpath = self.c._banpath
+
+        self.assertTrue(self.c.is_banned('0000-0000-0000-0000'))
+        self.assertFalse(self.c.is_banned('0000-0000-0000-0001'))
+
+        self.assertTrue(self.c.is_admin('0000-0000-0000-0000'))
+        self.assertFalse(self.c.is_admin('0000-0000-0000-0001'))
 
 if __name__ == "__main__":
 

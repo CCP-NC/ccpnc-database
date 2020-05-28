@@ -28,7 +28,7 @@ def search_by_msRange(sp, minms, maxms):
                                {'msiso': {'$gt': float(maxms)}}]}
                      }
          },
-        {'nmrdata': {'msiso': {'$exists': True}}}
+        {'nmrdata.msiso': {'$exists': True}}
     ]
 
 
@@ -41,7 +41,7 @@ def search_by_efgRange(sp, minefg, maxefg):
                                {'efgvzz': {'$gt': float(maxefg)}}]}
                      }
          },
-        {'nmrdata': {'efgvzz': {'$exists': True}}}         
+        {'nmrdata.efgvzz': {'$exists': True}}
     ]
 
 def search_by_doi(doi):
@@ -166,4 +166,5 @@ def build_search(search_spec):
 
         search_dict['$and'] += search_func(**args)
 
+    print(search_dict)
     return search_dict

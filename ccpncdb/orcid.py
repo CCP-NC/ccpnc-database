@@ -4,6 +4,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import re
+import os
+import yaml
 import requests
 from requests.exceptions import ConnectionError
 
@@ -22,6 +24,10 @@ class OrcidConnection(object):
     """ Provides an interface to connect with
     ORCID, given the relevant app data."""
 
+    # Path to banlist and admin list
+    _banpath = os.path.join(os.path.split(__file__)[0], 'userlists/banlist.yaml')
+    _adminpath = os.path.join(os.path.split(__file__)[0], 'userlists/adminlist.yaml')
+
     def __init__(self, details, session=None,
                  login_url='https://orcid.org/',
                  api_url='https://pub.orcid.org/v2.0/'):
@@ -34,6 +40,23 @@ class OrcidConnection(object):
         self._details = details
         self._login_url = login_url
         self._api_url = api_url
+
+
+    def is_banned(self, orcid):
+        # Check if the given ORCID is in the banlist
+        with open(self._banpath) as f:
+            banlist = yaml.safe_load(f)
+            banlist = [] if banlist is None else banlist
+        
+        return (orcid in banlist)
+
+    def is_admin(self, orcid):
+        # Check if the given ORCID is in the admin list
+        with open(self._adminpath) as f:
+            adminlist = yaml.safe_load(f)
+            adminlist = [] if adminlist is None else adminlist
+        
+        return (orcid in adminlist)
 
     def request_tokens(self, code):
         # Get tokens from ORCID given a request code
