@@ -2,13 +2,13 @@
     <table class="table is-fullwidth is-bordered is-striped is-fixed">
         <thead ng-if="!is_page">
             <tr>
-                <th class="width-1">Name: {{makePage}}</th>
+                <th class="width-1">Name:</th>
                 <td class="width-3 has-text-primary" colspan="3">{{databaseRecord.chemname}}</td>
             </tr>
             <tr>
                 <th class="width-1">ORCID:</th>
                 <td class="width-1"><a href="{{databaseRecord.orcid.uri}}" target="_blank">{{databaseRecord.orcid.path}}</a></td>
-                <th class="width-1">MDBREF:</th>
+                <th class="width-1">MRD Number:</th>
                 <td class="width-1"><a href="?mdbref={{databaseRecord.mdbref}}" target="_blank">{{databaseRecord.mdbref}}</a></td>
             </tr>
         </thead>
@@ -70,10 +70,40 @@
     <a class="button is-primary" href="get_magres?magres_id={{databaseRecord.version_history[_selected_index].magresFilesID}}" download="{{filename()}}">
         Download&nbsp;<i class="fa fa-download"></i>
     </a>
+    <!-- ADMIN ONLY -->
+    <div class="button is-danger" ng-show="isadmin()" ng-click="hideshow()">
+        Hide record
+    </div>
     <div class="button is-primary is-pulled-right" ng-click="edit()" ng-show="isown()" download>
         Edit&nbsp;<i class="fa fa-edit"></i>
     </div>
 
     <div edit-popup="_edit_popup">
+    </div>
+
+    <div class="modal" id="hide-confirm-modal">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Confirm Hide operation</p>
+          <button class="delete" aria-label="close" ng-click="hideshow()"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>
+                Warning: hiding a record is an admin-only operation that can not be undone 
+                from the web interface. The hidden record will not be returned any more in searches
+                but will remain stored on the database.
+            </p>
+
+            <p>
+                Do you want to proceed to hide the record with <span class="has-text-weight-bold">MRD Number {{databaseRecord.mdbref}}</span> by user with 
+                <span class="has-text-weight-bold">ORCID {{databaseRecord.orcid.path}}</span>?                
+            </p>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-danger" ng-click="hide()">Hide record</button>
+          <button class="button" ng-click="hideshow()">Cancel</button>
+        </footer>
+      </div>
     </div>
 </div>

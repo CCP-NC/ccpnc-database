@@ -1,8 +1,3 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import re
 import os
 import yaml
@@ -73,8 +68,13 @@ class OrcidConnection(object):
         except ConnectionError:
             raise NoOrcidTokens('Connection to oauth/token failed')
 
-        # Save them (if no error has occurred)
+        # Save them (if no error has occurred, and if the user is authorised)
         rjson = r.json()
+        if self.is_banned(rjson.get('orcid')):
+            raise NoOrcidTokens('User has been banned from service')
+        if self.is_admin(rjson.get('orcid')):
+            rjson['admin'] = True
+
         if 'error' not in rjson:
             self._session.permanent = True
             self._session['login_details'] = rjson
@@ -97,10 +97,15 @@ class OrcidConnection(object):
     def delete_tokens(self):
         self._session.pop('login_details', None)
 
-    def authenticate(self, client_details):
+    def authenticate(self, client_details, auth_admin=False):
         # Check client details vs. internally stored tokens
 
         tk = self.get_tokens()
+
+        # Is the user banned?
+        if self.is_banned(tk['orcid']):
+            raise OrcidError('User has been banned')
+            self.delete_tokens()
 
         try:
             auth = True
@@ -109,12 +114,16 @@ class OrcidConnection(object):
         except KeyError:
             raise ValueError('Incomplete client details')
 
+        if auth_admin:
+            # Also check that the user is an admin
+            auth = auth and self.is_admin(tk.get('orcid'))
+
         return auth
 
-    def request_info(self, client_details):
+    def request_info(self, client_details, auth_admin=False):
 
         # Start by authenticating
-        auth = self.authenticate(client_details)
+        auth = self.authenticate(client_details, auth_admin=auth_admin)
         if not auth:
             raise OrcidError('Could not authenticate')
 

@@ -65,7 +65,7 @@ class MainServer(object):
     def send_static(self, url):
         return self._app.send_static_file(url)
 
-    def request_user_info(self):
+    def request_user_info(self, auth_admin=False):
 
         client_details = {
             'orcid': request.values.get('_auth_id', None),
@@ -73,9 +73,10 @@ class MainServer(object):
         }
 
         try:
-            rinfo = self._orcid.request_info(client_details)
-        except OrcidError:
-            return None
+            rinfo = self._orcid.request_info(client_details,
+                                             auth_admin=auth_admin)
+        except OrcidError as e:
+            return {'error': str(e)}
 
         return rinfo
 
@@ -91,12 +92,12 @@ class MainServer(object):
 
         return json.dumps(tk), self.HTTP_200_OK
 
-    def upload(self):
+    def upload_record(self):
 
         # First, authenticate
         user_info = self.request_user_info()
-        if user_info is None:
-            return 'Failed', self.HTTP_401_UNAUTHORIZED
+        if 'error' in user_info:
+            return user_info['error'], self.HTTP_401_UNAUTHORIZED
 
         # Upload: single, or multiple?
         is_multi = request.values.get('_upload_multi', 'false') == 'true'
@@ -180,8 +181,8 @@ class MainServer(object):
 
         # First, authenticate
         user_info = self.request_user_info()
-        if user_info is None:
-            return 'Failed', self.HTTP_401_UNAUTHORIZED
+        if 'error' in user_info:
+            return user_info['error'], self.HTTP_401_UNAUTHORIZED
 
         # Get the data
         _, vdata = split_data(dict(request.values),
@@ -201,6 +202,25 @@ class MainServer(object):
             return str(e), self.HTTP_500_INTERNAL_SERVER_ERROR
 
         return 'Success', self.HTTP_200_OK
+
+    def hide_record(self):
+
+        # Authenticate and check for admin status
+        user_info = self.request_user_info(auth_admin=True)
+        if 'error' in user_info:
+            return user_info['error'], self.HTTP_401_UNAUTHORIZED
+
+        r_id = request.values.get('_record_id')
+
+        if r_id is None:
+            return 'Missing record_id', self.HTTP_400_BAD_REQUEST
+
+        res = self._db.set_visibility(r_id, False)
+
+        if res:
+            return 'Success', self.HTTP_200_OK
+        else:
+            return 'Unknown database error', self.HTTP_500_INTERNAL_SERVER_ERROR
 
     def search(self):
         query = request.json['search_spec']

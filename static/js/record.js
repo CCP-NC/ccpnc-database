@@ -24,6 +24,10 @@ function addRecordDirective(ngApp) {
                     }
                 }
 
+                scope.isadmin = function() {
+                    return loginStatus.is_admin();
+                }
+
                 // It's important to use "var" here and keep the scope local
                 // or there's some reference shenanigans...
                 var record_id = scope.databaseRecord._id;
@@ -74,6 +78,42 @@ function addRecordDirective(ngApp) {
                         });           
                     });
                 };
+
+                scope.hideshow = function() {
+                    // Show the hide confirmation popup
+                    elem.find('#hide-confirm-modal').toggleClass('is-active');
+                }
+
+                scope.hide = function() {
+
+                    // The record to hide
+                    var request_data = {'_record_id': record_id};
+
+                    loginStatus.verify_token(function() {
+
+                        $.extend(request_data, loginStatus.get_ajax_id());
+
+                        $.post(loginStatus.server_app + '/hide',
+                               request_data,
+                               function(data, status) {
+                                    if (status != 'success') {
+                                        alert('ERROR: ' + data);
+                                    }
+                                    else {
+                                        alert('Record successfully hidden');
+                                    }                                    
+                                }
+                        ).fail(function(e) {
+                            alert('ERROR: ' + e.responseText);
+                        }).always(function() {
+                            scope.hideshow();
+                        });
+
+                    }, function() {
+                        alert('User is not authorised to perform this operation')
+                    }, true); // The last true means we check for admin status too
+
+                }
 
                 scope.filename = function() {
                     return this.databaseRecord.chemname + '_v' + (parseInt(this._selected_index)+1) + '.magres';

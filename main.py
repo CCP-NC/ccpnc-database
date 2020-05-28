@@ -43,11 +43,15 @@ def get_tokens(code):
 
 @serv.app.route('/upload', methods=['POST'])
 def upload():
-    return serv.upload()
+    return serv.upload_record()
 
 @serv.app.route('/edit', methods=['POST'])
 def edit():
     return serv.upload_version()
+
+@serv.app.route('/hide', methods=['POST'])
+def hide():
+    return serv.hide_record()
 
 @serv.app.route('/search', methods=['POST'])
 def search():

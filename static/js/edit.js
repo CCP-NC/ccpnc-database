@@ -64,17 +64,6 @@ function addEditPopupDirective(ngApp) {
     });
 }
 
-// The edit table template is retrieved from the server
-var edit_table_template = [];
-$.ajax({
-    url: ccpnc_config.server_app + '/optionals',
-    type: 'GET',
-    crossDomain: true,
-    dataType: 'JSON'
-}).done(function(r) {
-    edit_table_template = r;
-});
-
 // Object creator for edit form scope
 // Takes: reference to the parent scope, object with editable properties, 
 // submit callback

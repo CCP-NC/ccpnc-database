@@ -183,6 +183,10 @@ class MagresDB(object):
 
         return res.acknowledged
 
+    def set_visibility(self, record_id, visible):
+
+        return self.edit_record(record_id, {'$set': {'visible': visible}})
+
     def get_record(self, record_id):
 
         try:

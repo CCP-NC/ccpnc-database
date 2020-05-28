@@ -166,5 +166,4 @@ def build_search(search_spec):
 
         search_dict['$and'] += search_func(**args)
 
-    print(search_dict)
     return search_dict

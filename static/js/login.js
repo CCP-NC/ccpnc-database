@@ -82,7 +82,12 @@ LoginStatus.prototype = {
         return window.localStorage.hasOwnProperty('login_details');
     },
 
-    verify_token: function(success, error) {
+    is_admin: function() {
+        var details = this.get_details();
+        return (details['admin'] == true);
+    },
+
+    verify_token: function(success, error, check_admin) {
 
         error = error || function() {
             console.log('TOKENS COULD NOT BE VERIFIED');
@@ -90,7 +95,7 @@ LoginStatus.prototype = {
 
         // Verify the locally stored token vs. the one in cookies
         var local_token = this.get_details();
-        if (local_token == null) {
+        if (local_token == null || check_admin && !local_token.admin) {
             error();
             return;
         }
