@@ -205,3 +205,7 @@ ul.discs li {
 .edit-modal-card {
     width: 70vw !important;
 }
+
+p.faq {
+    padding-bottom: 10px;
+}
