@@ -91,6 +91,7 @@ function addUploadController(ngApp) {
                 var file = files[0];
                 $scope.status = '';
                 $scope.status_err = false;
+                $scope.magres_file_name = file.name;
 
                 if (!$scope.upload_multi) {
                     var reader = new FileReader();
@@ -98,7 +99,6 @@ function addUploadController(ngApp) {
                         var mtext = fevent.currentTarget.result;
                         $scope.uploading_now = false;
                         if (validateMagres(file.name, mtext)) {
-                            $scope.magres_file_name = file.name;
                             $scope.status_err = false;
                             $scope.status = 'File ready to upload';
                         } else {
