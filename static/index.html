@@ -394,6 +394,9 @@
                 <div class="container is-scroll-y">
                     <div database-record="result" ng-repeat="result in search_results">
                     </div>
+                    <div class="notification is-warning" ng-if="(search_results.length == 0)*search_complete">
+                        No search results found
+                    </div>
                 </div>
             </div>
 

@@ -24,6 +24,7 @@ function addSearchController(ngApp) {
                 'type': 'doi',
                 'args': {}
             });
+            $scope.search_complete = false;
         }
 
         $scope.remove_spec = function(i) {
@@ -32,11 +33,13 @@ function addSearchController(ngApp) {
         }
 
         $scope.reset_search_args = function(new_type) {
+            $scope.search_complete = false;
             $scope.search_args = {};
         }
 
         $scope.add_spec();
         $scope.search_results = [];
+        $scope.search_complete = false;
 
         var last_query = null;
 
@@ -57,6 +60,7 @@ function addSearchController(ngApp) {
                         // Should NEVER happen, but you never know...
                         $scope.message = 'An unknown error has occurred';
                     }
+                    $scope.search_complete = true;
                     $scope.$apply();
                 },
                 error: function(xhr, statusText) {
