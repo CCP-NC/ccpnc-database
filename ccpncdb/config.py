@@ -26,6 +26,10 @@ class Config(object):
     def db_port(self):
         return self.data.get('db_port', 27017)
 
+    @property
+    def db_name(self):
+        return self.data.get('db_name', 'ccpnc')
+    
     def client(self):
         return MongoClient(host=self.db_url,
                            port=self.db_port)

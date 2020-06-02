@@ -35,8 +35,8 @@ class MainServer(object):
         self._app = Flask('ccpnc-database', static_url_path='',
                           static_folder=self._static_folder)
         # Load secret key
-        self._app.secret_key = open(os.path.join(path, 'secret',
-                                                 'secret.key')).read().strip()
+        with open(os.path.join(path, 'secret', 'secret.key')) as secret:
+            self._app.secret_key = secret.read().strip()
 
         # Set up cookie, duration: one month
         self._app.config['SESSION_COOKIE_NAME'] = 'CCPNCDBLOGIN'
@@ -55,12 +55,22 @@ class MainServer(object):
         self._config = Config(os.path.join(self._config_folder,
                                            'config.json'))
         self._client = self._config.client()
-        self._db = MagresDB(client=self._client)
+        self._dbname = self._config.db_name
+        self._db = MagresDB(client=self._client, dbname=self._dbname)
         self._logger = Logger(client=self._client)
 
     @property
     def app(self):
         return self._app
+
+    @property
+    def orcid(self):
+        return self._orcid
+
+    @orcid.setter
+    def orcid(self, val):
+        self._orcid = val
+        self._app.extensions['orcidlink'] = val
 
     def send_static(self, url):
         return self._app.send_static_file(url)
@@ -132,6 +142,7 @@ class MainServer(object):
             }
 
             self._logger.log('Added record', rdata['orcid']['path'], logdata)
+            ans = str(res.mdbref)
 
         else:
             # It's an archive!
@@ -174,8 +185,9 @@ class MainServer(object):
             }
 
             self._logger.log('Added archive', rdata['orcid']['path'], logdata)
+            ans = json.dumps(mdbrefs)
 
-        return 'Success', self.HTTP_200_OK
+        return ans, self.HTTP_200_OK
 
     def upload_version(self):
 

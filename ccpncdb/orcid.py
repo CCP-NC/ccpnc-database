@@ -172,15 +172,23 @@ class FakeOrcidConnection(OrcidConnection):
 
         return fake_details
 
-    def request_info(self, client_details):
+    def request_info(self, client_details, auth_admin=False):
 
-        self.authenticate(client_details)
+        auth = self.authenticate(client_details, auth_admin=auth_admin)
 
-        tk = self.get_tokens()
+        if not auth:
+            raise OrcidError('Could not authenticate')
 
         return {'orcid-identifier': {
                 'path': '0000-0000-0000-0000',
                 'host': 'none',
                 'uri': '0000-0000-0000-0000'
+                }, 
+                'person': {
+                    'name': {
+                        'credit-name': {
+                            'value': 'John Doe'
+                        }
+                    }
                 }
                 }
