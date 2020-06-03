@@ -19,13 +19,24 @@ class MagresArchiveError(Exception):
 
 class MagresArchive(object):
 
-    def __init__(self, archive, record_data={}, version_data={}):
+    def __init__(self, archive, mode='r', record_data={}, version_data={}):
         """Load an archive of magres files with an optional .csv document
         to store file by file information"""
 
         self._default_record = record_data
         self._default_version = version_data
 
+        self._magres_files = {}
+        self._csv_file = {}
+
+        self._mode = mode
+
+        if mode == 'r':
+            self.read(archive)
+        elif mode == 'w':
+            self._archive = archive
+
+    def read(self, archive):
         _raw_files = {}
 
         try:
@@ -50,9 +61,6 @@ class MagresArchive(object):
                     'Uploaded archive file is not a valid zip or tar file.')
 
         # Now to split them
-        self._magres_files = {}
-        self._csv_file = {}
-
         for fname, file in _raw_files.items():
             ext = os.path.splitext(fname)[1]
             if ext == '.magres':
@@ -66,7 +74,51 @@ class MagresArchive(object):
                                                  'archive: all rows must'
                                                  ' include a valid filename as'
                                                  'first entry.')
-                    self._csv_file[name] = dict(row)
+                    # Remove empty entries
+                    self._csv_file[name] = {key: val
+                                            for key, val in row.items()
+                                            if val != ''}
+
+    def csvstr(self):
+        """Make the CSV file into a string
+        """
+
+        # Find all keys
+        keyset = set([])
+        for f, d in self._csv_file.items():
+            keyset = keyset.union(set(d.keys()))
+
+        keyset = ['filename'] + sorted(list(keyset))
+
+        # Write the header
+        csvlines = [','.join(keyset)]
+
+        for f, d in self._csv_file.items():
+            row = [f] + [str(d.get(k, '')) for k in keyset[1:]]
+            csvlines += [','.join(row)]
+
+        return '\n'.join(csvlines)
+
+    def write(self, ftype='zip'):
+
+        if ftype == 'zip':
+            zf = zipfile.ZipFile(self._archive, mode='w')
+
+            # Create the CSV file
+            csv = self.csvstr()
+            zf.writestr('info.csv', csv)
+
+            # Now write the magres files
+            for name, contents in self._magres_files.items():
+                zf.writestr(name, contents)
+
+            zf.close()
+
+    def add_file(self, name, contents, record_data={}, version_data={}):
+
+        self._magres_files[name] = contents
+        self._csv_file[name] = dict(record_data)
+        self._csv_file[name].update(version_data)
 
     def files(self):
         """Return a generator for all files within the archive"""

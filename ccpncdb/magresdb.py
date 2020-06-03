@@ -165,7 +165,8 @@ class MagresDB(object):
     def add_archive(self, archive, record_data, version_data):
 
         # Create an archive object
-        ma = MagresArchive(archive, record_data, version_data)
+        ma = MagresArchive(archive, record_data=record_data,
+                           version_data=version_data)
         results = {}
 
         # Iterate over files

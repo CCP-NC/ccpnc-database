@@ -272,3 +272,10 @@ class MainServer(object):
         resp.headers['Content-Disposition'] = 'attachment'
 
         return resp, self.HTTP_200_OK
+
+    def get_magres_archive(self):
+        fs_ids = request.json.get('magres_id_list')
+
+        print(fs_ids)
+
+        return 'OK', self.HTTP_200_OK

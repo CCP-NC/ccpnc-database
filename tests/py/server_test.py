@@ -38,6 +38,7 @@ _fake_user = {
     '_auth_tk': 'XXX'
 }
 
+
 class MDBServerTest(unittest.TestCase):
 
     def setUp(self):
@@ -67,8 +68,8 @@ class MDBServerTest(unittest.TestCase):
 
         with open(os.path.join(file_path, '../serv/static/index.html')) as f:
             self.assertEqual(html, f.read())
-        self.assertEqual(resp.headers['Content-Type'], 
-            'text/html; charset=utf-8')
+        self.assertEqual(resp.headers['Content-Type'],
+                         'text/html; charset=utf-8')
 
         resp.close()
 
@@ -97,10 +98,14 @@ class MDBServerTest(unittest.TestCase):
         def get_magres():
             return self.serv.get_magres()
 
+        @self.serv.app.route('/get_magres_archive', methods=['GET'])
+        def get_magres_archive():
+            return self.serv.get_magres_archive()
+
         updata = dict(_fake_user)
         updata.update(_fake_rdata)
         updata.update(_fake_vdata)
-        updata['magres-file'] = (BytesIO(self.eth['string'].encode('utf8')), 
+        updata['magres-file'] = (BytesIO(self.eth['string'].encode('utf8')),
                                  'ethanol.magres')
 
         # First, try to upload
@@ -109,7 +114,7 @@ class MDBServerTest(unittest.TestCase):
         mdbref = next(resp.response).decode('utf-8')
 
         # Retrieve record
-        resp = self.client.get('/get_record', 
+        resp = self.client.get('/get_record',
                                json={'mdbref': mdbref})
         self.assertEqual(resp.status_code, 200)
         rec = json.loads(next(resp.response))
@@ -117,11 +122,15 @@ class MDBServerTest(unittest.TestCase):
         # Finally, the file
         m_id = rec['last_version']['magresFilesID']
 
-        resp = self.client.get('/get_magres', 
-            query_string={'magres_id': m_id})
+        resp = self.client.get('/get_magres',
+                               query_string={'magres_id': m_id})
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(next(resp.response).decode('utf-8'), 
+        self.assertEqual(next(resp.response).decode('utf-8'),
                          self.eth['string'])
+
+        # And now test archive retrieval
+        self.client.get('/get_magres_archive',
+                        json={'magres_id_list': [m_id]})
 
 
 if __name__ == '__main__':
