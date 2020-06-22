@@ -4,6 +4,7 @@ from ase.io.magres import read_magres
 from soprano.properties.linkage import Molecules
 from soprano.properties.nmr.ms import MSIsotropy
 from soprano.properties.nmr.efg import EFGVzz
+from soprano.nmr import NMRTensor
 
 
 def prime_factors(num):
@@ -31,6 +32,7 @@ def get_schema_keys(schema):
 
     return sorted(keys)
 
+
 def split_data(data, s1, s2):
     # Split data between two schemas
     sd1, sd2 = {}, {}
@@ -43,6 +45,7 @@ def split_data(data, s1, s2):
             sd2[k] = v
 
     return sd1, sd2
+
 
 def read_magres_file(mfile):
     # Read a magres file/string unifying the output into an ASE Atoms object
@@ -103,6 +106,12 @@ def extract_molecules(magres):
     return mols_f
 
 
+def extract_tensdata(tensor):
+    haeb_evals = tensor.haeb_eigenvalues
+
+    return {'e_x': haeb_evals[0], 'e_y': haeb_evals[1], 'e_z': haeb_evals[2]}
+
+
 def extract_nmrdata(magres):
 
     # Chemical species
@@ -113,21 +122,27 @@ def extract_nmrdata(magres):
     nmrdata = [{'species': s} for s in species]
 
     # Try adding individual nmr data
-    try:
-        msiso = MSIsotropy.get(magres)
+    if magres.has('ms'):
+        ms = magres.get_array('ms')
+        ms = np.array([NMRTensor(T) for T in ms])
         for i, s in enumerate(species):
             inds = sp[s]
-            nmrdata[i]['msiso'] = list(msiso[inds])
-    except RuntimeError:
-        pass
+            nmrdata[i]['ms'] = [extract_tensdata(T) for T in ms[inds]]
+            # nmrdata[i]['ms'] =
+    # try:
+    #     msiso = MSIsotropy.get(magres)
+    #     for i, s in enumerate(species):
+    #         inds = sp[s]
+    #         nmrdata[i]['msiso'] = list(msiso[inds])
+    # except RuntimeError:
+    #     pass
 
-    try:
-        efgvzz = EFGVzz.get(magres)
-        for i, s in enumerate(species):
-            inds = sp[s]
-            nmrdata[i]['efgvzz'] = list(efgvzz[inds])
-    except RuntimeError:
-        pass
-
+    # try:
+    #     efgvzz = EFGVzz.get(magres)
+    #     for i, s in enumerate(species):
+    #         inds = sp[s]
+    #         nmrdata[i]['efgvzz'] = list(efgvzz[inds])
+    # except RuntimeError:
+    #     pass
 
     return nmrdata

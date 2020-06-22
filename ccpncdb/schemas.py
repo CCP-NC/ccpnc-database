@@ -35,6 +35,12 @@ orcidSchema = Schema({
     'uri': orcid_path_re.search,
 })
 
+tensorSchema = Schema({
+    'e_x': float,
+    'e_y': float,
+    'e_z': float
+})
+
 # Two types of elements:
 #   - Records
 #   - Versions (multiple for each record)
@@ -80,6 +86,8 @@ magresRecordSchemaAutomatic = Schema({
     'user_name': And(str, len),
     'nmrdata': [{
         'species': str,
+        Optional('ms'): [tensorSchema],
+        Optional('efg'): [tensorSchema],
         Optional('msiso'): [float],
         Optional('efgvzz'): [float]
     }],

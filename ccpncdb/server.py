@@ -1,3 +1,4 @@
+import io 
 import os
 import json
 from datetime import timedelta
@@ -274,8 +275,18 @@ class MainServer(object):
         return resp, self.HTTP_200_OK
 
     def get_magres_archive(self):
+
+        raise NotImplementedError()
+        
         fs_ids = request.json.get('magres_id_list')
 
-        print(fs_ids)
+        bio = io.BytesIO()
+        arch = MagresArchive(bio, mode='w')
+
+        for fs_id in fs_ids:
+            try:
+                mfile = self._db.get_magres_file(fs_id)
+            except MagresDBError as e:
+                continue
 
         return 'OK', self.HTTP_200_OK
