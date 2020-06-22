@@ -103,17 +103,29 @@ class UtilsTest(unittest.TestCase):
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
             m = read_magres_file(f)['Atoms']
             symbols = m.get_chemical_symbols()
-            ms = np.trace(m.get_array('ms'), axis1=1, axis2=2)/3
             ms_tens = [NMRTensor(T) for T in m.get_array('ms')]
+            ms_iso = [T.isotropy for T in ms_tens]
+            efg_tens = [NMRTensor(T) for T in m.get_array('efg')]
+            efg_vzz = [T.haeb_eigenvalues[2] for T in efg_tens]
+
             nmrdata = extract_nmrdata(m)
             for eldata in nmrdata:
                 for elms in eldata['ms']:
                     iso = np.average(list(elms.values()))
-                    i = np.where(np.isclose(ms, iso))[0][0]
+                    i = np.where(np.isclose(ms_iso, iso))[0][0]
                     haeb_evals = [elms[k] for k in ['e_x', 'e_y', 'e_z']]
                     self.assertEqual(symbols[i], eldata['species'])
                     self.assertTrue(np.isclose(haeb_evals,
                                                ms_tens[i].haeb_eigenvalues
+                                               ).all())
+
+                for elefg in eldata['efg']:
+                    vzz = elefg['e_z']
+                    i = np.where(np.isclose(efg_vzz, vzz))[0][0]
+                    haeb_evals = [elefg[k] for k in ['e_x', 'e_y', 'e_z']]
+                    self.assertEqual(symbols[i], eldata['species'])
+                    self.assertTrue(np.isclose(haeb_evals,
+                                               efg_tens[i].haeb_eigenvalues
                                                ).all())
 
 

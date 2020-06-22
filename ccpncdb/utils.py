@@ -128,21 +128,13 @@ def extract_nmrdata(magres):
         for i, s in enumerate(species):
             inds = sp[s]
             nmrdata[i]['ms'] = [extract_tensdata(T) for T in ms[inds]]
-            # nmrdata[i]['ms'] =
-    # try:
-    #     msiso = MSIsotropy.get(magres)
-    #     for i, s in enumerate(species):
-    #         inds = sp[s]
-    #         nmrdata[i]['msiso'] = list(msiso[inds])
-    # except RuntimeError:
-    #     pass
 
-    # try:
-    #     efgvzz = EFGVzz.get(magres)
-    #     for i, s in enumerate(species):
-    #         inds = sp[s]
-    #         nmrdata[i]['efgvzz'] = list(efgvzz[inds])
-    # except RuntimeError:
-    #     pass
+    if magres.has('efg'):
+        efg = magres.get_array('efg')
+        efg = np.array([NMRTensor(T) for T in efg])
+        for i, s in enumerate(species):
+            inds = sp[s]
+            nmrdata[i]['efg'] = [extract_tensdata(T) for T in efg[inds]]
+
 
     return nmrdata
