@@ -104,7 +104,8 @@ class MagresDBTest(unittest.TestCase):
 
             for data in rec['nmrdata']:
                 el = data['species']
-                ms = data['msiso']
+                ms = data['ms']
+                ms = [np.average(list(T.values())) for T in ms]
 
                 inds = AtomSelection.from_element(self.eth['Atoms'],
                                                   el).indices
@@ -197,6 +198,23 @@ class MagresDBTest(unittest.TestCase):
 
         self.assertEqual(len(found), 1)
         self.assertEqual(str(found[0]['_id']), res_2.id)
+
+        # Test by MS, but first add another entry
+        with open(os.path.join(data_path, 'alanine.magres')) as f:
+            fstr = f.read()
+        rdata_3 = dict(_fake_rdata)
+        rdata_3['chemname'] = 'alanine'
+        self.mdb.add_record(fstr, rdata_3, _fake_vdata)
+
+        found = self.mdb.search_record([{
+            'type': 'msRange',
+            'args': {'sp': 'N', 'minms': 100.0, 'maxms': 200.0}
+        }])
+        found = list(found)
+
+        self.assertEqual(len(found), 1)
+        self.assertEqual(found[0]['chemname'], 'alanine')
+
 
     @clean_db
     def testUniqueID(self):

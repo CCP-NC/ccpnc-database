@@ -2,6 +2,7 @@ import re
 import inspect
 from ccpncdb.utils import extract_stochiometry
 
+
 def _formula_read(f):
     cfre = re.compile('([A-Z][a-z]*)([0-9]*)')
 
@@ -22,27 +23,96 @@ def _formula_read(f):
 def search_by_msRange(sp, minms, maxms):
 
     return [
-        {'nmrdata': {'$elemMatch': {'species': sp}}},
-        {'nmrdata': {'$elemMatch':
-                     {'$nor': [{'msiso': {'$lt': float(minms)}},
-                               {'msiso': {'$gt': float(maxms)}}]}
-                     }
-         },
-        {'nmrdata.msiso': {'$exists': True}}
+        {'nmrdata.ms': {'$exists': True}},
+        {'$expr': {'$anyElementTrue': {
+            '$map': {
+                'input': '$nmrdata',
+                'as': 'nmrd',
+                'in': {
+                    '$and': [
+                        {'$eq': ['$$nmrd.species', sp]},
+                        {'$anyElementTrue': {
+                            '$map': {
+                                'input': '$$nmrd.ms',
+                                'as': 'ms',
+                                'in': {
+                                    '$and': [
+                                            {'$gte': [{'$avg': ['$$ms.e_x',
+                                                                '$$ms.e_y',
+                                                                '$$ms.e_z']},
+                                                      minms]},
+                                            {'$lte': [{'$avg': ['$$ms.e_x',
+                                                                '$$ms.e_y',
+                                                                '$$ms.e_z']},
+                                                      maxms]}
+                                    ]
+                                }
+                            }
+                        }
+                        }
+                    ]
+                }
+            }
+        }
+        }
+        },
     ]
+
+    # return [
+    #     {'nmrdata': {'$elemMatch': {'species': sp}}},
+    #     {'nmrdata': {'$elemMatch':
+    #                  {'$nor': [{'msiso': {'$lt': float(minms)}},
+    #                            {'msiso': {'$gt': float(maxms)}}]}
+    #                  }
+    #      },
+    #     {'nmrdata.msiso': {'$exists': True}}
+    # ]
 
 
 def search_by_efgRange(sp, minefg, maxefg):
 
     return [
-        {'nmrdata': {'$elemMatch': {'species': sp}}},
-        {'nmrdata': {'$elemMatch':
-                     {'$nor': [{'efgvzz': {'$lt': float(minefg)}},
-                               {'efgvzz': {'$gt': float(maxefg)}}]}
-                     }
-         },
-        {'nmrdata.efgvzz': {'$exists': True}}
+        {'nmrdata.efg': {'$exists': True}},
+        {'$expr': {'$anyElementTrue': {
+            '$map': {
+                'input': '$nmrdata',
+                'as': 'nmrd',
+                'in': {
+                    '$and': [
+                        {'$eq': ['$$nmrd.species', sp]},
+                        {'$anyElementTrue': {
+                            '$map': {
+                                'input': '$$nmrd.efg',
+                                'as': 'efg',
+                                'in': {
+                                    '$and': [
+                                            {'$gte': ['$$efg.e_z',
+                                                      minefg]},
+                                            {'$lte': ['$$efg.e_z',
+                                                      maxefg]}
+                                    ]
+                                }
+                            }
+                        }
+                        }
+                    ]
+                }
+            }
+        }
+        }
+        },
     ]
+
+    # return [
+    #     {'nmrdata': {'$elemMatch': {'species': sp}}},
+    #     {'nmrdata': {'$elemMatch':
+    #                  {'$nor': [{'efgvzz': {'$lt': float(minefg)}},
+    #                            {'efgvzz': {'$gt': float(maxefg)}}]}
+    #                  }
+    #      },
+    #     {'nmrdata.efgvzz': {'$exists': True}}
+    # ]
+
 
 def search_by_doi(doi):
 
