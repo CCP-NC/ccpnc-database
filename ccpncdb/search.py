@@ -19,99 +19,62 @@ def _formula_read(f):
 
     return match
 
+# Expressions for NMR quantities in aggregation queries
 
-def search_by_msRange(sp, minms, maxms):
 
-    return [
-        {'nmrdata.ms': {'$exists': True}},
+def _expr_vzz(name):
+    return '$${0}.e_z'.format(name)
+
+
+def _expr_iso(name):
+    return {'$avg': ['$${0}.e_x'.format(name),
+                     '$${0}.e_y'.format(name),
+                     '$${0}.e_z'.format(name)]}
+
+
+def _expr_nmrrange(sp, var, expr, minv, maxv):
+
+    single_query = {'$and': [
+        {'$eq': ['$$nmrd.species', sp]},
+        {'$anyElementTrue': {
+            '$map': {
+                'input': '$$nmrd.{0}'.format(var),
+                'as': '{0}'.format(var),
+                'in': {
+                    '$and': [
+                            {'$gte': [expr(var), minv]},
+                            {'$lte': [expr(var), maxv]}
+                    ]
+                }
+            }
+        }
+        }
+    ]}
+
+    all_query = [
+        {'nmrdata.{0}'.format(var): {'$exists': True}},
         {'$expr': {'$anyElementTrue': {
             '$map': {
                 'input': '$nmrdata',
                 'as': 'nmrd',
-                'in': {
-                    '$and': [
-                        {'$eq': ['$$nmrd.species', sp]},
-                        {'$anyElementTrue': {
-                            '$map': {
-                                'input': '$$nmrd.ms',
-                                'as': 'ms',
-                                'in': {
-                                    '$and': [
-                                            {'$gte': [{'$avg': ['$$ms.e_x',
-                                                                '$$ms.e_y',
-                                                                '$$ms.e_z']},
-                                                      minms]},
-                                            {'$lte': [{'$avg': ['$$ms.e_x',
-                                                                '$$ms.e_y',
-                                                                '$$ms.e_z']},
-                                                      maxms]}
-                                    ]
-                                }
-                            }
-                        }
-                        }
-                    ]
-                }
+                'in': single_query
             }
         }
         }
         },
     ]
 
-    # return [
-    #     {'nmrdata': {'$elemMatch': {'species': sp}}},
-    #     {'nmrdata': {'$elemMatch':
-    #                  {'$nor': [{'msiso': {'$lt': float(minms)}},
-    #                            {'msiso': {'$gt': float(maxms)}}]}
-    #                  }
-    #      },
-    #     {'nmrdata.msiso': {'$exists': True}}
-    # ]
+    return all_query
+
+
+def search_by_msRange(sp, minms, maxms):
+
+    return _expr_nmrrange(sp, 'ms', _expr_iso, minms, maxms)
 
 
 def search_by_efgRange(sp, minefg, maxefg):
 
-    return [
-        {'nmrdata.efg': {'$exists': True}},
-        {'$expr': {'$anyElementTrue': {
-            '$map': {
-                'input': '$nmrdata',
-                'as': 'nmrd',
-                'in': {
-                    '$and': [
-                        {'$eq': ['$$nmrd.species', sp]},
-                        {'$anyElementTrue': {
-                            '$map': {
-                                'input': '$$nmrd.efg',
-                                'as': 'efg',
-                                'in': {
-                                    '$and': [
-                                            {'$gte': ['$$efg.e_z',
-                                                      minefg]},
-                                            {'$lte': ['$$efg.e_z',
-                                                      maxefg]}
-                                    ]
-                                }
-                            }
-                        }
-                        }
-                    ]
-                }
-            }
-        }
-        }
-        },
-    ]
-
-    # return [
-    #     {'nmrdata': {'$elemMatch': {'species': sp}}},
-    #     {'nmrdata': {'$elemMatch':
-    #                  {'$nor': [{'efgvzz': {'$lt': float(minefg)}},
-    #                            {'efgvzz': {'$gt': float(maxefg)}}]}
-    #                  }
-    #      },
-    #     {'nmrdata.efgvzz': {'$exists': True}}
-    # ]
+    return _expr_nmrrange(sp, 'efg', _expr_vzz, minms, maxms)
 
 
 def search_by_doi(doi):
