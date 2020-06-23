@@ -61,7 +61,7 @@ class MagresStrCast(object):
 def getDBCollections():
     # Return the database's collections after establishing a connection
     client = MongoClient(host=_db_url, port=_db_port)
-    ccpnc = client.ccpnc
+    ccpnc = client.ccpnc_old
 
     # Three collections:
     # 1. GridFS collection for magres files

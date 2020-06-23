@@ -34,6 +34,9 @@ def _expr_iso(name):
 
 def _expr_nmrrange(sp, var, expr, minv, maxv):
 
+    minv = float(minv)
+    maxv = float(maxv)
+
     single_query = {'$and': [
         {'$eq': ['$$nmrd.species', sp]},
         {'$anyElementTrue': {
@@ -199,4 +202,5 @@ def build_search(search_spec):
 
         search_dict['$and'] += search_func(**args)
 
+    print(search_dict)
     return search_dict
