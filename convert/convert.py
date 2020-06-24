@@ -1,7 +1,9 @@
 import os
 import sys
 import argparse as ap
+from bson.objectid import ObjectId
 from pymongo import MongoClient
+from gridfs import GridFS, NoFile
 
 path = os.path.split(__file__)[0]
 
@@ -25,6 +27,7 @@ args = parser.parse_args()
 # Create client to read old database
 client = MongoClient(host=args.url, port=args.port)
 olddb = client[args.olddb]
+mfiles_fs = GridFS(olddb, 'magresFilesFS')
 newdb = MagresDB(client, args.newdb)
 
 # Retrieve all entries in collection Metadata
@@ -32,10 +35,28 @@ to_convert = [m for m in olddb.magresMetadata.find({})]
 to_convert = sorted(to_convert, key=lambda x: x['version_history'][0]['date'])
 
 
-def get_new_rdata(entry):
+
+def make_new_entry(entry):
     rdata = {'chemname': entry['chemname'],
              'orcid': entry['orcid']}
-    return rdata
+    version_history = []
+    magres_files = []
+    # Versions?
+    for v in entry['version_history']:
+        vdata = {
+            'license': entry['license'],
+            'doi': v.get('doi'),
+            'extref': None,
+            'csd_ref': v.get('csd-ref'),
+            'csd_num': v.get('csd-num'),
+            'chemform': entry['chemform'],
+            'notes': v.get('notes')
+        }
+        version_history.append(vdata)
+        m_id = ObjectId(v['magresFilesID'])
+        magres_files.append(mfiles_fs.get(m_id))
+
+    return rdata, version_history, magres_files
 
 for entry in to_convert:
-    print(entry)
+    rdata, vhist, mfiles = make_new_entry(entry)
