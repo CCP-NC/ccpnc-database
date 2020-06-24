@@ -105,6 +105,14 @@ def extract_molecules(magres):
 
     return mols_f
 
+def extract_elements(formula):
+    return list([f['species'] for f in formula])
+
+def extract_elements_ratios(formula):
+    ratios = np.array([float(f['n']) for f in formula])
+    ratios /= np.sum(ratios)
+
+    return list(ratios)
 
 def extract_tensdata(tensor):
     haeb_evals = tensor.haeb_eigenvalues
@@ -135,6 +143,5 @@ def extract_nmrdata(magres):
         for i, s in enumerate(species):
             inds = sp[s]
             nmrdata[i]['efg'] = [extract_tensdata(T) for T in efg[inds]]
-
 
     return nmrdata

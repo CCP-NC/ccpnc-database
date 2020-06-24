@@ -169,7 +169,7 @@ def search_by_license(license):
 
 def search_by_mdbref(mdbref):
     return [
-        {'mdbref': mdbref}
+        {'immutable_id': mdbref}
     ]
 
 
@@ -202,5 +202,4 @@ def build_search(search_spec):
 
         search_dict['$and'] += search_func(**args)
 
-    print(search_dict)
     return search_dict

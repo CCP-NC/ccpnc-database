@@ -9,7 +9,8 @@ from pymongo import ReturnDocument
 
 from ccpncdb.utils import (read_magres_file, extract_formula,
                            extract_stochiometry, extract_molecules,
-                           extract_nmrdata)
+                           extract_nmrdata, extract_elements,
+                           extract_elements_ratios)
 from ccpncdb.schemas import (magresVersionSchema,
                              magresRecordSchema,
                              validate_with)
@@ -47,9 +48,15 @@ class MagresDB(object):
         formula = extract_formula(matoms)
         mols = extract_molecules(matoms)
 
+        elements = extract_elements(formula)        
+
         autodata = {
             'formula': formula,
             'stochiometry': extract_stochiometry(formula),
+            'elements': elements,
+            'elements_ratios': extract_elements_ratios(formula),
+            'chemical_formula_descriptive': matoms.get_chemical_formula(),
+            'nelements': len(elements),
             'molecules': mols,
             'Z': len(mols),
             'nmrdata': extract_nmrdata(matoms)
@@ -66,8 +73,11 @@ class MagresDB(object):
 
         # Generate automated data
         record_autodata = {
+            'id': 'NONE',                  # Placeholder
+            'type': 'magres',
             'visible': True,
-            'mdbref': '0000000',            # Placeholder
+            'last_modified': datetime.utcnow(),
+            'immutable_id': '0000000',     # Placeholder
             'version_count': 0,
             'version_history': []          # Empty for now
         }
@@ -97,7 +107,8 @@ class MagresDB(object):
         mdbref = self.generate_id()
         # Update the record
         res = self.magresIndex.update_one({'_id': ObjectId(record_id)},
-                                          {'$set': {'mdbref': mdbref}})
+                                          {'$set': {'id': str(record_id),
+                                                    'immutable_id': mdbref}})
 
         return MagresDBAddResult(res.acknowledged, str(record_id), mdbref)
 
@@ -125,9 +136,10 @@ class MagresDB(object):
                 'magresblock_calculation',
                 {}))
 
+        date = datetime.utcnow()
         version_autodata = {
             'magresFilesID': str(mfile_id),
-            'date': datetime.utcnow(),
+            'date': date,
             'magres_calc': calc_block
         }
 
@@ -143,7 +155,7 @@ class MagresDB(object):
                 # Invalid key
                 raise MagresDBError('Invalid key: ' + valres.invalid)
 
-        to_set = {'last_version': version_data}
+        to_set = {'last_version': version_data, 'last_modified': date}
 
         if update_record and mfile is not None:
             # Update the automatically generated elements in the record

@@ -81,8 +81,15 @@ magresRecordSchemaUser = Schema({
 
 magresRecordSchemaAutomatic = Schema({
     # Automatically generated
+    'id': str,
+    'type': str,
+    'immutable_id': str,
+    'last_modified': datetime,
+    'elements': [str],
+    'nelements': int,
+    'elements_ratios': [float],
+    'chemical_formula_descriptive': str,
     'visible': bool,
-    'mdbref': str,
     'user_name': And(str, len),
     'nmrdata': [{
         'species': str,

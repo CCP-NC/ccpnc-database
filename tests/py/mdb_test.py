@@ -72,7 +72,7 @@ class MagresDBTest(unittest.TestCase):
 
         # Test getting the record back
         rec = self.mdb.get_record(res.id)
-        self.assertEqual(rec['mdbref'], res.mdbref)
+        self.assertEqual(rec['immutable_id'], res.mdbref)
 
         with self.assertRaises(MagresDBError):
             self.mdb.get_record('Invalid ID')
