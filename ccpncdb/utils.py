@@ -33,6 +33,17 @@ def get_schema_keys(schema):
     return sorted(keys)
 
 
+def set_null_values(data, schema, pattern=''):
+    keys = get_schema_keys(schema)
+
+    # Set as None all values that match pattern
+    for k in keys:
+        if k not in data or data[k] == pattern:
+            data[k] = None
+
+    return data
+
+
 def split_data(data, s1, s2):
     # Split data between two schemas
     sd1, sd2 = {}, {}
@@ -105,14 +116,17 @@ def extract_molecules(magres):
 
     return mols_f
 
+
 def extract_elements(formula):
     return list([f['species'] for f in formula])
+
 
 def extract_elements_ratios(formula):
     ratios = np.array([float(f['n']) for f in formula])
     ratios /= np.sum(ratios)
 
     return list(ratios)
+
 
 def extract_tensdata(tensor):
     haeb_evals = tensor.haeb_eigenvalues

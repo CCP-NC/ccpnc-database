@@ -10,7 +10,7 @@ from pymongo import ReturnDocument
 from ccpncdb.utils import (read_magres_file, extract_formula,
                            extract_stochiometry, extract_molecules,
                            extract_nmrdata, extract_elements,
-                           extract_elements_ratios)
+                           extract_elements_ratios, set_null_values)
 from ccpncdb.schemas import (magresVersionSchema,
                              magresRecordSchema,
                              validate_with)
@@ -48,7 +48,7 @@ class MagresDB(object):
         formula = extract_formula(matoms)
         mols = extract_molecules(matoms)
 
-        elements = extract_elements(formula)        
+        elements = extract_elements(formula)
 
         autodata = {
             'formula': formula,
@@ -87,6 +87,7 @@ class MagresDB(object):
         record_data = dict(record_data)
         record_data.update(record_autodata)
         valres = validate_with(record_data, magresRecordSchema)
+
         if not valres.result:
             if valres.invalid is None:
                 # Missing keys
@@ -96,6 +97,7 @@ class MagresDB(object):
                 # Invalid key
                 raise MagresDBError('Invalid key: ' + valres.invalid)
 
+        record_data = set_null_values(record_data, magresRecordSchema)
         # Add the record to the database
         res = self.magresIndex.insert_one(record_data)
         if not res.acknowledged:
@@ -144,8 +146,10 @@ class MagresDB(object):
         }
 
         version_data = dict(version_data)
+
         version_data.update(version_autodata)
         valres = validate_with(version_data, magresVersionSchema)
+
         if not valres.result:
             if valres.invalid is None:
                 # Missing keys
@@ -154,6 +158,8 @@ class MagresDB(object):
             else:
                 # Invalid key
                 raise MagresDBError('Invalid key: ' + valres.invalid)
+
+        version_data = set_null_values(version_data, magresVersionSchema)
 
         to_set = {'last_version': version_data, 'last_modified': date}
 

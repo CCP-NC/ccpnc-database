@@ -54,12 +54,12 @@ magresVersionSchemaUser = Schema({
     # User input, mandatory
     'license': lictypes,
     # User input, optional
-    Optional('doi', ''): str,
-    Optional('extref', ''): namestr_re.match,
-    Optional('csd_ref', ''): csd_refcode_re.match,
-    Optional('csd_num', ''): csd_number_re.match,
-    Optional('chemform', ''): namestr_re.match,
-    Optional('notes', ''): namestr_re.match
+    Optional('doi', None): str,
+    Optional('extref', None): namestr_re.match,
+    Optional('csd_ref', None): csd_refcode_re.match,
+    Optional('csd_num', None): csd_number_re.match,
+    Optional('chemform', None): namestr_re.match,
+    Optional('notes', None): namestr_re.match
 })
 
 magresVersionSchemaAutomatic = Schema({

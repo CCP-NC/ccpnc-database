@@ -9,7 +9,7 @@
                 <th class="width-1">ORCID:</th>
                 <td class="width-1"><a href="{{databaseRecord.orcid.uri}}" target="_blank">{{databaseRecord.orcid.path}}</a></td>
                 <th class="width-1">MRD Number:</th>
-                <td class="width-1"><a href="?mdbref={{databaseRecord.mdbref}}" target="_blank">{{databaseRecord.mdbref}}</a></td>
+                <td class="width-1"><a href="?mdbref={{databaseRecord.immutable_id}}" target="_blank">{{databaseRecord.immutable_id}}</a></td>
             </tr>
         </thead>
         <tbody>
@@ -96,7 +96,7 @@
             </p>
 
             <p>
-                Do you want to proceed to hide the record with <span class="has-text-weight-bold">MRD Number {{databaseRecord.mdbref}}</span> by user with 
+                Do you want to proceed to hide the record with <span class="has-text-weight-bold">MRD Number {{databaseRecord.immutable_id}}</span> by user with 
                 <span class="has-text-weight-bold">ORCID {{databaseRecord.orcid.path}}</span>?                
             </p>
         </section>
