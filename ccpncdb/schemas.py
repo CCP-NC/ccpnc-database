@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 from collections import namedtuple, OrderedDict
-from schema import Schema, And, Optional
+from schema import Schema, And, Optional, Or
 from schema import (SchemaError, SchemaMissingKeyError)
 
 
@@ -23,7 +23,7 @@ def _merge_schemas(s1, s2):
 orcid_path_re = re.compile('[0-9]{4}-'*3+r'[0-9]{3}[0-9X]{1}\Z')
 csd_refcode_re = re.compile(r'[A-Z]{6}([0-9]{2})?\Z')
 csd_number_re = re.compile(r'[0-9]{6,7}\Z')
-namestr_re = re.compile(r'[a-zA-Z0-9\-_\.\s]*\Z')
+namestr_re = re.compile(r'[\x00-\x7F]+\Z')
 
 # License types
 lictypes = _one_of(['pddl', 'odc-by', 'cc-by'])
@@ -59,10 +59,10 @@ magresVersionSchemaUser = Schema({
     # User input, mandatory
     'license': lictypes,
     # User input, optional
-    Optional('doi', None): str,
-    Optional('extref', None): extrefSchema,
-    Optional('chemform', None): namestr_re.match,
-    Optional('notes', None): namestr_re.match
+    Optional('doi', None): Or(str, None),
+    Optional('extref', None): Or(extrefSchema, None),
+    Optional('chemform', None): Or(namestr_re.match, None),
+    Optional('notes', None): Or(namestr_re.match, None)
 })
 
 magresVersionSchemaAutomatic = Schema({
