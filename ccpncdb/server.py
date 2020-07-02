@@ -1,4 +1,4 @@
-import io 
+import io
 import os
 import json
 from datetime import timedelta
@@ -8,7 +8,7 @@ from ccpncdb.config import Config
 from ccpncdb.magresdb import MagresDB, MagresDBError
 from ccpncdb.log import Logger
 from ccpncdb.orcid import OrcidConnection, NoOrcidTokens, OrcidError
-from ccpncdb.utils import split_data
+from ccpncdb.utils import split_data, get_name_from_orcid
 from ccpncdb.schemas import (magresRecordSchemaUser,
                              magresVersionSchemaUser)
 from ccpncdb.archive import MagresArchive, MagresArchiveError
@@ -122,8 +122,7 @@ class MainServer(object):
                                   magresVersionSchemaUser)
         # Add user details
         rdata['orcid'] = user_info['orcid-identifier']
-        rdata['user_name'] = (user_info['person']['name']
-                              ['credit-name']['value'])
+        rdata['user_name'] = get_name_from_orcid(user_info)
 
         if not is_multi:
             # And upload
@@ -277,7 +276,7 @@ class MainServer(object):
     def get_magres_archive(self):
 
         raise NotImplementedError()
-        
+
         fs_ids = request.json.get('magres_id_list')
 
         bio = io.BytesIO()

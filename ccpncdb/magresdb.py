@@ -64,7 +64,7 @@ class MagresDB(object):
 
         return autodata
 
-    def add_record(self, mfile, record_data, version_data):
+    def add_record(self, mfile, record_data, version_data, date=None):
 
         # Read in magres file
         magres = read_magres_file(mfile)
@@ -104,7 +104,7 @@ class MagresDB(object):
             raise MagresDBError('Unknown error while uploading record')
         record_id = res.inserted_id
         # Finally, the version data
-        self.add_version(record_id, mstr, version_data, False)
+        self.add_version(record_id, mstr, version_data, False, date)
         # Now that it's all done, assign a unique identifier
         mdbref = self.generate_id()
         # Update the record
@@ -115,7 +115,8 @@ class MagresDB(object):
         return MagresDBAddResult(res.acknowledged, str(record_id), mdbref)
 
     def add_version(self, record_id,
-                    mfile=None, version_data={}, update_record=True):
+                    mfile=None, version_data={}, update_record=True,
+                    date=None):
 
         # Read in magres file
         if mfile is None:
@@ -138,7 +139,9 @@ class MagresDB(object):
                 'magresblock_calculation',
                 {}))
 
-        date = datetime.utcnow()
+        if date is None:
+            date = datetime.utcnow()
+
         version_autodata = {
             'magresFilesID': str(mfile_id),
             'date': date,

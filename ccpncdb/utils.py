@@ -5,6 +5,7 @@ from soprano.properties.linkage import Molecules
 from soprano.properties.nmr.ms import MSIsotropy
 from soprano.properties.nmr.efg import EFGVzz
 from soprano.nmr import NMRTensor
+from soprano.nmr.utils import _haeb_sort
 
 
 def prime_factors(num):
@@ -18,6 +19,23 @@ def prime_factors(num):
         n += 1 + (n > 2)  # So past 2 test only odd numbers
 
     return sorted(facs)
+
+
+def get_name_from_orcid(user_info):
+    # Retrieve a user name from an ORCID record
+
+    # Is there a credit name?
+    if user_info['person']['name']['credit-name'] is not None:
+        name = user_info['person']['name']['credit-name']['value']
+    else:
+        try:
+            name = user_info['person']['name']['given-names']['value']
+            name += ' ' + user_info['person']['name']['family-name']['value']
+        except KeyError:
+            # I got nothing
+            return None
+
+    return name
 
 
 def get_schema_keys(schema):
@@ -129,7 +147,8 @@ def extract_elements_ratios(formula):
 
 
 def extract_tensdata(tensor):
-    haeb_evals = tensor.haeb_eigenvalues
+    evals = tensor.eigenvalues
+    haeb_evals = _haeb_sort([evals])[0]
 
     return {'e_x': haeb_evals[0], 'e_y': haeb_evals[1], 'e_z': haeb_evals[2]}
 

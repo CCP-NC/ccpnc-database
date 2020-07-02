@@ -41,6 +41,11 @@ tensorSchema = Schema({
     'e_z': float
 })
 
+extrefSchema = Schema({
+    'ref_type': namestr_re.match,
+    'ref_code': str
+})
+
 # Two types of elements:
 #   - Records
 #   - Versions (multiple for each record)
@@ -55,9 +60,7 @@ magresVersionSchemaUser = Schema({
     'license': lictypes,
     # User input, optional
     Optional('doi', None): str,
-    Optional('extref', None): namestr_re.match,
-    Optional('csd_ref', None): csd_refcode_re.match,
-    Optional('csd_num', None): csd_number_re.match,
+    Optional('extref', None): extrefSchema,
     Optional('chemform', None): namestr_re.match,
     Optional('notes', None): namestr_re.match
 })
@@ -90,7 +93,7 @@ magresRecordSchemaAutomatic = Schema({
     'elements_ratios': [float],
     'chemical_formula_descriptive': str,
     'visible': bool,
-    'user_name': And(str, len),
+    Optional('user_name'): And(str, len),
     'nmrdata': [{
         'species': str,
         Optional('ms'): [tensorSchema],

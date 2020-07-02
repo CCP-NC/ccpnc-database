@@ -20,8 +20,10 @@ class OrcidConnection(object):
     ORCID, given the relevant app data."""
 
     # Path to banlist and admin list
-    _banpath = os.path.join(os.path.split(__file__)[0], 'userlists/banlist.yaml')
-    _adminpath = os.path.join(os.path.split(__file__)[0], 'userlists/adminlist.yaml')
+    _banpath = os.path.join(os.path.split(
+        __file__)[0], 'userlists/banlist.yaml')
+    _adminpath = os.path.join(os.path.split(
+        __file__)[0], 'userlists/adminlist.yaml')
 
     def __init__(self, details, session=None,
                  login_url='https://orcid.org/',
@@ -36,13 +38,12 @@ class OrcidConnection(object):
         self._login_url = login_url
         self._api_url = api_url
 
-
     def is_banned(self, orcid):
         # Check if the given ORCID is in the banlist
         with open(self._banpath) as f:
             banlist = yaml.safe_load(f)
             banlist = [] if banlist is None else banlist
-        
+
         return (orcid in banlist)
 
     def is_admin(self, orcid):
@@ -50,8 +51,25 @@ class OrcidConnection(object):
         with open(self._adminpath) as f:
             adminlist = yaml.safe_load(f)
             adminlist = [] if adminlist is None else adminlist
-        
+
         return (orcid in adminlist)
+
+    def request_public_tokens(self):
+        # Get tokens from ORCID for a public API access
+        headers = {'Accept': 'application/json'}
+        payload = dict(self._details)
+        payload.update({
+            'grant_type': 'client_credentials',
+            'scope': '/read-public',
+        })
+
+        try:
+            r = requests.post(self._login_url + 'oauth/token',
+                              data=payload, headers=headers)
+        except ConnectionError:
+            raise NoOrcidTokens('Connection to oauth/token failed')
+
+        return r.json()
 
     def request_tokens(self, code):
         # Get tokens from ORCID given a request code
@@ -129,13 +147,19 @@ class OrcidConnection(object):
 
         tk = self.get_tokens()
 
-        # Prepare a get request
+        rdata = self.request_public_info(tk['orcid'], tk['access_token'])
+
+        return rdata
+
+    def request_public_info(self, orcid, token):
+        # Request public info on a user, using the given access token
+
         headers = {
             'Accept': 'application/json',
             'Authorization type': 'Bearer',
-            'Access token': tk['access_token']
+            'Access token': token,
         }
-        r = requests.get(self._api_url + tk['orcid'] + '/record',
+        r = requests.get(self._api_url + orcid + '/record',
                          headers=headers)
 
         try:
@@ -183,12 +207,12 @@ class FakeOrcidConnection(OrcidConnection):
                 'path': '0000-0000-0000-0000',
                 'host': 'none',
                 'uri': '0000-0000-0000-0000'
-                }, 
+                },
                 'person': {
                     'name': {
                         'credit-name': {
                             'value': 'John Doe'
                         }
                     }
-                }
-                }
+        }
+        }
