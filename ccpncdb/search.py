@@ -101,7 +101,7 @@ def search_by_chemname(pattern):
     # escape ., convert * to any character, convert ? to a single character
 
     return [
-        {'chemname': {'$regex': regex}}
+        {'chemname': {'$regex': regex, '$options': 'i'}}
     ]
 
 

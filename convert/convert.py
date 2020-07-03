@@ -92,8 +92,6 @@ def make_new_entry(entry):
 N = len(to_convert)
 print('{0} records found. Starting conversion...'.format(N))
 
-from ccpncdb.schemas import namestr_re
-
 for i, entry in enumerate(to_convert):
 
     # Progress bar
