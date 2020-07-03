@@ -23,7 +23,7 @@ def _merge_schemas(s1, s2):
 orcid_path_re = re.compile('[0-9]{4}-'*3+r'[0-9]{3}[0-9X]{1}\Z')
 csd_refcode_re = re.compile(r'[A-Z]{6}([0-9]{2})?\Z')
 csd_number_re = re.compile(r'[0-9]{6,7}\Z')
-namestr_re = re.compile(r'[\x00-\x7F]+\Z')
+namestr_re = re.compile(r'[\x00-\x7F]*\Z')
 
 # License types
 lictypes = _one_of(['pddl', 'odc-by', 'cc-by'])
@@ -41,11 +41,6 @@ tensorSchema = Schema({
     'e_z': float
 })
 
-extrefSchema = Schema({
-    'ref_type': namestr_re.match,
-    'ref_code': str
-})
-
 # Two types of elements:
 #   - Records
 #   - Versions (multiple for each record)
@@ -60,16 +55,18 @@ magresVersionSchemaUser = Schema({
     'license': lictypes,
     # User input, optional
     Optional('doi', None): Or(str, None),
-    Optional('extref', None): Or(extrefSchema, None),
     Optional('chemform', None): Or(namestr_re.match, None),
-    Optional('notes', None): Or(namestr_re.match, None)
+    Optional('notes', None): Or(namestr_re.match, None),
+    Optional('extref_type', None): Or(namestr_re.match, None),
+    Optional('extref_other', None): Or(namestr_re.match, None),
+    Optional('extref_code', None): Or(namestr_re.match, None)
 })
 
 magresVersionSchemaAutomatic = Schema({
     # Automatically generated
     'date': datetime,
     'magresFilesID': str,
-    'magres_calc': str,
+    'magres_calc': Or(str, None),
 })
 
 magresVersionSchema = _merge_schemas(magresVersionSchemaUser,

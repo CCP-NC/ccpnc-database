@@ -25,12 +25,20 @@ function addUploadController(ngApp) {
             // Check required fields
             $scope.status_err = false;
             $scope.status = '';
+
+
             $('#upload-form input[required]').each(function(i, o) {
                 if ($(o).val() == '') {
                     $scope.status = 'Missing file or obligatory field';
                     $scope.status_err = true;
                 }
             });
+
+            // Specific fix for extref
+            if ($('#upload-form #extref_code').val() == '') {
+                $('#upload-form #extref_type').val('');
+            }
+
             if ($scope.status_err) {
                 return;
             }

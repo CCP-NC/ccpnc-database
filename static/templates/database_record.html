@@ -49,13 +49,25 @@
                     <a class="has-text-weight-bold" href="https://creativecommons.org/licenses/by/4.0" ng-switch-when="cc-by" target="_blank">CC-By</a>
                 </td>
             </tr>
+            <tr ng-if="databaseRecord.version_history[_selected_index].extref_code">
+                <th class="width-1">Database reference:</th>
+                <td class="width-3" ng-switch="databaseRecord.version_history[_selected_index].extref_type" colspan="1">
+                    <span ng-if="databaseRecord.version_history[_selected_index].extref_type != 'other'">
+                        <a class="has-text-weight-bold" href="https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/" ng-switch-when="csd" target="_blank">CSD</a>
+                        <a class="has-text-weight-bold" href="https://www.psds.ac.uk/icsd" ng-switch-when="icsd" target="_blank">ICSD</a>
+                        <a class="has-text-weight-bold" href="http://www.crystallography.net/cod/index.php" ng-switch-when="cod" target="_blank">COD</a>
+                    </span>
+                    <span ng-else>
+                        {{databaseRecord.version_history[_selected_index].extref_other}}
+                    </span>
+                </td>
+                <td class="width-3" ng-switch="databaseRecord.version_history[_selected_index].license" colspan="2">
+                    {{databaseRecord.version_history[_selected_index].extref_code}}
+                </td>
+            </tr>
             <tr ng-if="databaseRecord.version_history[_selected_index].doi">
                 <th class="width-1">DOI:</th>
                 <td class="width-3" colspan="3"><a href="https://doi.org/{{databaseRecord.version_history[_selected_index].doi}}" target="_blank">{{databaseRecord.version_history[_selected_index].doi}}</a></td>
-            </tr>
-            <tr ng-if="databaseRecord.version_history[_selected_index]['csd-ref']">
-                <th class="width-1">CSD Refcode:</th>
-                <td class="width-3" colspan="3">{{databaseRecord.version_history[_selected_index]['csd-ref']}}</td>
             </tr>
             <tr ng-if="databaseRecord.version_history[_selected_index].magres_calc">
                 <th class="width-1">Calculation details:</th>

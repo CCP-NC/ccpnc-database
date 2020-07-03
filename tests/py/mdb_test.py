@@ -160,7 +160,7 @@ class MagresDBTest(unittest.TestCase):
 
         found = self.mdb.search_record([{
             'type': 'chemname',
-            'args': {'pattern': 'ethanol_1'}
+            'args': {'pattern': 'Ethanol_1'}
         }])
         found = list(found)
 

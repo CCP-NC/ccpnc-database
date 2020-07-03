@@ -120,6 +120,7 @@ class MainServer(object):
         rdata, vdata = split_data(dict(request.values),
                                   magresRecordSchemaUser,
                                   magresVersionSchemaUser)
+
         # Add user details
         rdata['orcid'] = user_info['orcid-identifier']
         rdata['user_name'] = get_name_from_orcid(user_info)

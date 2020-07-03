@@ -135,9 +135,9 @@ class MagresDB(object):
             mfile_id = self.magresFilesFS.put(mstr,
                                               filename=record_id,
                                               encoding='UTF-8')
-            calc_block = json.dumps(matoms.info.get(
-                'magresblock_calculation',
-                {}))
+            calc_block = matoms.info.get('magresblock_calculation', {})
+            calc_block = (json.dumps(calc_block) if len(calc_block) > 0 else
+                          None)
 
         if date is None:
             date = datetime.utcnow()
