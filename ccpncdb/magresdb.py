@@ -104,7 +104,12 @@ class MagresDB(object):
             raise MagresDBError('Unknown error while uploading record')
         record_id = res.inserted_id
         # Finally, the version data
-        self.add_version(record_id, mstr, version_data, False, date)
+        try:
+            self.add_version(record_id, mstr, version_data, False, date)
+        except MagresDBError as e:
+            # Delete the record for the failed version
+            self.magresIndex.delete_one({'_id': ObjectId(record_id)})
+            raise e
         # Now that it's all done, assign a unique identifier
         mdbref = self.generate_id()
         # Update the record
