@@ -194,11 +194,10 @@
                                         <option value="msRange">Magnetic Shielding</option>
                                         <option value="efgRange">Electric Field Gradient V<sub>zz</sub></option>
                                         <option value="chemname">Chemical name</option>
-                                        <option value="cform">Form</option>
+                                        <option value="chemform">Form</option>
                                         <option value="formula">Chemical formula</option>
                                         <option value="molecule">Molecular formula</option>
-                                        <option value="csdcode">CSD Refcode</option>
-                                        <option value="csdnum">CSD Number</option>
+                                        <option value="extref">External database reference</option>
                                         <option value="license">License</option>
                                     </select>
                                 </td>
@@ -281,7 +280,7 @@
                                     </td>
                                 </tr>
                             </tbody>
-                            <tbody ng-if="search_spec.type == 'cform'">
+                            <tbody ng-if="search_spec.type == 'chemform'">
                                 <tr>
                                     <td colspan="1" rowspan="" headers="">
                                         Search pattern
@@ -327,27 +326,20 @@
                                     </td>
                                 </tr>
                             </tbody>
-                            <tbody ng-if="search_spec.type == 'csdcode'">
+                            <tbody ng-if="search_spec.type == 'extref'">
                                 <tr>
                                     <td colspan="1" rowspan="" headers="">
-                                        CSD Refcode
+                                        External reference
                                     </td>
-                                    <td colspan="3" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" size="10" placeholder="ABCDEF01"
-                                            ng-model="search_spec.args.csdref"
-                                            ng-init="search_spec.args.csdref = null">
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tbody ng-if="search_spec.type == 'csdnum'">
-                                <tr>
                                     <td colspan="1" rowspan="" headers="">
-                                        CSD Number
+                                        <input class="cc-ctrl cc-bulma" type="text" size="15" placeholder="Database name"
+                                            ng-model="search_spec.args.reftype"
+                                            ng-init="search_spec.args.reftype = null">
                                     </td>
-                                    <td colspan="3" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" size="10" placeholder="0123456"
-                                            ng-model="search_spec.args.csdnum"
-                                            ng-init="search_spec.args.csdnum = null">
+                                    <td colspan="2" rowspan="" headers="">
+                                        <input class="cc-ctrl cc-bulma" type="text" size="15" placeholder="Database code"
+                                            ng-model="search_spec.args.refcode"
+                                            ng-init="search_spec.args.refcode = null">
                                     </td>
                                 </tr>
                             </tbody>

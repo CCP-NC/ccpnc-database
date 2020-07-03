@@ -215,6 +215,31 @@ class MagresDBTest(unittest.TestCase):
         self.assertEqual(len(found), 1)
         self.assertEqual(found[0]['chemname'], 'alanine')
 
+        # External reference
+        vdata = dict(_fake_vdata)
+        vdata['extref_type'] = 'csd'
+        vdata['extref_code'] = 'ABC123'
+        self.mdb.add_record(fstr, rdata_3, vdata)        
+        vdata['extref_code'] = 'ABC456'
+        self.mdb.add_record(fstr, rdata_3, vdata)
+
+        # Search only by type
+        found = self.mdb.search_record([{
+            'type': 'extref',
+            'args': {'reftype': 'csd', 'refcode': None}    
+        }])
+        found = list(found)
+
+        self.assertEqual(len(found), 2)
+
+        # Add code
+        found = self.mdb.search_record([{
+            'type': 'extref',
+            'args': {'reftype': 'csd', 'refcode': 'ABC123'}    
+        }])
+        found = list(found)
+
+        self.assertEqual(len(found), 1)
 
     @clean_db
     def testUniqueID(self):

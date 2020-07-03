@@ -112,7 +112,7 @@ def search_by_chemform(pattern):
     # escape ., convert * to any character, convert ? to a single character
 
     return [
-        {'last_version.chemform': {'$regex': regex}}
+        {'last_version.chemform': {'$regex': regex, '$options': 'i'}}
     ]
 
 
@@ -147,18 +147,21 @@ def search_by_molecule(formula):
     }}]
 
 
-def search_by_csdref(csdref):
+def search_by_extref(reftype, refcode):
 
-    return [
-        {'last_version.csd_ref': csdref}
-    ]
+    q = {}
 
+    if reftype is not None:
+        q['$or'] = [
+            {'last_version.extref_type': {'$regex': reftype, '$options': 'i'}},
+            {'$and': [{'last_version.extref_type': 'other'},
+                      {'last_version.extref_other':
+                       {'$regex': reftype, '$options': 'i'}}]}
+        ]
+    if refcode is not None:
+        q['last_version.extref_code'] = {'$regex': refcode, '$options': 'i'}
 
-def search_by_csdnum(csdnum):
-
-    return [
-        {'last_version.csd_num': csdnum}
-    ]
+    return [q]
 
 
 def search_by_license(license):
