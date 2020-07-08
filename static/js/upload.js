@@ -14,6 +14,7 @@ function addUploadController(ngApp) {
         // Status message
         $scope.status = '';
         $scope.status_err = false; // Is the status an error?
+        $scope.faillist = '';
 
         // Upload mode
         $scope.upload_multi = false;
@@ -25,6 +26,7 @@ function addUploadController(ngApp) {
             // Check required fields
             $scope.status_err = false;
             $scope.status = '';
+            $scope.faillist = '';
 
 
             $('#upload-form input[required]').each(function(i, o) {
@@ -63,8 +65,18 @@ function addUploadController(ngApp) {
                             $scope.status = 'ERROR: ' + msg;
                             $scope.status_err = true;
                         } else {
-                            $scope.status = 'Successfully uploaded';
-                            $scope.status_err = false;
+                            if (!request_data._upload_multi) {
+                                $scope.status = 'Successfully uploaded';
+                                $scope.status_err = false;                                
+                            }
+                            else {
+                                var resp = JSON.parse(msg);
+                                $scope.status_err = resp.success == 0;
+                                $scope.status = 'Uploaded ' + resp.uploaded + ' files';
+                                if (resp.failed.length > 0) {
+                                    $scope.faillist = 'data:,' + resp.failed.join(',');
+                                }
+                            }
                             // Also, clear
                             clearForm();
                         }

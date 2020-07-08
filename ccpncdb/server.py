@@ -155,28 +155,27 @@ class MainServer(object):
                         self.HTTP_400_BAD_REQUEST)
 
             successful = []
+            failed = []
             mdbrefs = []
             ids = []
 
             for f in archive.files():
 
-                res = self._db.add_record(f.contents,
-                                          f.record_data,
-                                          f.version_data)
+                try:
+                    res = self._db.add_record(f.contents,
+                                              f.record_data,
+                                              f.version_data)
+                except MagresDBError as e:
+                    successful.append(False)
+                    failed.append(f.name)
+                    continue
 
                 successful.append(res.successful)
                 if res.successful:
                     mdbrefs.append(res.mdbref)
                     ids.append(res.id)
-
-            # How many were successful?
-            n = sum(successful)
-            N = len(successful)
-
-            if n == 0:
-                return 'Uploading failed', self.HTTP_500_INTERNAL_SERVER_ERROR
-            elif n < N:
-                return 'Uploaded {0}/{1} files from archive'.format(n, N)
+                else:
+                    failed.append(f.name)
 
             # Log the operation
             logdata = {
@@ -185,8 +184,18 @@ class MainServer(object):
                 'ids': ids
             }
 
+            # How many were successful?
+            n = sum(successful)
+            N = len(successful)
+
+            ans = {}
+            ans['success'] = (n > 0) + (n == N)
+            ans['uploaded'] = '{0}/{1}'.format(n, N)
+            ans['mdbrefs'] = mdbrefs
+            ans['failed'] = failed
+
             self._logger.log('Added archive', rdata['orcid']['path'], logdata)
-            ans = json.dumps(mdbrefs)
+            ans = json.dumps(ans)
 
         return ans, self.HTTP_200_OK
 

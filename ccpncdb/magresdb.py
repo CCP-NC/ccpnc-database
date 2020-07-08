@@ -67,7 +67,11 @@ class MagresDB(object):
     def add_record(self, mfile, record_data, version_data, date=None):
 
         # Read in magres file
-        magres = read_magres_file(mfile)
+        try:
+            magres = read_magres_file(mfile)
+        except:
+            # Anything, really
+            raise MagresDBError('Invalid magres file')
         mstr = magres['string']
         matoms = magres['Atoms']
 
@@ -133,7 +137,11 @@ class MagresDB(object):
             mfile_id = rec['last_version']['magresFilesID']
             calc_block = rec['last_version']['magres_calc']
         else:
-            magres = read_magres_file(mfile)
+            try:
+                magres = read_magres_file(mfile)
+            except:
+                # Anything, really
+                raise MagresDBError('Invalid magres file')
             mstr = magres['string']
             matoms = magres['Atoms']
 

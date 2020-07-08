@@ -466,7 +466,10 @@
                         'has-text-danger': status_err,
                         'has-text-success': !status_err,
                     }">
-                            {{ status }}
+                            {{ status }}                            
+                            <span ng-show="faillist !== ''"><br>
+                                <a href="{{faillist}}" download="failed.txt" class="has-text-danger">Failed uploads</a>
+                            </span>
                         </span>
                         <span class="separator-1"></span>
                         <a class="button is-primary is-large" ng-click="upload()">Upload</a>
