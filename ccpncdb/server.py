@@ -8,7 +8,7 @@ from ccpncdb.config import Config
 from ccpncdb.magresdb import MagresDB, MagresDBError
 from ccpncdb.log import Logger
 from ccpncdb.orcid import OrcidConnection, NoOrcidTokens, OrcidError
-from ccpncdb.utils import split_data, get_name_from_orcid
+from ccpncdb.utils import split_data, get_name_from_orcid, get_schema_keys
 from ccpncdb.schemas import (magresRecordSchemaUser,
                              magresVersionSchemaUser)
 from ccpncdb.archive import MagresArchive, MagresArchiveError
@@ -233,7 +233,8 @@ class MainServer(object):
         if res:
             return 'Success', self.HTTP_200_OK
         else:
-            return 'Unknown database error', self.HTTP_500_INTERNAL_SERVER_ERROR
+            return ('Unknown database error',
+                    self.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def search(self):
         query = request.json['search_spec']
@@ -290,3 +291,22 @@ class MainServer(object):
                 continue
 
         return 'OK', self.HTTP_200_OK
+
+    def get_csv_template(self):
+
+        all_keys = get_schema_keys(magresRecordSchemaUser)
+        all_keys += get_schema_keys(magresVersionSchemaUser)
+
+        # Remove ORCID, that's not for users
+        try:
+            all_keys.remove('orcid')
+        except ValueError:
+            # Shouldn't happen but ok
+            pass
+
+        resp = make_response('filename,' + ','.join(all_keys))
+        resp.headers['Content-Type'] = 'text/plain'
+        resp.headers.set('Content-Disposition', 'attachment',
+                         filename='info.csv')
+
+        return resp, self.HTTP_200_OK

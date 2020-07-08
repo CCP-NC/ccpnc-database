@@ -41,29 +41,42 @@ def logout():
 def get_tokens(code):
     return serv.get_tokens(code)
 
+
 @serv.app.route('/upload', methods=['POST'])
 def upload():
     return serv.upload_record()
+
 
 @serv.app.route('/edit', methods=['POST'])
 def edit():
     return serv.upload_version()
 
+
 @serv.app.route('/hide', methods=['POST'])
 def hide():
     return serv.hide_record()
+
 
 @serv.app.route('/search', methods=['POST'])
 def search():
     return serv.search()
 
+
 @serv.app.route('/get_record', methods=['POST'])
 def get_record():
     return serv.get_record()
 
+
 @serv.app.route('/get_magres', methods=['GET'])
 def get_magres():
     return serv.get_magres()
+
+
+@serv.app.route('/csvtemplate', methods=['GET'])
+def get_csv():
+
+    return serv.get_csv_template()
+
 
 @serv.app.route('/pyversion', methods=['GET'])
 def get_version():
@@ -79,6 +92,7 @@ def get_version():
            sprv=soprano.__version__, flkv=flask.__version__)
 
     return resp
+
 
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!
