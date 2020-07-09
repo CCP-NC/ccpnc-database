@@ -74,8 +74,12 @@ def get_magres():
 
 @serv.app.route('/csvtemplate', methods=['GET'])
 def get_csv():
-
     return serv.get_csv_template()
+
+
+@serv.app.route('/sendmail', methods=['POST'])
+def send_mail():
+    return serv.send_mail()
 
 
 @serv.app.route('/pyversion', methods=['GET'])

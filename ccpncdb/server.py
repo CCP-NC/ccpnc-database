@@ -3,6 +3,8 @@ import os
 import json
 from datetime import timedelta
 from flask import Flask, Response, session, request, make_response
+from flask_mail import Mail, Message
+
 
 from ccpncdb.config import Config
 from ccpncdb.magresdb import MagresDB, MagresDBError
@@ -59,6 +61,12 @@ class MainServer(object):
         self._dbname = self._config.db_name
         self._db = MagresDB(client=self._client, dbname=self._dbname)
         self._logger = Logger(client=self._client)
+
+        # Load mail config
+        with open(os.path.join(self._config_folder, 'smtpconfig.json')) as f:
+            self._app.config.update(json.load(f))
+
+        self._mail = Mail(self._app)
 
     @property
     def app(self):
@@ -319,3 +327,27 @@ class MainServer(object):
                          filename='info.csv')
 
         return resp, self.HTTP_200_OK
+
+    def send_mail(self):
+
+        sender = request.values.get('_sender', '')
+        title = request.values.get('_title', '')
+        body = request.values.get('_body', '')
+
+        if sender == '' or body == '':
+            return 'Missing sender or message body', self.HTTP_400_BAD_REQUEST
+        if title == '':
+            # Just do a standard one...
+            title = 'Untitled Message'
+
+        email = Message(title, sender=sender, recipients=['ccpnc@gmail.com'])
+        email.body = body
+
+        try:
+            self._mail.send(email)
+        except Exception as e:
+            return str(e), self.HTTP_500_INTERNAL_SERVER_ERROR
+
+        return 'Message sent', self.HTTP_200_OK
+
+
