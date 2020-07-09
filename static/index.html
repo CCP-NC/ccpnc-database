@@ -24,6 +24,7 @@
     <script src="js/record.js"></script>
     <script src="js/login.js"></script>
     <script src="js/search.js"></script>
+    <script src="js/mail.js"></script>
     <script src="js/upload.js"></script>
     <script src="js/cookielaw.js"></script>
     <script src="js/yourfiles.js"></script>
@@ -80,6 +81,12 @@
                     <a class="navbar-item" ng-click="open_tab='yourfiles';" ng-show="loginStatus.get_login_status()"
                         ng-cloak>
                         Your files
+                        &nbsp;
+                        <i class="fa fa-file-text" aria-hidden="true"></i>
+                    </a>
+                    <a class="navbar-item" ng-click="open_tab='contact';"
+                        ng-cloak>
+                        Contact us
                         &nbsp;
                         <i class="fa fa-file-text" aria-hidden="true"></i>
                     </a>
@@ -437,7 +444,7 @@
                         <div class="file has-name is-boxed is-primary is-medium is-centered">
                             <label class="file-label">
                                 <input class="file-input" type="file" id="magres-file" name="magres-file"
-                                    ngf-select="load_files($files)" required>
+                                    ng-select="load_files($files)" required>
                                 <span class="file-cta">
                                     <span class="file-icon">
                                         <span ng-show="!uploading_now">
@@ -510,6 +517,47 @@
                     </div>
                     <button class="modal-close is-large" aria-label="close"></button>
                 </div>
+            </div>
+
+            <div id="div-search" class="section" ng-switch-when="contact" ng-controller="MailController" ng-cloak>
+                <div class="container">
+                    <form id="contact-form" enctype="multipart/form-data" action="sendmail" method="post">
+
+                        <div class="field">
+                          <label class="label">Email</label>
+                          <div class="control has-icons-left has-icons-right">
+                            <input name="_sender" class="input" ng-class="(form.email? '' : 'is-danger')" ng-model="form.email" type="email" placeholder="Sender email" size="50">
+                            <span class="icon is-small is-left">
+                              <i class="fas fa-envelope"></i>
+                            </span>
+                            <span class="icon is-small is-right" ng-show="!form.email">
+                              <i class="fas fa-exclamation-triangle"></i>
+                            </span>
+                          </div>
+                          <p class="help is-danger" ng-show="!form.email">This email is invalid</p>
+                        </div>
+
+                        <div class="field">
+                          <label class="label">Title</label>
+                          <div class="control has-icons-left has-icons-right">
+                            <input name="_title" class="input" type="text" placeholder="Title" size="120">
+                          </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="control">
+                              <label class="label">Message</label>
+                              <textarea name="_body" class="textarea has-fixed-size" placeholder="Type your message here..."></textarea>
+                            </div>                            
+                        </div>
+
+                        <div class="field">
+                            <div class="control">
+                              <a class="button is-primary is-large" ng-click="sendmail()">Send</a>
+                            </div>                            
+                        </div>
+                    </form>                    
+                </div>                
             </div>
         </div>
     </div>

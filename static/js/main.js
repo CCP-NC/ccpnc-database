@@ -24,6 +24,7 @@
   addCookieLawController(ccpncApp);
   addUploadController(ccpncApp);
   addSearchController(ccpncApp);
+  addMailController(ccpncApp);
   addFileListerController(ccpncApp);
   addRecordController(ccpncApp);
 
