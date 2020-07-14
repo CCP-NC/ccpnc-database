@@ -151,21 +151,32 @@ class MagresDBTest(unittest.TestCase):
 
         # Add it twice
         rdata_1 = dict(_fake_rdata)
-        rdata_1['chemname'] = 'ethanol_1'
+        rdata_1['chemname'] = 'ethanol'
         res_1 = self.mdb.add_record(fstr, rdata_1, _fake_vdata)
 
         rdata_2 = dict(_fake_rdata)
-        rdata_2['chemname'] = 'ethanol_2'
+        rdata_2['chemname'] = 'ethyl alcohol'
         res_2 = self.mdb.add_record(fstr, rdata_2, _fake_vdata)
 
         found = self.mdb.search_record([{
             'type': 'chemname',
-            'args': {'pattern': 'Ethanol_1'}
+            'args': {'pattern': '"Ethanol"'}
         }])
         found = list(found)
 
         self.assertEqual(len(found), 1)
         self.assertEqual(str(found[0]['_id']), res_1.id)
+
+        # Test search using tokens
+        found = self.mdb.search_record([{
+            'type': 'chemname',
+            'args': {'pattern': 'alcohol ethyl'}
+        }])
+        found = list(found)
+
+        self.assertEqual(len(found), 1)
+        self.assertEqual(str(found[0]['_id']), res_2.id)
+
 
         # Test by mdbref
         found = self.mdb.search_record([{

@@ -137,7 +137,7 @@ def validate_with(data, schema):
         result = False
     except SchemaError as e:
         result = False
-        invalid = re.compile('Key \'([a-zA-Z0-9_]+)\''
-                             ).match(str(e)).groups()[0]
+        invalid = re.compile('ey \'([a-zA-Z0-9_]+)\''
+                             ).findall(str(e))[0]
 
     return ValidationResult(result, missing, invalid)

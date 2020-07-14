@@ -1,6 +1,6 @@
 import re
 import inspect
-from ccpncdb.utils import extract_stochiometry
+from ccpncdb.utils import extract_stochiometry, tokenize_name
 
 
 def _formula_read(f):
@@ -96,13 +96,35 @@ def search_by_orcid(orcid):
 
 def search_by_chemname(pattern):
 
-    regex = re.compile(pattern.replace(".", "\\.").replace(
-        "*", ".*").replace("?", "."), re.IGNORECASE)
-    # escape ., convert * to any character, convert ? to a single character
+    # Start by splitting the pattern in bits in quotes and bits outside them
+    quotere = re.compile('"([^\"]+)"')
+    substrings = quotere.findall(pattern)
 
-    return [
-        {'chemname': {'$regex': regex, '$options': 'i'}}
-    ]
+    query = {
+        '$or': [
+        ]
+    }
+
+    # Start by finding the substrings in chemname
+    if len(substrings) > 0:
+        query['$or'].append({'$and': []})
+    for sb in substrings:
+        # regex = re.compile(sb.replace(".", "\\.").replace(
+        # "*", ".*").replace("?", "."), re.IGNORECASE)
+        regex = re.compile(sb.replace("*", ".*"), re.IGNORECASE)
+        sbquery = {'chemname': {'$regex': regex, '$options': 'i'}}
+        query['$or'][0]['$and'].append(sbquery)    
+        pattern = pattern.replace('"{0}"'.format(sb), '')
+
+    # Now tokens
+    tokens = tokenize_name(pattern)
+
+    if len(tokens) > 0:
+        query['$or'].append({'$and': []})
+    for tk in tokens:
+        query['$or'][-1]['$and'].append({'chemname_tokens': tk})
+
+    return [query]
 
 
 def search_by_chemform(pattern):

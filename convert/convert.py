@@ -68,19 +68,20 @@ def make_new_entry(entry):
         extref = None
         csd = csdref or csdnum
 
-        if csd is not None:
-            extref = {
-                'ref_type': 'csd',
-                'ref_code': csd
-            }
-
         vdata = {
             'license': entry['license'],
             'doi': v.get('doi'),
-            'extref': extref,
+            'extref_type': None,
+            'extref_code': None,
+            'extref_other': None,
             'chemform': entry['chemform'],
             'notes': v.get('notes')
         }
+
+        if csd is not None:
+            vdata['extref_type'] = 'csd'
+            vdata['extref_code'] = csd
+
         version_history.append(vdata)
         m_id = ObjectId(v['magresFilesID'])
         magres_files.append(mfiles_fs.get(m_id))
