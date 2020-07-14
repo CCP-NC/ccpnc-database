@@ -1,3 +1,4 @@
+import re
 import numpy as np
 from io import StringIO
 from ase.io.magres import read_magres
@@ -75,6 +76,13 @@ def split_data(data, s1, s2):
 
     return sd1, sd2
 
+
+def tokenize_name(name):
+    # Split a chemname, extract useful keywords from it
+    sep = re.compile('[0-9,\\\'\\(\\)\\[\\]\\s\\-]+')
+    tokens = sep.split(name)
+    tokens = [tk.lower() for tk in tokens if len(tk) > 1]
+    return tokens
 
 def read_magres_file(mfile):
     # Read a magres file/string unifying the output into an ASE Atoms object

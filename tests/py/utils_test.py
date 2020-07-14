@@ -103,10 +103,10 @@ class UtilsTest(unittest.TestCase):
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
             m = read_magres_file(f)['Atoms']
             symbols = m.get_chemical_symbols()
-            ms_tens = [NMRTensor(T) for T in m.get_array('ms')]
+            ms_tens = [NMRTensor(T, order='h') for T in m.get_array('ms')]
             ms_iso = [T.isotropy for T in ms_tens]
-            efg_tens = [NMRTensor(T) for T in m.get_array('efg')]
-            efg_vzz = [T.haeb_eigenvalues[2] for T in efg_tens]
+            efg_tens = [NMRTensor(T, order='h') for T in m.get_array('efg')]
+            efg_vzz = [T.eigenvalues[2] for T in efg_tens]
 
             nmrdata = extract_nmrdata(m)
             for eldata in nmrdata:
@@ -116,7 +116,7 @@ class UtilsTest(unittest.TestCase):
                     haeb_evals = [elms[k] for k in ['e_x', 'e_y', 'e_z']]
                     self.assertEqual(symbols[i], eldata['species'])
                     self.assertTrue(np.isclose(haeb_evals,
-                                               ms_tens[i].haeb_eigenvalues
+                                               ms_tens[i].eigenvalues
                                                ).all())
 
                 for elefg in eldata['efg']:
@@ -125,8 +125,25 @@ class UtilsTest(unittest.TestCase):
                     haeb_evals = [elefg[k] for k in ['e_x', 'e_y', 'e_z']]
                     self.assertEqual(symbols[i], eldata['species'])
                     self.assertTrue(np.isclose(haeb_evals,
-                                               efg_tens[i].haeb_eigenvalues
+                                               efg_tens[i].eigenvalues
                                                ).all())
+
+    def testTokenize(self):
+
+        from ccpncdb.utils import tokenize_name
+
+        tname = "3-Ethoxy-2,2-bis(N-oxy-N'-methoxydiazenyl)propan-1-ol"
+        tokens = tokenize_name(tname)
+
+        self.assertEqual(tokens, ['ethoxy', 'bis', 'oxy', 'methoxydiazenyl',
+                                  'propan', 'ol'])
+
+        tname = ("5,6-Dimethyl-12-hydroxy-1,3,8,10-tetra-azatetracyclo" +
+                 "(8.3.2.05,14.06,15)pentadecane-2,4,7,9-tetraone")
+        tokens = tokenize_name(tname)
+
+        self.assertEqual(tokens, ['dimethyl', 'hydroxy', 'tetra',
+                                  'azatetracyclo', 'pentadecane', 'tetraone'])
 
 
 if __name__ == "__main__":
