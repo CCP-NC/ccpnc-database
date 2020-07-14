@@ -10,7 +10,8 @@ from pymongo import ReturnDocument
 from ccpncdb.utils import (read_magres_file, extract_formula,
                            extract_stochiometry, extract_molecules,
                            extract_nmrdata, extract_elements,
-                           extract_elements_ratios, set_null_values)
+                           extract_elements_ratios, set_null_values, 
+                           tokenize_name)
 from ccpncdb.schemas import (magresVersionSchema,
                              magresRecordSchema,
                              validate_with)
@@ -80,10 +81,12 @@ class MagresDB(object):
             'id': 'NONE',                  # Placeholder
             'type': 'magres',
             'visible': True,
+            'chemname_tokens': [''],
             'last_modified': datetime.utcnow(),
             'immutable_id': '0000000',     # Placeholder
             'version_count': 0,
-            'version_history': []          # Empty for now
+            'version_history': [],          # Empty for now
+            'last_version': None
         }
 
         record_autodata.update(self._auto_recdata(matoms))
@@ -100,6 +103,9 @@ class MagresDB(object):
             else:
                 # Invalid key
                 raise MagresDBError('Invalid key: ' + valres.invalid)
+
+        # Extract the tokens
+        record_data['chemname_tokens'] = tokenize_name(record_data['chemname'])
 
         record_data = set_null_values(record_data, magresRecordSchema)
         # Add the record to the database

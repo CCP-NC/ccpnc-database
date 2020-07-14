@@ -22,7 +22,7 @@ class SchemaTest(unittest.TestCase):
 
         # Acceptable names
         self.assertTrue(namestr_re.match('John Smith-09'))
-        self.assertFalse(namestr_re.match('$$$'))
+        self.assertFalse(namestr_re.match('α')) # non-ASCII characters fail
 
         # ORCIDs
         self.assertTrue(orcid_path_re.match('0123-4567-8901-234X'))
@@ -46,7 +46,7 @@ class SchemaTest(unittest.TestCase):
         self.assertFalse(res.result)
         self.assertEqual(res.missing, ['chemname', 'orcid'])
 
-        rdatau['chemname'] = '$$'
+        rdatau['chemname'] = 'α'
         res = validate_with(rdatau, magresRecordSchemaUser)
         self.assertFalse(res.result)
         self.assertEqual(res.invalid, 'chemname')

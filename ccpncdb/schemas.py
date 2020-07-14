@@ -77,6 +77,7 @@ magresRecordSchemaUser = Schema({
     'chemname': And(namestr_re.match, len),
     'orcid': orcidSchema,
     # User input, optional
+    Optional('user_name'): And(str, len)
 })
 
 magresRecordSchemaAutomatic = Schema({
@@ -85,12 +86,12 @@ magresRecordSchemaAutomatic = Schema({
     'type': str,
     'immutable_id': str,
     'last_modified': datetime,
+    'chemname_tokens': [str],
     'elements': [str],
     'nelements': int,
     'elements_ratios': [float],
     'chemical_formula_descriptive': str,
     'visible': bool,
-    Optional('user_name'): And(str, len),
     'nmrdata': [{
         'species': str,
         Optional('ms'): [tensorSchema],
@@ -107,7 +108,7 @@ magresRecordSchemaAutomatic = Schema({
                     'n': int}]],
     'version_count': int,
     'version_history': [magresVersionSchema],
-    Optional('last_version', None): magresVersionSchema,
+    'last_version': Or(magresVersionSchema, None)
 })
 
 magresRecordSchema = _merge_schemas(magresRecordSchemaUser,
