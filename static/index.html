@@ -475,7 +475,7 @@
                     }">
                             {{ status }}                            
                             <span ng-show="faillist !== ''"><br>
-                                <a href="{{faillist}}" download="failed.txt" class="has-text-danger">Download failed uploads</a>
+                                <a href="{{faillist}}" download="failed.txt" class="has-text-danger">Download list of failed uploads</a>
                             </span>
                         </span>
                         <span class="separator-1"></span>
@@ -556,7 +556,16 @@
                               <a class="button is-primary is-large" ng-click="sendmail()">Send</a>
                             </div>                            
                         </div>
+
                     </form>                    
+
+                    <span class="separator-1"></span>
+                    <span class="box has-text-centered" ng-show="status !== ''" ng-class="{
+                        'has-text-danger': status_err,
+                        'has-text-success': !status_err,
+                    }">
+                            {{ status }}                 
+                    </span>
                 </div>                
             </div>
         </div>
