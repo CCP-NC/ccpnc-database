@@ -207,5 +207,9 @@ ul.discs li {
 }
 
 p.faq {
-    padding-bottom: 10px;
+    padding-bottom: 2em;
+}
+
+p.faq span {
+    display: block;
 }

@@ -84,6 +84,7 @@ def tokenize_name(name):
     tokens = [tk.lower() for tk in tokens if len(tk) > 1]
     return tokens
 
+
 def read_magres_file(mfile):
     # Read a magres file/string unifying the output into an ASE Atoms object
     if hasattr(mfile, 'read'):

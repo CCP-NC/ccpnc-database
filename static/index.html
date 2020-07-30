@@ -84,8 +84,10 @@
                         &nbsp;
                         <i class="fa fa-file-text" aria-hidden="true"></i>
                     </a>
-                    <a class="navbar-item" ng-click="open_tab='contact';"
-                        ng-cloak>
+<!--                
+                    *This used to be its own tab, but now redirects to a contact form on the CCP-NC website*
+ -->
+                    <a class="navbar-item" href="https://www.ccpnc.ac.uk/contact-us" target="_blank">
                         Contact us
                         &nbsp;
                         <i class="fa fa-file-text" aria-hidden="true"></i>
@@ -519,6 +521,10 @@
                 </div>
             </div>
 
+<!--        
+            
+            Temporarily removed
+
             <div id="div-search" class="section" ng-switch-when="contact" ng-controller="MailController" ng-cloak>
                 <div class="container">
                     <form id="contact-form" enctype="multipart/form-data" action="sendmail" method="post">
@@ -568,6 +574,7 @@
                     </span>
                 </div>                
             </div>
+ -->        
         </div>
     </div>
     <div ng-if="recordref" ng-controller="RecordController" ng-cloak>

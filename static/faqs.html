@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>CCPNC database - Our Cookie and Privacy Policy</title>
+    <title>CCPNC database - Frequently Asked Questions</title>
     <link rel="stylesheet" href="css/bulma.min.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="academicons/css/academicons.min.css" />
@@ -24,8 +24,118 @@
 
             <p class="faq">
                 <span class="has-text-weight-bold">Can I change the metadata associated with a file?</span> 
-                Yes. This is encouraged, for example, to add a publication DOI. Note that any change will create a new version. 
+                Yes. This is encouraged, for example, to add a publication DOI. Note that any change will create a new version. Changing the metadata of multiple files in block is still not supported, but is planned for a future version.
             </p>
+
+            <p class="faq">
+
+                <span class="has-text-weight-bold">How do I contact the database administrators?  </span> 
+                    For requests that cannot be met through the user interface, or for any problems that are not addressed in the FAQs, please use the webform <a href="https://www.ccpnc.ac.uk/contact-us" target="_blank">on the CCP-NC website</a>.
+            </p>
+
+            <p class="faq">
+                <span class="has-text-weight-bold">Can I deposit a set of results together rather than individually?</span>
+
+                Yes. There is <a href="csvtemplate" download="info.csv">a template CSV spreadsheet</a> that should be completed with the name of each file (first column) and file-specific metadata in the remaining columns; default values for metadata are taken from the submission form. The CSV file must be compressed with the magres files in either a zip or tarball file, and the archive is then submitted via the submission form. Note that the normal limit for bulk uploads is 999 files (see below).                
+
+            </p>
+
+            <p class="faq">
+
+                <span class="has-text-weight-bold">Can I deposit unpublished data?</span> 
+                Yes. Although most data will be associated with publications (via a DOI), it is also useful to include unpublished data, e.g. associated with a PhD thesis. In this case, leave the DOI field blank, but please include a link to the associated document (e.g. a deposited thesis link) in the free text Notes field.
+            </p>
+
+            <p class="faq">
+
+                <span class="has-text-weight-bold">Can I download a large number of entries?</span> 
+                <!--
+                    If a search returns multiple entries, then these can be downloaded as a single zip file, with the exclusion of entries with an attribution licence (these must be downloaded individually). 
+                -->
+
+                Currently no. The functionality will be added in a future version, with some limitations for files whose license doesn't allow it.
+            </p>            
+
+            <p class="faq">
+
+                <span class="has-text-weight-bold">Does it matter if similar calculations have been deposited already?</span> 
+                No, indeed, new calculations are encouraged.
+            </p>            
+
+
+            <p class="faq">
+                <span class="has-text-weight-bold">How can I refer to a dataset?</span> 
+                Each individual magres file is assigned a unique numerical ID on deposit called the MRD number (for MagRes files Database), which can be used to refer to the dataset. The MRD numbers will generally be sequential if depositing a set of magres files. Note that files downloaded from the database will be named, for example, MRD000001v1.magres, where “v1” indicates version 1 of the deposit.
+           </p>            
+
+
+            <p class="faq">
+                <span class="has-text-weight-bold">How do I obtain the metadata associated with the dataset?</span> 
+                A search for a dataset will produce a landing page containing the metadata (including any version history) and a link to download the original submitted file and/or the metadata as a text file. For bulk downloads, the metadata will be provided as a CSV file in the archive.
+           </p>
+
+
+            <p class="faq">
+                <span class="has-text-weight-bold">I have a very large number of calculation results. Can this be deposited?</span> 
+                In principle yes. Normal uploads are limited to 999 records, but users can use the webform to discuss larger deposits.
+           </p>
+
+
+            <p class="faq">
+                <span class="has-text-weight-bold">I have discovered a problem with the data I deposited. Can I change it?</span> 
+                Yes. Entries cannot be changed once submitted, but you create a new version of a data set. A search will always return the most recent version of a dataset.
+           </p>
+
+            <p class="faq">
+                <span class="has-text-weight-bold">Is the submitted file altered on deposit?</span> 
+                Is the submitted file altered on deposit?  No. The file contents are fixed, although the name used for the downloaded data will use the record number e.g. MRD0001256.magres. 
+           </p>
+ 
+            <p class="faq">
+                <span class="has-text-weight-bold">How long does my login last?</span> 
+                Login (using ORCID id) stores a cookie and should be persistent, but may be canceled after extended periods of time. If that happens, simply log out and log sign back in.
+           </p>
+
+
+            <p class="faq">
+                <span class="has-text-weight-bold">My calculations are of hypothetical structures. Can these be included?  </span> 
+                These are perfectly fine as they may be valuable, e.g., for machine learning applications. See query about bulk uploads.
+           </p>
+
+            <p class="faq">
+                <span class="has-text-weight-bold">My calculations involve results from incorrect structures. Can these be included?  </span> 
+                Yes, any valid calculation is acceptable, but do use the Notes field to highlight the fact that the structure is thought to be incorrect. 
+           </p>
+
+            <p class="faq">
+                <span class="has-text-weight-bold">What data formats are accepted?</span> 
+                Only magres files using the CCP-NC-developed magres format are accepted. These are produced by both the major DFT codes which calculate NMR parameters for periodic solids (CASTEP and Quantum ESPRESSO). 
+           </p>
+
+            <p class="faq">
+                <span class="has-text-weight-bold">What licence is used for database entries?</span> 
+                Users have the option of three licences when submitting database entries:<br>
+                    - PDDL (Public Domain Dedication and License) v 1.0 (default)<br>
+                    - ODC-By (Open Data Commons Attribution License) v 1.0<br>
+                    - CC-By (Creative Commons Attribution License) v 4.0<br>
+                The default, and strongly preferred, PDDL licence essentially puts the data in the public domain. Users who prefer (or are required) to use a more restrictive licence can use one of the other two licences, which means that the data licensed cannot be used without attribution, e.g. by citing the reference paper and original author. Users requesting an attribution licence are strongly encouraged to provide suitable attribution text in the Notes field. Database entries that have an attribution licence can only be downloaded individually and will not be available through bulk downloads. Note that data that has been bulk downloaded can be used freely, e.g. for machine learning training, without needing attribution. We cannot accept data which requires more restrictive licences than the ones offered.
+           </p>
+
+            <p class="faq">
+                <span class="has-text-weight-bold">What metadata needs to be supplied when uploading a file?</span> 
+                The following metadata can be supplied for each file: <br>
+                - Name. This is the primary search text. It is recommended to keep this simple and use the structural keywords for qualifiers, such as polymorph. Hence use “alanine” as the name and “beta” as a structural qualifier for “alanine form beta”. Note that the database will only accept simple alphanumeric characters in text. Users are encouraged to use IUPAC naming for consistency. <br>
+                - Keywords: An optional list of structural qualifiers.Please use alphanumeric characters rather than symbols wherever possible, e.g. “beta” instead of &beta;. More than one keyword can be supplied where this would help users to find a specific entry. <br>
+                - Database number: Optional reference code for starting structure, e.g. Cambridge Structural Database, or ICSD reference code. <br>
+                - DOI: Optional DOI to publication associated with record. This should be an actual DOI (generally text beginning 10.XXX) rather than a link. Use the Notes field instead if you need to refer to a different type of reference, e.g. a link to a PhD thesis. <br>
+                - Notes: Free text information. This should be used to provide any information that might be helpful to users, e.g. requested attribution text. Note this text is not directly searchable.
+           </p>
+
+            <p class="faq">
+                <span class="has-text-weight-bold">When should I deposit data?</span> 
+                The database is intended as a convenient means of accessing published magnetic resonance results. One option is to upload the data when a publication DOI is available. You are encouraged, however, to upload data prior to publication, in order to be able to refer to record numbers in the paper, and add the DOI when available (this will create a new version). Note that it is important to add the DOI when available since database users have the option of restricting searches to data associated with a DOI.
+           </p>
+
             <span class="separator-2"></span>
             <a class="button is-primary" href="/"> <i class="fas fa-arrow-left"></i> &nbsp; Go Back</a>
         </div>
