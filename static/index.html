@@ -396,12 +396,20 @@
                 <span class="separator-2"></span>
 
                 <div class="container is-scroll-y">
-                    <div database-record="result" ng-repeat="result in search_results">
+                    <div database-record="result" ng-repeat="result in search_results[results_page]">
                     </div>
                     <div class="notification is-warning" ng-if="(search_results.length == 0)*search_complete">
                         No search results found
                     </div>
                 </div>
+
+                <span class="separator-1"></span>
+
+                <div class="container">                    
+                    <a class="button is-primary" ng-show="results_page > 0" ng-click="change_page(-1)">Previous {{max_results}} results</a>
+                    <a class="button is-primary" ng-show="results_page < (search_results.length-1)" ng-click="change_page(1)">Next {{max_results}} results</a>
+                </div>
+
             </div>
 
             <div id="div-upload" class="section" ng-switch-when="upload" ng-controller="UploadController" ng-cloak>

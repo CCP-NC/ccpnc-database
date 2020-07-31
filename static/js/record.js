@@ -48,7 +48,7 @@ function addRecordDirective(ngApp) {
 
                             $.extend(request_data, loginStatus.get_ajax_id());
 
-                            elem.find('#edit-popup-form').ajaxSubmit({
+                            elem.find('.edit-popup-form').ajaxSubmit({
                                 data: request_data,
                                 success: function(msg, status) {
 

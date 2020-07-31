@@ -37,8 +37,11 @@ function addSearchController(ngApp) {
             $scope.search_args = {};
         }
 
+        $scope.max_results = 20;
+
         $scope.add_spec();
         $scope.search_results = [];
+        $scope.results_page = 0;
         $scope.search_complete = false;
 
         var last_query = null;
@@ -54,12 +57,22 @@ function addSearchController(ngApp) {
                     'search_spec': $scope.search_specs
                 }),
                 success: function(d, statusText, xhr) {
-                    $scope.search_results = parseSearchResults(d);
+                    var results = parseSearchResults(d)
+
                     $scope.message = '';
-                    if ($scope.search_results == null) {
+
+                    if (results == null) {
                         // Should NEVER happen, but you never know...
                         $scope.message = 'An unknown error has occurred';
                     }
+                    else {                        
+                        // Cap max results
+                        $scope.search_results = [];
+                        for (var i = 0; i < results.length; i += $scope.max_results) {
+                            $scope.search_results.push(results.slice(i, i+$scope.max_results));
+                        }
+                    }
+
                     $scope.search_complete = true;
                     $scope.$apply();
                 },
@@ -85,6 +98,10 @@ function addSearchController(ngApp) {
             if (last_query) {
                 $.ajax(last_query);
             }
+        }
+
+        $scope.change_page = function(i) {
+            $scope.results_page += i;
         }
 
     });

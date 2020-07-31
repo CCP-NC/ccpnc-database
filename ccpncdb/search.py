@@ -142,6 +142,7 @@ def search_by_formula(formula, subset=False):
 
     formula = _formula_read(formula)
     stochio = extract_stochiometry(formula)
+
     # Check for stochiometry
     if not subset:
         return [{

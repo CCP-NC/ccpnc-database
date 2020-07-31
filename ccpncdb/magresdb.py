@@ -253,9 +253,12 @@ class MagresDB(object):
             return mfile_ref.read()
 
     def search_record(self, query):
+        # print(query)
         query = build_search(query)
+        # print(query)
 
         results = self.magresIndex.find(query)
+        # print(len(list(results)))
 
         return results
 

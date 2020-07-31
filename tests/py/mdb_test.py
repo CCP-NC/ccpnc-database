@@ -145,18 +145,28 @@ class MagresDBTest(unittest.TestCase):
     @clean_db
     def testSearch(self):
 
-        fstr = None
+        ethstr = None
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
-            fstr = f.read()
+            ethstr = f.read()
+
+        alastr = None
+        with open(os.path.join(data_path, 'alanine.magres')) as f:
+            alastr = f.read()
 
         # Add it twice
         rdata_1 = dict(_fake_rdata)
         rdata_1['chemname'] = 'ethanol'
-        res_1 = self.mdb.add_record(fstr, rdata_1, _fake_vdata)
+        res_1 = self.mdb.add_record(ethstr, rdata_1, _fake_vdata)
 
         rdata_2 = dict(_fake_rdata)
         rdata_2['chemname'] = 'ethyl alcohol'
-        res_2 = self.mdb.add_record(fstr, rdata_2, _fake_vdata)
+        res_2 = self.mdb.add_record(ethstr, rdata_2, _fake_vdata)
+
+        rdata_3 = dict(_fake_rdata)
+        rdata_3['chemname'] = 'alanine'
+        vdata_3 = dict(_fake_vdata)
+        vdata_3['license'] = 'pddl'
+        res_3 = self.mdb.add_record(alastr, rdata_3, vdata_3)
 
         found = self.mdb.search_record([{
             'type': 'chemname',
@@ -197,6 +207,15 @@ class MagresDBTest(unittest.TestCase):
 
         self.assertEqual(len(found), 2)
 
+        # Try with subset
+        found = self.mdb.search_record([{
+            'type': 'formula',
+            'args': {'formula': 'N4', 'subset': True}
+        }])
+        found = list(found)
+        
+        self.assertEqual(len(found), 1)
+
         # Now try obfuscating one
         self.mdb.edit_record(res_1.id, {'$set': {'visible': False}})
 
@@ -210,13 +229,7 @@ class MagresDBTest(unittest.TestCase):
         self.assertEqual(len(found), 1)
         self.assertEqual(str(found[0]['_id']), res_2.id)
 
-        # Test by MS, but first add another entry
-        with open(os.path.join(data_path, 'alanine.magres')) as f:
-            fstr = f.read()
-        rdata_3 = dict(_fake_rdata)
-        rdata_3['chemname'] = 'alanine'
-        self.mdb.add_record(fstr, rdata_3, _fake_vdata)
-
+        # Test by MS
         found = self.mdb.search_record([{
             'type': 'msRange',
             'args': {'sp': 'N', 'minms': 100.0, 'maxms': 200.0}
@@ -230,9 +243,9 @@ class MagresDBTest(unittest.TestCase):
         vdata = dict(_fake_vdata)
         vdata['extref_type'] = 'csd'
         vdata['extref_code'] = 'ABC123'
-        self.mdb.add_record(fstr, rdata_3, vdata)        
+        self.mdb.add_record(alastr, rdata_3, vdata)        
         vdata['extref_code'] = 'ABC456'
-        self.mdb.add_record(fstr, rdata_3, vdata)
+        self.mdb.add_record(alastr, rdata_3, vdata)
 
         # Search only by type
         found = self.mdb.search_record([{

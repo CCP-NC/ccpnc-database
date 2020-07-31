@@ -3,8 +3,7 @@
         License<sup class="has-text-danger">*</sup>
     </th>
     <td colspan="" rowspan="" headers="">
-        <select id="license" 
-                class="cc-ctrl cc-bulma" 
+        <select class="cc-ctrl cc-bulma" 
                 name="license"
                 ng-model="versionTable.license"
                 help="License to apply to the data (see bottom of the page for details)" >
@@ -20,7 +19,7 @@
         DOI
     </th>
     <td colspan="" rowspan="" headers="">
-        <input id="doi" class="cc-ctrl cc-bulma" type="text" size="80"
+        <input class="cc-ctrl cc-bulma" type="text" size="80"
             name="doi"
             ng-model="versionTable.doi"
             placeholder="A valid DOI code for published work referencing this data">
@@ -32,17 +31,16 @@
         External reference code (e.g. CSD refcode/number)
     </th>
     <td colspan="" rowspan="" headers="">
-        <input id="extref_code" class="cc-ctrl cc-bulma" type="text" size="30"
+        <input class="cc-ctrl cc-bulma" type="text" size="30"
             name="extref_code" ng-model="versionTable.extref_code"
             placeholder="Code for external database">
 
-        <input id="extref_other" class="cc-ctrl cc-bulma" type="text" size="10"
+        <input class="cc-ctrl cc-bulma" type="text" size="10"
             ng-if="versionTable.extref_type == 'other'"
             name="extref_other" ng-model="versionTable.extref_other"
             placeholder="Name of external database">
 
-        <select id="extref_type"
-                class="cc-ctrl cc-bulma" 
+        <select class="cc-ctrl cc-bulma" 
                 name="extref_type"
                 ng-model="versionTable.extref_type"
                 help="External database for the inserted code"
@@ -63,7 +61,7 @@
         Additional structural descriptors
     </th>
     <td colspan="" rowspan="" headers="">
-        <input id="chemform" class="cc-ctrl cc-bulma" type="text" size="80"
+        <input class="cc-ctrl cc-bulma" type="text" size="80"
             name="chemform"
             ng-model="versionTable.chemform"
             placeholder="Additional relevant descriptors (e.g.: phase, conformer, etc.)">
@@ -75,7 +73,7 @@
         Notes
     </th>
     <td colspan="" rowspan="" headers="">
-        <input id="notes" class="cc-ctrl cc-bulma" type="text" size="80"
+        <input class="cc-ctrl cc-bulma" type="text" size="80"
             name="notes"
             ng-model="versionTable.notes"
             placeholder="Any other useful notes">
