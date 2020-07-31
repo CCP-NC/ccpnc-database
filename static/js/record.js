@@ -116,7 +116,14 @@ function addRecordDirective(ngApp) {
                 }
 
                 scope.filename = function() {
-                    return this.databaseRecord.chemname + '_v' + (parseInt(this._selected_index)+1) + '.magres';
+                    return 'MRD' + this.databaseRecord.immutable_id + 'v' + (parseInt(this._selected_index)+1);
+                }
+
+                scope.dataurl = function() {
+                    var url = 'data:application/json;charset=utf-8,';
+                    url += JSON.stringify(this.databaseRecord, null, 4);
+
+                    return url;
                 }
 
                 scope.lastdate = function() {

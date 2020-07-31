@@ -79,8 +79,11 @@
             </tr>
         </tbody>
     </table>
-    <a class="button is-primary" href="get_magres?magres_id={{databaseRecord.version_history[_selected_index].magresFilesID}}" download="{{filename()}}">
+    <a class="button is-primary" href="get_magres?magres_id={{databaseRecord.version_history[_selected_index].magresFilesID}}" download="{{filename()}}.magres">
         Download&nbsp;<i class="fa fa-download"></i>
+    </a>
+    <a class="button is-primary" href="{{dataurl()}}" download="{{filename()}}.json">
+        Download metadata&nbsp;<i class="fa fa-download"></i>
     </a>
     <!-- ADMIN ONLY -->
     <div class="button is-danger" ng-show="isadmin()" ng-click="hideshow()">
