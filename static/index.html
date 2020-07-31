@@ -34,6 +34,10 @@
 
     <script src="js/main.js" async defer></script>
 
+    <link rel="icon" 
+          type="image/png" 
+          href="favicon.png">
+
 </head>
 
 <body ng-controller="NavigateController">
@@ -446,7 +450,7 @@
                         <div class="file has-name is-boxed is-primary is-medium is-centered">
                             <label class="file-label">
                                 <input class="file-input" type="file" id="magres-file" name="magres-file"
-                                    ng-select="load_files($files)" required>
+                                    ngf-select="load_files($files)" required>
                                 <span class="file-cta">
                                     <span class="file-icon">
                                         <span ng-show="!uploading_now">

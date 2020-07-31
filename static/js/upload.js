@@ -112,6 +112,7 @@ function addUploadController(ngApp) {
                 $scope.status = '';
                 $scope.status_err = false;
                 $scope.magres_file_name = file.name;
+                $scope.$apply();
 
                 if (!$scope.upload_multi) {
                     var reader = new FileReader();
