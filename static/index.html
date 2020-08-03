@@ -20,10 +20,11 @@
 
     <script src="js/config.js"></script>
     <script src="js/edit.js"></script>
-    <script src="js/directives.js"></script>
+    <script src="js/tables.js"></script>
     <script src="js/record.js"></script>
     <script src="js/login.js"></script>
     <script src="js/search.js"></script>
+    <script src="js/searchresults.js"></script>
     <script src="js/mail.js"></script>
     <script src="js/upload.js"></script>
     <script src="js/cookielaw.js"></script>
@@ -392,23 +393,9 @@
 
                 </div>
 
-
                 <span class="separator-2"></span>
 
-                <div class="container is-scroll-y">
-                    <div database-record="result" ng-repeat="result in search_results[results_page]">
-                    </div>
-                    <div class="notification is-warning" ng-if="(search_results.length == 0)*search_complete">
-                        No search results found
-                    </div>
-                </div>
-
-                <span class="separator-1"></span>
-
-                <div class="container">                    
-                    <a class="button is-primary" ng-show="results_page > 0" ng-click="change_page(-1)">Previous {{max_results}} results</a>
-                    <a class="button is-primary" ng-show="results_page < (search_results.length-1)" ng-click="change_page(1)">Next {{max_results}} results</a>
-                </div>
+                <div search-results="search_results"></div>
 
             </div>
 
@@ -518,9 +505,9 @@
                         {{ message }}
                     </div>
                 </div>
-                <div class="container is-scroll-y">
-                    <div database-record="result" ng-repeat="result in search_results">
-                    </div>
+
+                <div search-results="search_results" ng-init="refresh()">                    
+                {{search_results}}
                 </div>
 
                 <!-- Use for edits -->

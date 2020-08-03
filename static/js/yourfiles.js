@@ -4,6 +4,9 @@ function addFileListerController(ngApp) {
     ngApp.controller('FileListerController', function($scope, loginStatus) {
 
         $scope.message = '';
+        $scope.search_results = {
+            max_results: 20
+        };
 
         // This code gets executed every time the tab is opened, and refreshes
         // the contents
@@ -25,7 +28,7 @@ function addFileListerController(ngApp) {
                 }, ]
             }),
             success: function(d, statusText, xhr) {
-                $scope.search_results = parseSearchResults(d);
+                $scope.search_results.update_results(parseSearchResults(d));
                 $scope.message = '';
                 $scope.$apply();
             },
@@ -39,7 +42,5 @@ function addFileListerController(ngApp) {
         $scope.refresh = function() {
             $.ajax(query);
         }
-
-        $scope.refresh();
     });
 }

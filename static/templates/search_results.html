@@ -1,0 +1,19 @@
+<div class="container">
+    <div class="notification" ng-show="searchResults.search_complete" ng-class="searchResults.found_results? 'is-primary' : 'is-warning'">
+        {{searchResults.found_results}} results found
+    </div>    
+</div>
+
+<span class="separator-1"></span>
+
+<div class="container is-scroll-y">
+    <div database-record="result" ng-repeat="result in searchResults.results[searchResults.results_page]">
+    </div>
+</div>
+
+<span class="separator-1"></span>
+
+<div class="container">           
+    <a class="button is-primary" ng-show="searchResults.results_page > 0" ng-click="searchResults.change_page(-1)">Previous {{searchResults.max_results}} results</a>
+    <a class="button is-primary" ng-show="searchResults.results_page < (searchResults.results.length-1)" ng-click="searchResults.change_page(1)">Next {{searchResults.max_results}} results</a>
+</div>

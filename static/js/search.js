@@ -24,7 +24,6 @@ function addSearchController(ngApp) {
                 'type': 'doi',
                 'args': {}
             });
-            $scope.search_complete = false;
         }
 
         $scope.remove_spec = function(i) {
@@ -33,16 +32,15 @@ function addSearchController(ngApp) {
         }
 
         $scope.reset_search_args = function(new_type) {
-            $scope.search_complete = false;
             $scope.search_args = {};
         }
 
-        $scope.max_results = 20;
-
         $scope.add_spec();
-        $scope.search_results = [];
-        $scope.results_page = 0;
-        $scope.search_complete = false;
+
+        // This will become a proper directive
+        $scope.search_results = {
+            max_results: 20
+        };
 
         var last_query = null;
 
@@ -65,15 +63,10 @@ function addSearchController(ngApp) {
                         // Should NEVER happen, but you never know...
                         $scope.message = 'An unknown error has occurred';
                     }
-                    else {                        
-                        // Cap max results
-                        $scope.search_results = [];
-                        for (var i = 0; i < results.length; i += $scope.max_results) {
-                            $scope.search_results.push(results.slice(i, i+$scope.max_results));
-                        }
+                    else { 
+                        $scope.search_results.update_results(results);                       
                     }
 
-                    $scope.search_complete = true;
                     $scope.$apply();
                 },
                 error: function(xhr, statusText) {
@@ -98,10 +91,6 @@ function addSearchController(ngApp) {
             if (last_query) {
                 $.ajax(last_query);
             }
-        }
-
-        $scope.change_page = function(i) {
-            $scope.results_page += i;
         }
 
     });
