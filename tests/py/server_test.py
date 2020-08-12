@@ -129,8 +129,8 @@ class MDBServerTest(unittest.TestCase):
                          self.eth['string'])
 
         # And now test archive retrieval
-        self.client.get('/get_magres_archive',
-                        json={'magres_id_list': [m_id]})
+        # self.client.get('/get_magres_archive',
+        #                 json={'magres_id_list': [m_id]})
 
 
 if __name__ == '__main__':

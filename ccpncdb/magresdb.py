@@ -10,7 +10,7 @@ from pymongo import ReturnDocument
 from ccpncdb.utils import (read_magres_file, extract_formula,
                            extract_stochiometry, extract_molecules,
                            extract_nmrdata, extract_elements,
-                           extract_elements_ratios, set_null_values, 
+                           extract_elements_ratios, set_null_values,
                            tokenize_name)
 from ccpncdb.schemas import (magresVersionSchema,
                              magresRecordSchema,
@@ -43,7 +43,7 @@ class MagresDB(object):
         # 3. Unique ID counter
         self.magresIDcount = ccpnc.magresIDcount
 
-    def _auto_recdata(self, matoms):
+    def _auto_rdata(self, matoms):
         # Compute a dictionary of all data that needs to be extracted
         # automatically from a magres Atoms object
         formula = extract_formula(matoms)
@@ -65,7 +65,7 @@ class MagresDB(object):
 
         return autodata
 
-    def add_record(self, mfile, record_data, version_data, date=None):
+    def _load_magres(self, mfile):
 
         # Read in magres file
         try:
@@ -73,8 +73,14 @@ class MagresDB(object):
         except:
             # Anything, really
             raise MagresDBError('Invalid magres file')
-        mstr = magres['string']
+        return magres
+
+    def _validate_rdata(self, magres, record_data, date=None):
+
         matoms = magres['Atoms']
+
+        if date is None:
+            date = datetime.utcnow()
 
         # Generate automated data
         record_autodata = {
@@ -82,14 +88,14 @@ class MagresDB(object):
             'type': 'magres',
             'visible': True,
             'chemname_tokens': [''],
-            'last_modified': datetime.utcnow(),
+            'last_modified': date,
             'immutable_id': '0000000',     # Placeholder
             'version_count': 0,
             'version_history': [],          # Empty for now
             'last_version': None
         }
 
-        record_autodata.update(self._auto_recdata(matoms))
+        record_autodata.update(self._auto_rdata(matoms))
 
         record_data = dict(record_data)
         record_data.update(record_autodata)
@@ -106,9 +112,16 @@ class MagresDB(object):
 
         # Extract the tokens
         record_data['chemname_tokens'] = tokenize_name(record_data['chemname'])
-
         record_data = set_null_values(record_data, magresRecordSchema)
-        # Add the record to the database
+
+        return record_data
+
+    def _push_record(self, magres, record_data, version_data):
+
+        mstr = magres['string']
+        date = record_data['last_modified']
+
+      # Add the record to the database
         res = self.magresIndex.insert_one(record_data)
         if not res.acknowledged:
             raise MagresDBError('Unknown error while uploading record')
@@ -129,42 +142,15 @@ class MagresDB(object):
 
         return MagresDBAddResult(res.acknowledged, str(record_id), mdbref)
 
-    def add_version(self, record_id,
-                    mfile=None, version_data={}, update_record=True,
-                    date=None):
-
-        # Read in magres file
-        if mfile is None:
-            # Just get the contents from the record
-            rec = self.get_record(record_id)
-            if rec['version_count'] == 0:
-                raise MagresDBError('A magres file must be passed for the '
-                                    'first version of a record')
-            mfile_id = rec['last_version']['magresFilesID']
-            calc_block = rec['last_version']['magres_calc']
-        else:
-            try:
-                magres = read_magres_file(mfile)
-            except:
-                # Anything, really
-                raise MagresDBError('Invalid magres file')
-            mstr = magres['string']
-            matoms = magres['Atoms']
-
-            mfile_id = self.magresFilesFS.put(mstr,
-                                              filename=record_id,
-                                              encoding='UTF-8')
-            calc_block = matoms.info.get('magresblock_calculation', {})
-            calc_block = (json.dumps(calc_block) if len(calc_block) > 0 else
-                          None)
+    def _validate_vdata(self, version_data={}, date=None):
 
         if date is None:
             date = datetime.utcnow()
 
         version_autodata = {
-            'magresFilesID': str(mfile_id),
+            'magresFilesID': '000',  # Placeholder
             'date': date,
-            'magres_calc': calc_block
+            'magres_calc': None
         }
 
         version_data = dict(version_data)
@@ -183,11 +169,43 @@ class MagresDB(object):
 
         version_data = set_null_values(version_data, magresVersionSchema)
 
+        return version_data
+
+    def _push_version(self, record_id, magres, version_data,
+                      update_record=True):
+
+        # Read in magres file
+        if magres is None:
+            # Just get the contents from the record
+            rec = self.get_record(record_id)
+            if rec['version_count'] == 0:
+                raise MagresDBError('A magres file must be passed for the '
+                                    'first version of a record')
+            mfile_id = rec['last_version']['magresFilesID']
+            calc_block = rec['last_version']['magres_calc']
+        else:
+
+            mstr = magres['string']
+            matoms = magres['Atoms']
+
+            mfile_id = self.magresFilesFS.put(mstr,
+                                              filename=record_id,
+                                              encoding='UTF-8')
+            calc_block = matoms.info.get('magresblock_calculation', {})
+            calc_block = (json.dumps(calc_block) if len(calc_block) > 0 else
+                          None)
+
+        date = version_data['date']
+        
+        # Set these two
+        version_data['magresFilesID'] = str(mfile_id)
+        version_data['magres_calc'] = calc_block
+
         to_set = {'last_version': version_data, 'last_modified': date}
 
-        if update_record and mfile is not None:
+        if update_record and magres is not None:
             # Update the automatically generated elements in the record
-            to_set.update(self._auto_recdata(matoms))
+            to_set.update(self._auto_rdata(matoms))
 
         res = self.magresIndex.update_one({'_id': ObjectId(record_id)},
                                           {'$push': {
@@ -201,6 +219,28 @@ class MagresDB(object):
         if not res.acknowledged:
             raise MagresDBError('Could not push new version for record ' +
                                 str(record_id))
+
+    def add_record(self, mfile, record_data, version_data, date=None):
+
+        # Read in magres file
+        magres = self._load_magres(mfile)
+
+        record_data = self._validate_rdata(magres, record_data, date)
+
+        return self._push_record(magres, record_data, version_data)
+
+    def add_version(self, record_id,
+                    mfile=None, version_data={}, update_record=True,
+                    date=None):
+
+        if mfile is not None:
+            magres = self._load_magres(mfile)
+        else:
+            magres = None
+
+        version_data = self._validate_vdata(version_data, date)
+
+        self._push_version(record_id, magres, version_data, update_record)
 
     def add_archive(self, archive, record_data, version_data):
 
