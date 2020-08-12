@@ -154,36 +154,22 @@ class MainServer(object):
             ans = str(res.mdbref)
 
         else:
-            # It's an archive!
-            try:
-                archive = MagresArchive(fd, record_data=rdata,
-                                        version_data=vdata)
-            except MagresArchiveError as e:
-                return ('Invalid archive: {0}'.format(e),
-                        self.HTTP_400_BAD_REQUEST)
+
+            results = self._db.add_archive(fd)            
 
             successful = []
             failed = []
             mdbrefs = []
             ids = []
 
-            for f in archive.files():
+            for name, res in results.items():
 
-                try:
-                    res = self._db.add_record(f.contents,
-                                              f.record_data,
-                                              f.version_data)
-                except MagresDBError as e:
-                    successful.append(False)
+                if (res is None) or not res.successful:
                     failed.append(f.name)
-                    continue
-
-                successful.append(res.successful)
-                if res.successful:
+                    successful.append(False)
+                else:
                     mdbrefs.append(res.mdbref)
                     ids.append(res.id)
-                else:
-                    failed.append(f.name)
 
             # Log the operation
             logdata = {

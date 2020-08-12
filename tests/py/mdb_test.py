@@ -82,9 +82,27 @@ class MagresDBTest(unittest.TestCase):
 
     @clean_db
     def testAddArchive(self):
+        from ccpncdb.magresdb import MagresDBError
 
         with open(os.path.join(data_path, 'test.csv.zip'), 'rb') as a:
-            self.mdb.add_archive(a, _fake_rdata, _fake_vdata)
+            results = self.mdb.add_archive(a, _fake_rdata, _fake_vdata)
+
+        self.assertEqual(len(results), 2)
+
+        names = []
+        for name, res in results.items():
+            rec = self.mdb.magresIndex.find_one({'_id': ObjectId(res.id)})
+            names.append(rec['chemname'])
+
+        self.assertEqual(sorted(names), ['alanine', 'ethanol'])
+
+        with open(os.path.join(data_path, 'broken.zip'), 'rb') as a:
+            with self.assertRaises(MagresDBError):
+                results = self.mdb.add_archive(a, _fake_rdata, _fake_vdata)
+
+        # Check that there is no file that was actually added
+        for rec in self.mdb.magresIndex.find({}):
+            self.assertTrue('broken' not in rec['chemname'])
 
     @clean_db
     def testAddVersion(self):
@@ -118,12 +136,12 @@ class MagresDBTest(unittest.TestCase):
         # And now try what happens when you add a new version with no magres
         # file - just metadata
         vdata = {
-            'license': 'odc-by' 
+            'license': 'odc-by'
         }
         self.mdb.add_version(r_id, version_data=vdata)
 
         rec = self.mdb.get_record(r_id)
-        
+
         self.assertEqual(rec['last_version']['license'], 'odc-by')
 
     @clean_db
@@ -187,7 +205,6 @@ class MagresDBTest(unittest.TestCase):
         self.assertEqual(len(found), 1)
         self.assertEqual(str(found[0]['_id']), res_2.id)
 
-
         # Test by mdbref
         found = self.mdb.search_record([{
             'type': 'mdbref',
@@ -213,7 +230,7 @@ class MagresDBTest(unittest.TestCase):
             'args': {'formula': 'N4', 'subset': True}
         }])
         found = list(found)
-        
+
         self.assertEqual(len(found), 1)
 
         # Now try obfuscating one
@@ -243,14 +260,14 @@ class MagresDBTest(unittest.TestCase):
         vdata = dict(_fake_vdata)
         vdata['extref_type'] = 'csd'
         vdata['extref_code'] = 'ABC123'
-        self.mdb.add_record(alastr, rdata_3, vdata)        
+        self.mdb.add_record(alastr, rdata_3, vdata)
         vdata['extref_code'] = 'ABC456'
         self.mdb.add_record(alastr, rdata_3, vdata)
 
         # Search only by type
         found = self.mdb.search_record([{
             'type': 'extref',
-            'args': {'reftype': 'csd', 'refcode': None}    
+            'args': {'reftype': 'csd', 'refcode': None}
         }])
         found = list(found)
 
@@ -259,7 +276,7 @@ class MagresDBTest(unittest.TestCase):
         # Add code
         found = self.mdb.search_record([{
             'type': 'extref',
-            'args': {'reftype': 'csd', 'refcode': 'ABC123'}    
+            'args': {'reftype': 'csd', 'refcode': 'ABC123'}
         }])
         found = list(found)
 

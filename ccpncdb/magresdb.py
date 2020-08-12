@@ -15,7 +15,7 @@ from ccpncdb.utils import (read_magres_file, extract_formula,
 from ccpncdb.schemas import (magresVersionSchema,
                              magresRecordSchema,
                              validate_with)
-from ccpncdb.archive import MagresArchive
+from ccpncdb.archive import MagresArchive, MagresArchiveError
 from ccpncdb.search import build_search
 
 MagresDBAddResult = namedtuple('MagresDBAddResult',
@@ -196,7 +196,7 @@ class MagresDB(object):
                           None)
 
         date = version_data['date']
-        
+
         # Set these two
         version_data['magresFilesID'] = str(mfile_id)
         version_data['magres_calc'] = calc_block
@@ -244,16 +244,36 @@ class MagresDB(object):
 
     def add_archive(self, archive, record_data, version_data):
 
-        # Create an archive object
-        ma = MagresArchive(archive, record_data=record_data,
-                           version_data=version_data)
+        try:
+            ma = MagresArchive(archive, record_data=record_data,
+                               version_data=version_data)
+        except MagresArchiveError as e:
+            return ('Invalid archive: {0}'.format(e),
+                    self.HTTP_400_BAD_REQUEST)
+
+        data = {}
+
         results = {}
 
-        # Iterate over files
         for f in ma.files():
-            results[f.name] = self.add_record(f.contents,
-                                              f.record_data,
-                                              f.version_data)
+
+            magres = self._load_magres(f.contents)
+            rdata = self._validate_rdata(magres, f.record_data)
+            vdata = self._validate_vdata(f.version_data)
+            data[f.name] = (magres, rdata, vdata)
+
+        successful = []
+        failed = []
+        mdbrefs = []
+        ids = []
+
+        # If everything's gone right, we can push
+        for f in ma.files():
+            magres, rdata, vdata = data[f.name]
+            try:
+                results[f.name] = self._push_record(magres, rdata, vdata)
+            except:
+                results[f.name] = None
 
         return results
 
@@ -293,12 +313,10 @@ class MagresDB(object):
             return mfile_ref.read()
 
     def search_record(self, query):
-        # print(query)
+
         query = build_search(query)
-        # print(query)
 
         results = self.magresIndex.find(query)
-        # print(len(list(results)))
 
         return results
 
