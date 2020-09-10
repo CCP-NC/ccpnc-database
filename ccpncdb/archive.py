@@ -19,6 +19,8 @@ class MagresArchiveError(Exception):
 
 class MagresArchive(object):
 
+    VDATA_CASEINS_TAGS = ['extref_type', 'license']
+
     def __init__(self, archive, mode='r', record_data={}, version_data={}):
         """Load an archive of magres files with an optional .csv document
         to store file by file information"""
@@ -75,9 +77,9 @@ class MagresArchive(object):
                                                  ' include a valid filename as'
                                                  'first entry.')
                     # Remove empty entries
-                    self._csv_file[name] = {key: val
+                    self._csv_file[name] = {key: val.strip()
                                             for key, val in row.items()
-                                            if val != ''}
+                                            if val.strip() != ''}
 
     def csvstr(self):
         """Make the CSV file into a string
@@ -134,6 +136,12 @@ class MagresArchive(object):
             rdata.update({k: v for k, v in cdata.items() if k in rkeys})
             vdata = dict(self._default_version)
             vdata.update({k: v for k, v in cdata.items() if k in vkeys})
+
+            # Crude fix for tolerance of user behaviour            
+            for tag in self.VDATA_CASEINS_TAGS:
+                if tag in vdata:
+                    vdata[tag] = vdata[tag].lower()
+
 
             yield MagresArchiveFile(f, ftext, rdata, vdata)
 

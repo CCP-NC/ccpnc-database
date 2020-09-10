@@ -12,7 +12,7 @@ from ccpncdb.log import Logger
 from ccpncdb.orcid import OrcidConnection, NoOrcidTokens, OrcidError
 from ccpncdb.utils import split_data, get_name_from_orcid, get_schema_keys
 from ccpncdb.schemas import (magresRecordSchemaUser,
-                             magresVersionSchemaUser)
+                             magresVersionSchemaUser, csvProperties)
 from ccpncdb.archive import MagresArchive, MagresArchiveError
 
 
@@ -155,7 +155,10 @@ class MainServer(object):
 
         else:
 
-            results = self._db.add_archive(fd)
+            try:
+                results = self._db.add_archive(fd, rdata, vdata)
+            except MagresDBError as e:
+                return str(e), self.HTTP_400_BAD_REQUEST
 
             successful = []
             failed = []
@@ -170,6 +173,7 @@ class MainServer(object):
                 else:
                     mdbrefs.append(res.mdbref)
                     ids.append(res.id)
+                    successful.append(True)
 
             # Log the operation
             logdata = {
@@ -297,17 +301,7 @@ class MainServer(object):
 
     def get_csv_template(self):
 
-        all_keys = get_schema_keys(magresRecordSchemaUser)
-        all_keys += get_schema_keys(magresVersionSchemaUser)
-
-        # Remove ORCID, that's not for users
-        try:
-            all_keys.remove('orcid')
-        except ValueError:
-            # Shouldn't happen but ok
-            pass
-
-        resp = make_response('filename,' + ','.join(all_keys))
+        resp = make_response('filename,' + ','.join(csvProperties))
         resp.headers['Content-Type'] = 'text/plain'
         resp.headers.set('Content-Disposition', 'attachment',
                          filename='info.csv')

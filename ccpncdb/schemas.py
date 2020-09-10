@@ -114,6 +114,11 @@ magresRecordSchemaAutomatic = Schema({
 magresRecordSchema = _merge_schemas(magresRecordSchemaUser,
                                     magresRecordSchemaAutomatic)
 
+# Keys to actually list in the standard CSV file for archives
+csvProperties = ['chemname', 'license', 'doi', 'chemform',
+                 'extref_type', 'extref_other', 'extref_code', 
+                 'notes']
+
 ValidationResult = namedtuple('ValidationResult',
                               ['result', 'missing', 'invalid'])
 
