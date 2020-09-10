@@ -155,7 +155,7 @@ class MainServer(object):
 
         else:
 
-            results = self._db.add_archive(fd)            
+            results = self._db.add_archive(fd)
 
             successful = []
             failed = []
@@ -335,5 +335,3 @@ class MainServer(object):
             return str(e), self.HTTP_500_INTERNAL_SERVER_ERROR
 
         return 'Message sent', self.HTTP_200_OK
-
-

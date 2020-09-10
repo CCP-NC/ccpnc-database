@@ -28,7 +28,7 @@ function addSearchResultsDirective(ngApp) {
                 }
 
                 sR.update_results = function(results) {
-                    sR.results = [];
+                    sR.reset();
                     for (var i = 0; i < results.length; i += sR.max_results) {
                         sR.results.push(results.slice(i, i+sR.max_results));
                     }
