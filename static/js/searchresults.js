@@ -19,12 +19,14 @@ function addSearchResultsDirective(ngApp) {
                     sR.results_page = 0;     
                     sR.found_results = 0;
                     sR.search_complete = false;
+                    $('#search-scroll-container').scrollTop(0); // Reset scrolling
                 }
 
                 sR.reset();
 
                 sR.change_page = function(i) {
                     sR.results_page += i;
+                    $('#search-scroll-container').scrollTop(0); // Reset scrolling
                 }
 
                 sR.update_results = function(results) {
