@@ -60,7 +60,7 @@ class MainServer(object):
         self._client = self._config.client()
         self._dbname = self._config.db_name
         self._db = MagresDB(client=self._client, dbname=self._dbname)
-        self._logger = Logger(client=self._client)
+        self._logger = Logger(client=self._client, dbname=self._dbname)
 
         # Load mail config
         with open(os.path.join(self._config_folder, 'smtpconfig.json')) as f:

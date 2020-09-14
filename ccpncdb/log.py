@@ -3,12 +3,12 @@ from pymongo import MongoClient
 
 class Logger(object):
 
-    def __init__(self, client, logname='ccpnc-log'):
+    def __init__(self, client, dbname='ccpnc'):
 
         self.client = client
-        logdb = client[logname]
+        logdb = client[dbname]
 
-        self.logs = logdb.logs
+        self.logs = logdb.databaseLogs
 
     def log(self, message, orcid, data={}):
 
