@@ -125,7 +125,7 @@ class MainServer(object):
         fd = request.files['magres-file']
 
         # Now extract the record information
-        rdata, vdata = split_data(dict(request.values),
+        rdata, vdata = split_data(request.values.to_dict(),
                                   magresRecordSchemaUser,
                                   magresVersionSchemaUser)
 
@@ -205,7 +205,7 @@ class MainServer(object):
             return user_info['error'], self.HTTP_401_UNAUTHORIZED
 
         # Get the data
-        _, vdata = split_data(dict(request.values),
+        _, vdata = split_data(request.values.to_dict(),
                               magresRecordSchemaUser,
                               magresVersionSchemaUser)
 
