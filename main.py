@@ -17,72 +17,73 @@ filepath = os.path.abspath(os.path.dirname(__file__))
 
 # Create server app
 serv = MainServer(filepath)
+app = serv.app
 
 ### APP ROUTES ###
 
 
-@serv.app.route('/')
+@app.route('/')
 def root():
     return serv.send_static('index.html')
 
 
-@serv.app.route('/cookies')
+@app.route('/cookies')
 def cookiepol():
     return serv.send_static('cookies.html')
 
 
-@serv.app.route('/logout')
+@app.route('/logout')
 def logout():
     return serv.logout()
 
 
-@serv.app.route('/gettokens/', defaults={'code': None})
-@serv.app.route('/gettokens/<code>')
+@app.route('/gettokens/', defaults={'code': None})
+@app.route('/gettokens/<code>')
 def get_tokens(code):
     return serv.get_tokens(code)
 
 
-@serv.app.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['POST'])
 def upload():
     return serv.upload_record()
 
 
-@serv.app.route('/edit', methods=['POST'])
+@app.route('/edit', methods=['POST'])
 def edit():
     return serv.upload_version()
 
 
-@serv.app.route('/hide', methods=['POST'])
+@app.route('/hide', methods=['POST'])
 def hide():
     return serv.hide_record()
 
 
-@serv.app.route('/search', methods=['POST'])
+@app.route('/search', methods=['POST'])
 def search():
     return serv.search()
 
 
-@serv.app.route('/get_record', methods=['POST'])
+@app.route('/get_record', methods=['POST'])
 def get_record():
     return serv.get_record()
 
 
-@serv.app.route('/get_magres', methods=['GET'])
+@app.route('/get_magres', methods=['GET'])
 def get_magres():
     return serv.get_magres()
 
 
-@serv.app.route('/csvtemplate', methods=['GET'])
+@app.route('/csvtemplate', methods=['GET'])
 def get_csv():
     return serv.get_csv_template()
 
 
-@serv.app.route('/sendmail', methods=['POST'])
+@app.route('/sendmail', methods=['POST'])
 def send_mail():
     return serv.send_mail()
 
 
-@serv.app.route('/pyversion', methods=['GET'])
+@app.route('/pyversion', methods=['GET'])
 def get_version():
 
     resp = """
@@ -103,8 +104,8 @@ if __name__ == '__main__':
 
     # Authorise cross-origin for the sake of local testing
     from flask_cors import CORS
-    CORS(serv.app)
+    CORS(app)
 
-    serv.app.debug = True
-    serv.app.config['SERVER_NAME'] = 'localhost:8000'
-    serv.app.run(port=8000, threaded=True)
+    app.debug = True
+    app.config['SERVER_NAME'] = 'localhost:8000'
+    app.run(port=8000, threaded=True)

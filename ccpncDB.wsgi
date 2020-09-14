@@ -16,7 +16,6 @@ except:
 try:
     for p in config["pythonpath"]:
         sys.path.append(p)
-
 except:
     pass
 
