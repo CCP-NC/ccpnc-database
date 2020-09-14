@@ -136,7 +136,7 @@ def validate_with(data, schema):
         schema.validate(data)
     except SchemaMissingKeyError as e:
         # Parse which ones are missing
-        kw = str(e).split('Missing keys:')[1].split(',')
+        kw = str(e).split(':')[1].split(',')
         kw = list(map(lambda s: s.strip()[1:-1], kw))
         missing = kw
         result = False
