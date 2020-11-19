@@ -77,7 +77,7 @@ def search_by_msRange(sp, minms, maxms):
 
 def search_by_efgRange(sp, minefg, maxefg):
 
-    return _expr_nmrrange(sp, 'efg', _expr_vzz, minms, maxms)
+    return _expr_nmrrange(sp, 'efg', _expr_vzz, minefg, maxefg)
 
 
 def search_by_doi(doi):
