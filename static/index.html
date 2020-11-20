@@ -209,7 +209,7 @@
                                         <option value="efgRange">Electric Field Gradient V<sub>zz</sub></option>
                                         <option value="chemname">Chemical name</option>
                                         <option value="chemform">Form</option>
-                                        <option value="formula">Chemical formula</option>
+                                        <option value="formula">Unit cell formula</option>
                                         <option value="molecule">Molecular formula</option>
                                         <option value="extref">External database reference</option>
                                         <option value="license">License</option>
@@ -310,10 +310,10 @@
                             <tbody ng-if="search_spec.type == 'formula'">
                                 <tr>
                                     <td colspan="1" rowspan="" headers="">
-                                        Chemical formula
+                                        Unit cell formula
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" placeholder="Chemical formula"
+                                        <input class="cc-ctrl cc-bulma" type="text" placeholder="Unit cell formula"
                                             ng-model="search_spec.args.formula"
                                             ng-init="search_spec.args.formula = null">
                                     </td>
