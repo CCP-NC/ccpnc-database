@@ -3,24 +3,26 @@
         <thead ng-if="!is_page">
             <tr>
                 <th class="width-1">Name:</th>
-                <td class="width-3 has-text-primary" colspan="3">{{databaseRecord.chemname}}</td>
+                <td class="width-3" colspan="3"><a href="?mdbref={{databaseRecord.immutable_id}}" target="_blank">{{databaseRecord.chemname}}</a></td>
             </tr>
-            <tr>
-                <th class="width-1">ORCID:</th>
-                <td class="width-1"><a href="{{databaseRecord.orcid.uri}}" target="_blank">{{databaseRecord.orcid.path}}</a></td>
-                <th class="width-1">MRD Number:</th>
-                <td class="width-1"><a href="?mdbref={{databaseRecord.immutable_id}}" target="_blank">{{databaseRecord.immutable_id}}</a></td>
-            </tr>
-        </thead>
-        <tbody>
             <tr>
                 <th class="width-1">Unit cell formula:</th>
-                <td class="width-3" colspan="3">
+                <td class="width-1">
                     <span ng-repeat="el in databaseRecord.formula">
                         {{el.species}}<sub>{{el.n}}</sub>
                     </span>
                 </td>
+                <th class="width-1">MRD Number:</th>
+                <td class="width-1"><a href="?mdbref={{databaseRecord.immutable_id}}" target="_blank">{{databaseRecord.immutable_id}}</a></td>
             </tr>
+            <tr>
+                <th class="width-1">Submitter:</th>
+                <td class="width-1">{{databaseRecord.user_name? databaseRecord.user_name : "N/A"}}</td>
+                <th class="width-1">ORCID:</th>
+                <td class="width-1"><a href="{{databaseRecord.orcid.uri}}" target="_blank">{{databaseRecord.orcid.path}}</a></td>
+            </tr>
+        </thead>
+        <tbody>
             <tr>
                 <th class="width-1">Number of versions: </th>
                 <td class="width-1">{{databaseRecord.version_count}}</td>
