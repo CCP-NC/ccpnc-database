@@ -82,6 +82,9 @@ def search_by_efgRange(sp, minefg, maxefg):
 
 def search_by_doi(doi):
 
+    if doi is None or doi == '':
+        return []
+
     doi = re.escape(doi)
     regex = re.compile('.*{0}.*'.format(doi))
 
@@ -100,6 +103,9 @@ def search_by_orcid(orcid):
 
 
 def search_by_chemname(pattern):
+
+    if pattern is None or pattern == '':
+        return []
 
     # Start by splitting the pattern in bits in quotes and bits outside them
     quotere = re.compile('"([^\"]+)"')

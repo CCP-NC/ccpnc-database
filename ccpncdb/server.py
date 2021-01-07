@@ -244,8 +244,12 @@ class MainServer(object):
                     self.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def search(self):
+
         query = request.json['search_spec']
-        results = list(self._db.search_record(query))
+        try:
+            results = list(self._db.search_record(query))
+        except MagresDBError as e:
+            results = []
 
         return json.dumps(results, default=str), self.HTTP_200_OK
 

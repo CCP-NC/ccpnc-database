@@ -315,7 +315,9 @@ class MagresDB(object):
     def search_record(self, query):
 
         query = build_search(query)
-
+        if len(query['$and']) == 1:
+            # Query for everything
+            raise MagresDBError('Empty query') 
         results = self.magresIndex.find(query)
 
         return results
