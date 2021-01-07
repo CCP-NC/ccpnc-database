@@ -126,15 +126,17 @@ function addRecordDirective(ngApp) {
                     return url;
                 }
 
-                scope.lastdate = function() {
-                    // Prettify the date
-                    var sdate = this.databaseRecord.last_version.date.split(' ');
+                scope.prettydate = function(date) {
+
+                    // Prettify a date
+                    var sdate = date.split(' ');
                     date = sdate[0].split('-');
                     time = sdate[1].split('.')[0]; // Discard fractions of second
                     // Reorder year, month, day
                     date = date[2] + '-' + date[1] + '-' + date[0];
 
                     return date + ' ' + time;
+
                 }
 
                 // Magres calc blocks
