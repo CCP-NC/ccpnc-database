@@ -519,61 +519,6 @@
                     <button class="modal-close is-large" aria-label="close"></button>
                 </div>
             </div>
-
-<!--        
-            
-            Temporarily removed
-
-            <div id="div-search" class="section" ng-switch-when="contact" ng-controller="MailController" ng-cloak>
-                <div class="container">
-                    <form id="contact-form" enctype="multipart/form-data" action="sendmail" method="post">
-
-                        <div class="field">
-                          <label class="label">Email</label>
-                          <div class="control has-icons-left has-icons-right">
-                            <input name="_sender" class="input" ng-class="(form.email? '' : 'is-danger')" ng-model="form.email" type="email" placeholder="Sender email" size="50">
-                            <span class="icon is-small is-left">
-                              <i class="fas fa-envelope"></i>
-                            </span>
-                            <span class="icon is-small is-right" ng-show="!form.email">
-                              <i class="fas fa-exclamation-triangle"></i>
-                            </span>
-                          </div>
-                          <p class="help is-danger" ng-show="!form.email">This email is invalid</p>
-                        </div>
-
-                        <div class="field">
-                          <label class="label">Title</label>
-                          <div class="control has-icons-left has-icons-right">
-                            <input name="_title" class="input" type="text" placeholder="Title" size="120">
-                          </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="control">
-                              <label class="label">Message</label>
-                              <textarea name="_body" class="textarea has-fixed-size" placeholder="Type your message here..."></textarea>
-                            </div>                            
-                        </div>
-
-                        <div class="field">
-                            <div class="control">
-                              <a class="button is-primary is-large" ng-click="sendmail()">Send</a>
-                            </div>                            
-                        </div>
-
-                    </form>                    
-
-                    <span class="separator-1"></span>
-                    <span class="box has-text-centered" ng-show="status !== ''" ng-class="{
-                        'has-text-danger': status_err,
-                        'has-text-success': !status_err,
-                    }">
-                            {{ status }}                 
-                    </span>
-                </div>                
-            </div>
- -->        
         </div>
     </div>
     <div ng-if="recordref" ng-controller="RecordController" ng-cloak>

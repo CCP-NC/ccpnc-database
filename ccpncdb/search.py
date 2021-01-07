@@ -82,8 +82,13 @@ def search_by_efgRange(sp, minefg, maxefg):
 
 def search_by_doi(doi):
 
+    doi = re.escape(doi)
+    regex = re.compile('.*{0}.*'.format(doi))
+
     return [
-        {'last_version.doi': doi}
+        {'last_version.doi':
+            {'$regex': regex, '$options': 'i'}
+         }
     ]
 
 
@@ -113,7 +118,7 @@ def search_by_chemname(pattern):
         # "*", ".*").replace("?", "."), re.IGNORECASE)
         regex = re.compile(sb.replace("*", ".*"), re.IGNORECASE)
         sbquery = {'chemname': {'$regex': regex, '$options': 'i'}}
-        query['$or'][0]['$and'].append(sbquery)    
+        query['$or'][0]['$and'].append(sbquery)
         pattern = pattern.replace('"{0}"'.format(sb), '')
 
     # Now tokens
