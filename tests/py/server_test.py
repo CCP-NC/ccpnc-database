@@ -86,6 +86,8 @@ class MDBServerTest(unittest.TestCase):
 
     def testMagres(self):
 
+        from ccpncdb.schemas import csvProperties
+
         @self.serv.app.route('/upload', methods=['POST'])
         def upload():
             return self.serv.upload_record()
@@ -97,6 +99,10 @@ class MDBServerTest(unittest.TestCase):
         @self.serv.app.route('/get_magres', methods=['GET'])
         def get_magres():
             return self.serv.get_magres()
+
+        @self.serv.app.route('/get_csv', methods=['GET'])
+        def get_csv():
+            return self.serv.get_csv()
 
         @self.serv.app.route('/get_magres_archive', methods=['GET'])
         def get_magres_archive():
@@ -128,9 +134,17 @@ class MDBServerTest(unittest.TestCase):
         self.assertEqual(next(resp.response).decode('utf-8'),
                          self.eth['string'])
 
-        # And now test archive retrieval
-        # self.client.get('/get_magres_archive',
-        #                 json={'magres_id_list': [m_id]})
+        # And the CSV
+        resp = self.client.get('/get_csv',
+                               query_string={'oid': rec['id'], 'v': 0})
+        self.assertEqual(resp.status_code, 200)
+
+        lines = [r.decode('utf-8').strip() for r in resp.response]
+
+        _fake_alldata = dict(_fake_rdata, **_fake_vdata)
+        self.assertEqual(lines[0], ','.join(csvProperties))
+        self.assertEqual(lines[1], ','.join([_fake_alldata.get(p, '')
+                                             for p in csvProperties]))
 
 
 if __name__ == '__main__':

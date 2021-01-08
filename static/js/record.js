@@ -119,7 +119,7 @@ function addRecordDirective(ngApp) {
                     return 'MRD' + this.databaseRecord.immutable_id + 'v' + (parseInt(this._selected_index)+1);
                 }
 
-                scope.dataurl = function() {
+                scope.metadataJsonURI = function() {
                     var url = 'data:application/json;charset=utf-8,';
                     url += JSON.stringify(this.databaseRecord, null, 4);
 

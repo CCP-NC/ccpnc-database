@@ -1,5 +1,6 @@
 import io
 import os
+import csv
 import json
 from datetime import timedelta
 from flask import Flask, Response, session, request, make_response
@@ -270,6 +271,22 @@ class MainServer(object):
             self._logger.log('Duplicate MDBREF found', 'N/A',
                              {'mdbref': mdbref})
 
+    def get_csv(self):
+
+        oid = request.args.get('oid')
+        v = int(request.args.get('v'))
+        record = self._db.get_record(oid)
+        version = record['version_history'][v]
+        row = dict(record, **version)
+
+        # Form a csv file
+        resp = Response()
+        w = csv.DictWriter(resp.stream, csvProperties, extrasaction='ignore')
+        w.writeheader()
+        w.writerow(row)
+
+        return resp, self.HTTP_200_OK
+
     def get_magres(self):
         fs_id = request.args.get('magres_id')
 
@@ -303,14 +320,9 @@ class MainServer(object):
 
         return 'OK', self.HTTP_200_OK
 
-    def get_csv_template(self):
+    def get_csv_property_list(self):
 
-        resp = make_response('filename,' + ','.join(csvProperties))
-        resp.headers['Content-Type'] = 'text/plain'
-        resp.headers.set('Content-Disposition', 'attachment',
-                         filename='info.csv')
-
-        return resp, self.HTTP_200_OK
+        return json.dumps(csvProperties), self.HTTP_200_OK
 
     def send_mail(self):
 

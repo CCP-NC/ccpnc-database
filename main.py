@@ -72,9 +72,12 @@ def get_record():
 def get_magres():
     return serv.get_magres()
 
+@app.route('/get_csv', methods=['GET'])
+def get_csv():
+    return serv.get_csv()
 
 @app.route('/csvtemplate', methods=['GET'])
-def get_csv():
+def get_csv_template():
     return serv.get_csv_template()
 
 
