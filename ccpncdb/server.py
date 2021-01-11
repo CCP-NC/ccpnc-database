@@ -17,6 +17,15 @@ from ccpncdb.schemas import (magresRecordSchemaUser,
 from ccpncdb.archive import MagresArchive, MagresArchiveError
 
 
+def make_csv_response():
+    response = Response()
+    writer = csv.DictWriter(response.stream, csvProperties,
+                            extrasaction='ignore')
+    writer.writeheader()
+
+    return response, writer
+
+
 class MainServer(object):
 
     # Response codes
@@ -280,10 +289,14 @@ class MainServer(object):
         row = dict(record, **version)
 
         # Form a csv file
-        resp = Response()
-        w = csv.DictWriter(resp.stream, csvProperties, extrasaction='ignore')
-        w.writeheader()
+        resp, w = make_csv_response()
         w.writerow(row)
+
+        return resp, self.HTTP_200_OK
+
+    def get_csv_template(self):
+
+        resp, _ = make_csv_response()
 
         return resp, self.HTTP_200_OK
 
@@ -319,10 +332,6 @@ class MainServer(object):
                 continue
 
         return 'OK', self.HTTP_200_OK
-
-    def get_csv_property_list(self):
-
-        return json.dumps(csvProperties), self.HTTP_200_OK
 
     def send_mail(self):
 

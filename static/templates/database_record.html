@@ -1,5 +1,5 @@
 <div class="database-record">
-    <table class="table is-fullwidth is-bordered is-striped is-fixed">
+    <table class="table is-fullwidth is-bordered is-fixed has-background-light">
         <thead ng-if="!is_page">
             <tr>
                 <th class="width-1">Name:</th>
@@ -32,10 +32,14 @@
             <tr>
                 <th class="width-1">Version:</th>
                 <td class="width-3" colspan="3">
-                    <select class="cc-ctrl cc-bulma" ng-model="_selected_index" ng-init="_selected_index=(databaseRecord.version_history.length-1)+'';">
-                        <option ng-repeat="v in databaseRecord.version_history" value="{{$index}}"
-                        ng-selected="$last">Version {{$index+1}} [{{prettydate(v.date)}}]</option>
-                    </select>                                        
+                    <div class="control is-pulled-right">
+                        <div class="select">
+                            <select ng-model="_selected_index" ng-init="_selected_index=(databaseRecord.version_history.length-1)+'';">
+                                <option ng-repeat="v in databaseRecord.version_history" value="{{$index}}"
+                                ng-selected="$last">Version {{$index+1}} [{{prettydate(v.date)}}]</option>
+                            </select>                                                                    
+                        </div>
+                    </div>
                 </td>
             </tr>
         </tbody>

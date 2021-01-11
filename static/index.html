@@ -10,12 +10,10 @@
     <link rel="stylesheet" href="academicons/css/academicons.min.css" />
     <link rel="stylesheet" href="css/stylesheet.css">
     <link rel="stylesheet" href="css/loader.css">
-    <link rel="stylesheet" href="css/capsule.min.css">
 
     <script src="vendor/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="vendor/jquery.form-4.2.2.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="vendor/angular.min.js"></script>
-    <script src="vendor/capsule.min.js"></script>
     <script src="vendor/ng-file-upload-all.min.js"></script>
 
     <script src="js/config.js"></script>
@@ -192,28 +190,33 @@
 
                 <div class="container has-text-centered">
 
-                    <div class="notification" ng-repeat="search_spec in search_specs">
+                    <div class="notification has-background-grey-lighter" ng-repeat="search_spec in search_specs">
 
                         <button class="delete" ng-click="remove_spec($index)"></button>
 
-                        <table class="table is-fullwidth is-bordered is-striped is-fixed search-form">
+                        <table class="table is-fullwidth is-bordered has-background-light is-fixed search-form">
                             <tr>
                                 <td class="width-1" colspan="1" rowspan="" headers="">
                                     Search type
                                 </td>
                                 <td class="width-3" colspan="3" rowspan="" headers="">
-                                    <select class="cc-ctrl cc-bulma" ng-model="search_spec.type"
-                                        ng-change="reset_search_args(search_spec.type)">
-                                        <option value="doi">doi</option>
-                                        <option value="msRange">Magnetic Shielding</option>
-                                        <option value="efgRange">Electric Field Gradient V<sub>zz</sub></option>
-                                        <option value="chemname">Chemical name</option>
-                                        <option value="chemform">Form</option>
-                                        <option value="formula">Unit cell formula</option>
-                                        <option value="molecule">Molecular formula</option>
-                                        <option value="extref">External database reference</option>
-                                        <option value="license">License</option>
-                                    </select>
+                                    <div class="control is-pulled-right">
+                                        <div class="select">
+                                            <select ng-model="search_spec.type"
+                                                ng-change="reset_search_args(search_spec.type)">
+                                                <option value="doi">doi</option>
+                                                <option value="msRange">Magnetic Shielding</option>
+                                                <option value="efgRange">Electric Field Gradient V<sub>zz</sub></option>
+                                                <option value="chemname">Chemical name</option>
+                                                <option value="chemform">Form</option>
+                                                <option value="formula">Unit cell formula</option>
+                                                <option value="molecule">Molecular formula</option>
+                                                <option value="extref">External database reference</option>
+                                                <option value="license">License</option>
+                                            </select>
+                                            
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             <tbody ng-if="search_spec.type == 'doi'">
@@ -222,8 +225,10 @@
                                         doi
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" placeholder="doi"
-                                            ng-model="search_spec.args.doi" ng-init="search_spec.args.doi = null">
+                                        <div class="control">
+                                            <input class="input" type="text" placeholder="doi"
+                                                ng-model="search_spec.args.doi" ng-init="search_spec.args.doi = null">                        
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -233,8 +238,10 @@
                                         Species
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" placeholder="Element symbol"
-                                            ng-model="search_spec.args.sp" ng-init="search_spec.args.sp = null">
+                                        <div class="control">
+                                            <input class="input" type="text" placeholder="Element symbol"
+                                                ng-model="search_spec.args.sp" ng-init="search_spec.args.sp = null">
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -242,15 +249,19 @@
                                         Min. MS value
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" placeholder="Minimum shielding (ppm)"
-                                            ng-model="search_spec.args.minms" ng-init="search_spec.args.minms = 0">
+                                        <div class="control">                                        
+                                            <input class="input" type="text" placeholder="Minimum shielding (ppm)"
+                                                ng-model="search_spec.args.minms" ng-init="search_spec.args.minms = 0">
+                                        </div>
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
                                         Max. MS value
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" placeholder="Maximum shielding (ppm)"
-                                            ng-model="search_spec.args.maxms" ng-init="search_spec.args.maxms = 0">
+                                        <div class="control">                                        
+                                            <input class="input" type="text" placeholder="Maximum shielding (ppm)"
+                                                ng-model="search_spec.args.maxms" ng-init="search_spec.args.maxms = 0">
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -260,8 +271,10 @@
                                         Species
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" placeholder="Element symbol"
-                                            ng-model="search_spec.args.sp" ng-init="search_spec.args.sp = null">
+                                        <div class="control">
+                                            <input class="input" type="text" placeholder="Element symbol"
+                                                ng-model="search_spec.args.sp" ng-init="search_spec.args.sp = null">
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -269,15 +282,19 @@
                                         Min. EFG V<sub>zz</sub> value
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" placeholder="Minimum EFG Vzz value (au)"
-                                            ng-model="search_spec.args.minefg" ng-init="search_spec.args.minefg = 0">
+                                        <div class="control">
+                                            <input class="input" type="text" placeholder="Minimum EFG Vzz value (au)"
+                                                ng-model="search_spec.args.minefg" ng-init="search_spec.args.minefg = 0">                          
+                                        </div>
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
                                         Max. EFG V<sub>zz</sub> value
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" placeholder="Maximum EFG Vzz value (au)"
-                                            ng-model="search_spec.args.maxefg" ng-init="search_spec.args.maxefg = 0">
+                                        <div class="control">
+                                            <input class="input" type="text" placeholder="Maximum EFG Vzz value (au)"
+                                                ng-model="search_spec.args.maxefg" ng-init="search_spec.args.maxefg = 0">                               
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -287,10 +304,12 @@
                                         Search pattern
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" size="90"
-                                            placeholder="Pattern (for perfect matches use strings in double quotes, which can use * as wildcard)"
-                                            ng-model="search_spec.args.pattern"
-                                            ng-init="search_spec.args.pattern = null">
+                                        <div class="control">
+                                            <input class="input" type="text" size="90"
+                                                placeholder="Pattern (for perfect matches use strings in double quotes, which can use * as wildcard)"
+                                                ng-model="search_spec.args.pattern"
+                                                ng-init="search_spec.args.pattern = null">
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -300,10 +319,12 @@
                                         Search pattern
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" size="50"
-                                            placeholder="Pattern (* and ? wildcards allowed)"
-                                            ng-model="search_spec.args.pattern"
-                                            ng-init="search_spec.args.pattern = null">
+                                        <div class="control">
+                                            <input class="input" type="text" size="50"
+                                                placeholder="Pattern (* and ? wildcards allowed)"
+                                                ng-model="search_spec.args.pattern"
+                                                ng-init="search_spec.args.pattern = null">                                            
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -313,9 +334,11 @@
                                         Unit cell formula
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" placeholder="Unit cell formula"
-                                            ng-model="search_spec.args.formula"
-                                            ng-init="search_spec.args.formula = null">
+                                        <div class="control">
+                                            <input class="input" type="text" placeholder="Unit cell formula"
+                                                ng-model="search_spec.args.formula"
+                                                ng-init="search_spec.args.formula = null">                                            
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -323,8 +346,10 @@
                                         Include systems with additional elements
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
-                                        <input id="formula-subset-check-$index" class="cc-ctrl cc-bulma" type="checkbox"
-                                            ng-model="search_spec.args.subset" ng-init="search_spec.args.subset = false">
+                                        <div class="control is-pulled-right">
+                                            <input class="input large-checkbox" type="checkbox"
+                                                ng-model="search_spec.args.subset" ng-init="search_spec.args.subset = false">
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -334,9 +359,11 @@
                                         Molecular formula
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" placeholder="Molecular formula"
-                                            ng-model="search_spec.args.formula"
-                                            ng-init="search_spec.args.formula = null">
+                                        <div class="control">
+                                            <input class="input" type="text" placeholder="Molecular formula"
+                                                ng-model="search_spec.args.formula"
+                                                ng-init="search_spec.args.formula = null">                                  
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -346,14 +373,18 @@
                                         External reference
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" size="15" placeholder="Database name"
-                                            ng-model="search_spec.args.reftype"
-                                            ng-init="search_spec.args.reftype = null">
+                                        <div class="control">
+                                            <input class="input" type="text" size="15" placeholder="Database name"
+                                                ng-model="search_spec.args.reftype"
+                                                ng-init="search_spec.args.reftype = null">                                            
+                                        </div>
                                     </td>
                                     <td colspan="2" rowspan="" headers="">
-                                        <input class="cc-ctrl cc-bulma" type="text" size="15" placeholder="Database code"
-                                            ng-model="search_spec.args.refcode"
-                                            ng-init="search_spec.args.refcode = null">
+                                        <div class="control">
+                                            <input class="input" type="text" size="15" placeholder="Database code"
+                                                ng-model="search_spec.args.refcode"
+                                                ng-init="search_spec.args.refcode = null">                                            
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -363,20 +394,24 @@
                                         License
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
-                                        <select class="cc-ctrl cc-bulma" 
-                                            ng-model="search_spec.args.license"
-                                            ng-init="search_spec.args.license = 'pddl'">
-                                            <option value="pddl">PDDL v1.0</option>
-                                            <option value="odc-by">ODC-By v1.0</option>
-                                            <option value="cc-by">CC-By v4.0</option>
-                                        </select>
+                                        <div class="control is-pulled-right">
+                                            <div class="select">
+                                                <select
+                                                    ng-model="search_spec.args.license"
+                                                    ng-init="search_spec.args.license = 'pddl'">
+                                                    <option value="pddl">PDDL v1.0</option>
+                                                    <option value="odc-by">ODC-By v1.0</option>
+                                                    <option value="cc-by">CC-By v4.0</option>
+                                                </select>                                                
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
 
                         <div class="plus-button" ng-show="$index == search_specs.length-1">
-                            <button class="button is-primary is-small" ng-click="add_spec()">
+                            <button class="button is-primary is-medium" ng-click="add_spec()">
                                 <i class="fa fa-plus" aria-hidden="true"></i>
                             </button>
                         </div>
@@ -432,7 +467,7 @@
 
                 <form id="upload-form" enctype="multipart/form-data" action="upload" method="post">
                     <div class="table-container" >
-                            <table class="table is-fullwidth is-narrow">
+                            <table class="table is-fullwidth is-narrow has-background-light">
                                 <thead record-table="{}">
                                 </thead>
                                 <tbody version-table="{license: 'pddl', extref_type: 'csd'}"> <!-- The license thing here helps initialise the values -->

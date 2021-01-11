@@ -213,3 +213,18 @@ p.faq {
 p.faq span {
     display: block;
 }
+
+/* A checkbox emulating the style of Bulma text boxes */
+.large-checkbox { 
+    width: 2.5em;
+    padding: 10%;
+}
+
+.large-checkbox:checked::after {
+    content: ' ';
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    background-color: #00b89c;
+}
