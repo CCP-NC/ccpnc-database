@@ -75,6 +75,14 @@
                 <th class="width-1">DOI:</th>
                 <td class="width-3" colspan="3"><a href="https://doi.org/{{databaseRecord.version_history[_selected_index].doi}}" target="_blank">{{databaseRecord.version_history[_selected_index].doi}}</a></td>
             </tr>
+            <tr ng-if="databaseRecord.version_history[_selected_index].chemform">
+                <th class="width-1">Additional structural descriptors:</th>
+                <td class="width-3" colspan="3">{{databaseRecord.version_history[_selected_index].chemform}}</td>
+            </tr>
+            <tr ng-if="databaseRecord.version_history[_selected_index].notes">
+                <th class="width-1">Notes:</th>
+                <td class="width-3" colspan="3">{{databaseRecord.version_history[_selected_index].notes}}</td>
+            </tr>            
             <tr ng-if="databaseRecord.version_history[_selected_index].magres_calc">
                 <th class="width-1">Calculation details:</th>
                 <td class="width-3" colspan="3">
