@@ -17,9 +17,13 @@ from ccpncdb.schemas import (magresRecordSchemaUser,
 from ccpncdb.archive import MagresArchive, MagresArchiveError
 
 
-def make_csv_response():
+def make_csv_response(for_uploading=False):
     response = Response()
-    writer = csv.DictWriter(response.stream, csvProperties,
+    props = list(csvProperties)
+    # If it's for uploading, add filename
+    if for_uploading:
+        props = ['filename'] + props
+    writer = csv.DictWriter(response.stream, props,
                             extrasaction='ignore')
     writer.writeheader()
 
@@ -167,7 +171,7 @@ class MainServer(object):
 
             try:
                 results = self._db.add_archive(fd, rdata, vdata)
-            except MagresDBError as e:
+            except Exception as e:
                 return str(e), self.HTTP_400_BAD_REQUEST
 
             successful = []
@@ -296,7 +300,7 @@ class MainServer(object):
 
     def get_csv_template(self):
 
-        resp, _ = make_csv_response()
+        resp, _ = make_csv_response(True)
 
         return resp, self.HTTP_200_OK
 

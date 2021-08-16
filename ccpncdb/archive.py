@@ -70,8 +70,20 @@ class MagresArchive(object):
             elif ext == '.csv':
                 csv_reader = csv.DictReader(StringIO(file.decode('UTF-8')))
                 for row in csv_reader:
-                    k, name = row.popitem(False)
-                    if k != 'filename' or not (name in _raw_files):
+                    # We need to grab the filename first
+                    if type(row) == dict:
+                        # Version 3.8 or later
+                        try:
+                            name = row['filename']
+                        except KeyError:
+                            raise MagresArchiveError('Invalid .csv file in '
+                                                     'archive: column '
+                                                     '"filename" not found')
+                        del(row['filename'])
+                    else:
+                        # Older versions
+                        _, name = row.popitem(False)
+                    if not (name in _raw_files):
                         raise MagresArchiveError('Invalid .csv file in '
                                                  'archive: all rows must'
                                                  ' include a valid filename as'
@@ -137,11 +149,10 @@ class MagresArchive(object):
             vdata = dict(self._default_version)
             vdata.update({k: v for k, v in cdata.items() if k in vkeys})
 
-            # Crude fix for tolerance of user behaviour            
+            # Crude fix for tolerance of user behaviour
             for tag in self.VDATA_CASEINS_TAGS:
                 if tag in vdata:
                     vdata[tag] = vdata[tag].lower()
-
 
             yield MagresArchiveFile(f, ftext, rdata, vdata)
 

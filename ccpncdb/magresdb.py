@@ -244,12 +244,8 @@ class MagresDB(object):
 
     def add_archive(self, archive, record_data, version_data):
 
-        try:
-            ma = MagresArchive(archive, record_data=record_data,
-                               version_data=version_data)
-        except MagresArchiveError as e:
-            return ('Invalid archive: {0}'.format(e),
-                    self.HTTP_400_BAD_REQUEST)
+        ma = MagresArchive(archive, record_data=record_data,
+                           version_data=version_data)
 
         data = {}
 
