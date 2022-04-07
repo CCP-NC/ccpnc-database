@@ -3,7 +3,7 @@ import sys
 import json
 import argparse as ap
 from bson.objectid import ObjectId
-from pymongo import MongoClient
+import pymongo
 from gridfs import GridFS, NoFile
 from soprano.utils import progbar
 from greek import fix_greek
@@ -36,7 +36,7 @@ parser.add_argument('-noorcid', action='store_true', default=False,
 args = parser.parse_args()
 
 # Create client to read old database
-client = MongoClient(host=args.url, port=args.port)
+client = pymongo.MongoClient(host=args.url, port=args.port)
 olddb = client[args.olddb]
 mfiles_fs = GridFS(olddb, 'magresFilesFS')
 newdb = MagresDB(client, args.newdb)

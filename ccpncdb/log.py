@@ -1,5 +1,4 @@
 from datetime import datetime
-from pymongo import MongoClient
 
 class Logger(object):
 

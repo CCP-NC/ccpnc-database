@@ -1,7 +1,7 @@
 import os
 import json
 import ccpncdb
-from pymongo import MongoClient
+import pymongo
 
 
 class Config(object):
@@ -31,5 +31,5 @@ class Config(object):
         return self.data.get('db_name', 'ccpnc')
     
     def client(self):
-        return MongoClient(host=self.db_url,
+        return pymongo.MongoClient(host=self.db_url,
                            port=self.db_port)
