@@ -1,18 +1,13 @@
 image: python
 
 stages:
-  - build
   - test
-
-build:
-  stage: build 
-  script:
-    - pip install -U pip
-    - pip install -e .
 
 test:
   stage: test
   before_script:
+    - pip install -U pip
+    - pip install -e .
     - pip install pytest
   script:
     - py.test 
