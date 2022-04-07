@@ -9,3 +9,5 @@
     schema~=0.7
     pyyaml~=5.0
     requests~=2.27
+    numpy~=1.22
+    mongomock~=4.0
