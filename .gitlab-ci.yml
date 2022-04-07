@@ -1,13 +1,14 @@
-image: python
+image: python:3.9
 
-stages:
-  - test
-
+before_script:
+  - pip install -U pip
+  - pip install virtualenv
+  - virutalenv venv
+  - source venv/bin/activate
+  
 test:
-  stage: test
   before_script:
-    - pip install -U pip
-    - pip install -e .
     - pip install pytest
   script:
+    - pip install -e .
     - py.test 
