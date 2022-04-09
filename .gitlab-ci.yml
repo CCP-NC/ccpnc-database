@@ -1,5 +1,6 @@
 image: python:3.9
 
+
 before_script:
   - pip install -U pip
   - pip install virtualenv
@@ -7,6 +8,8 @@ before_script:
   - source venv/bin/activate
   
 test:
+  services:
+    - mongo:3
   before_script:
     - pip install pytest
   script:
