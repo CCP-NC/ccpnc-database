@@ -3,6 +3,7 @@
 import os
 import sys
 import unittest
+import functools
 import numpy as np
 import subprocess as sp
 from hashlib import md5
@@ -36,6 +37,7 @@ _fake_vdata = {
 
 
 def clean_db(method):
+    @functools.wraps(method)
     def clean_method(self):
         # Start with a clean database
         self.mdb.client.drop_database('ccpnc-test')
@@ -46,7 +48,7 @@ def clean_db(method):
 
 class MagresDBTest(unittest.TestCase):
 
-    @mongomock.patch("mongodb://localhost:27017", on_new="create")
+    #@mongomock.patch("mongodb://localhost:27017", on_new="create")
     def setUp(self):
 
         enable_gridfs_integration()
@@ -88,7 +90,7 @@ class MagresDBTest(unittest.TestCase):
         with self.assertRaises(MagresDBError):
             self.mdb.get_record('0'*24)
 
-    @mongomock.patch("mongodb://localhost:27017", on_new="create")
+    #@mongomock.patch("mongodb://localhost:27017", on_new="create")
     @clean_db
     def testAddArchive(self):
         from ccpncdb.magresdb import MagresDBError
@@ -113,7 +115,7 @@ class MagresDBTest(unittest.TestCase):
         for rec in self.mdb.magresIndex.find({}):
             self.assertTrue('broken' not in rec['chemname'])
 
-    @mongomock.patch("mongodb://localhost:27017", on_new="create")
+    #@mongomock.patch("mongodb://localhost:27017", on_new="create")
     @clean_db
     def testAddVersion(self):
 
@@ -154,7 +156,7 @@ class MagresDBTest(unittest.TestCase):
 
         self.assertEqual(rec['last_version']['license'], 'odc-by')
 
-    @mongomock.patch("mongodb://localhost:27017", on_new="create")
+    #@mongomock.patch("mongodb://localhost:27017", on_new="create")
     @clean_db
     def testGetFile(self):
 
@@ -171,7 +173,7 @@ class MagresDBTest(unittest.TestCase):
 
             self.assertEqual(fstr, fstr2)
 
-    @mongomock.patch("mongodb://localhost:27017", on_new="create")
+    #@mongomock.patch("mongodb://localhost:27017", on_new="create")
     @clean_db
     def testSearch(self):
 
@@ -294,7 +296,7 @@ class MagresDBTest(unittest.TestCase):
 
         self.assertEqual(len(found), 1)
 
-    @mongomock.patch("mongodb://localhost:27017", on_new="create")
+    #@mongomock.patch("mongodb://localhost:27017", on_new="create")
     @clean_db
     def testUniqueID(self):
 

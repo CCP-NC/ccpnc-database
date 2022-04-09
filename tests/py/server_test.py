@@ -44,7 +44,7 @@ _fake_user = {
 
 class MDBServerTest(unittest.TestCase):
 
-    @mongomock.patch("mongodb://localhost:27017", on_new="create")
+    # @mongomock.patch("mongodb://localhost:27017", on_new="create")
     def setUp(self):
         enable_gridfs_integration()
 
@@ -63,7 +63,7 @@ class MDBServerTest(unittest.TestCase):
 
         self.client = self.serv.app.test_client()
 
-    @mongomock.patch("mongodb://localhost:27017", on_new="create")
+    # @mongomock.patch("mongodb://localhost:27017", on_new="create")
     def testStatic(self):
 
         @self.serv.app.route('/')
@@ -80,7 +80,7 @@ class MDBServerTest(unittest.TestCase):
 
         resp.close()
 
-    @mongomock.patch("mongodb://localhost:27017", on_new="create")
+    #@mongomock.patch("mongodb://localhost:27017", on_new="create")
     def testUserInfo(self):
 
         @self.serv.app.route('/uinfo', methods=['POST'])
@@ -92,7 +92,7 @@ class MDBServerTest(unittest.TestCase):
 
         self.assertEqual(resp.status_code, 200)
 
-    @mongomock.patch("mongodb://localhost:27017", on_new="create")
+    #@mongomock.patch("mongodb://localhost:27017", on_new="create")
     def testMagres(self):
 
         from ccpncdb.schemas import csvProperties
