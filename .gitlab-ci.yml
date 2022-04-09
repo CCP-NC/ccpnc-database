@@ -9,7 +9,11 @@ before_script:
   
 test:
   services:
-    - mongo:3
+    - name: mongo:3
+
+  variables:
+    DB_URL: "mongo"
+
   before_script:
     - pip install pytest
   script:

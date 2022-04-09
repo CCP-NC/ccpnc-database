@@ -20,7 +20,7 @@ class Config(object):
 
     @property
     def db_url(self):
-        return self.data.get('db_url', 'localhost')
+        return os.environ.get("DB_URL") or self.data.get('db_url', 'localhost')
 
     @property
     def db_port(self):
