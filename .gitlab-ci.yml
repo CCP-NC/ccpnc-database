@@ -1,0 +1,21 @@
+image: python:3.9
+
+
+before_script:
+  - pip install -U pip
+  - pip install virtualenv
+  - virutalenv venv
+  - source venv/bin/activate
+  
+test:
+  services:
+    - name: mongo:3
+
+  variables:
+    DB_URL: "mongo"
+
+  before_script:
+    - pip install pytest
+  script:
+    - pip install -e .
+    - py.test 

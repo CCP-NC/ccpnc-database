@@ -8,6 +8,8 @@ import subprocess as sp
 from hashlib import md5
 from bson.objectid import ObjectId
 
+import mongomock
+
 file_path = os.path.split(__file__)[0]
 data_path = os.path.join(file_path, '../data')
 sys.path.append(os.path.abspath(os.path.join(file_path, '../../')))
@@ -22,6 +24,7 @@ def clean_db(method):
 
 class LoggerTest(unittest.TestCase):
     
+    @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
     def setUp(self):
         from ccpncdb.config import Config
         from ccpncdb.log import Logger
@@ -31,6 +34,7 @@ class LoggerTest(unittest.TestCase):
 
         self.logger = Logger(client, 'ccpnc-log-test')
 
+    @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
     @clean_db
     def testAddLog(self):
         

@@ -13,6 +13,9 @@ from bson.objectid import ObjectId
 from soprano.selection import AtomSelection
 from soprano.properties.nmr import MSIsotropy
 
+import mongomock
+from mongomock.gridfs import enable_gridfs_integration
+
 file_path = os.path.split(__file__)[0]
 data_path = os.path.join(file_path, '../data')
 sys.path.append(os.path.abspath(os.path.join(file_path, '../../')))
@@ -41,7 +44,10 @@ _fake_user = {
 
 class MDBServerTest(unittest.TestCase):
 
+    @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
     def setUp(self):
+        enable_gridfs_integration()
+
         from ccpncdb.server import MainServer
         from ccpncdb.utils import read_magres_file
         from ccpncdb.orcid import FakeOrcidConnection
@@ -57,6 +63,7 @@ class MDBServerTest(unittest.TestCase):
 
         self.client = self.serv.app.test_client()
 
+    @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
     def testStatic(self):
 
         @self.serv.app.route('/')
@@ -69,10 +76,11 @@ class MDBServerTest(unittest.TestCase):
         with open(os.path.join(file_path, '../serv/static/index.html')) as f:
             self.assertEqual(html, f.read())
         self.assertEqual(resp.headers['Content-Type'],
-                         'text/html; charset=utf-8')
+                        'text/html; charset=utf-8')
 
         resp.close()
 
+    @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
     def testUserInfo(self):
 
         @self.serv.app.route('/uinfo', methods=['POST'])
@@ -84,6 +92,7 @@ class MDBServerTest(unittest.TestCase):
 
         self.assertEqual(resp.status_code, 200)
 
+    @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
     def testMagres(self):
 
         from ccpncdb.schemas import csvProperties
@@ -112,7 +121,9 @@ class MDBServerTest(unittest.TestCase):
         updata.update(_fake_rdata)
         updata.update(_fake_vdata)
         updata['magres-file'] = (BytesIO(self.eth['string'].encode('utf8')),
-                                 'ethanol.magres')
+                                'ethanol.magres')
+
+        print(updata)
 
         # First, try to upload
         resp = self.client.post('/upload', data=updata)
@@ -121,7 +132,7 @@ class MDBServerTest(unittest.TestCase):
 
         # Retrieve record
         resp = self.client.get('/get_record',
-                               json={'mdbref': mdbref})
+                            json={'mdbref': mdbref})
         self.assertEqual(resp.status_code, 200)
         rec = json.loads(next(resp.response))
 
@@ -129,14 +140,14 @@ class MDBServerTest(unittest.TestCase):
         m_id = rec['last_version']['magresFilesID']
 
         resp = self.client.get('/get_magres',
-                               query_string={'magres_id': m_id})
+                            query_string={'magres_id': m_id})
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(next(resp.response).decode('utf-8'),
-                         self.eth['string'])
+                        self.eth['string'])
 
         # And the CSV
         resp = self.client.get('/get_csv',
-                               query_string={'oid': rec['id'], 'v': 0})
+                            query_string={'oid': rec['id'], 'v': 0})
         self.assertEqual(resp.status_code, 200)
 
         lines = [r.decode('utf-8').strip() for r in resp.response]
@@ -144,16 +155,16 @@ class MDBServerTest(unittest.TestCase):
         _fake_alldata = dict(_fake_rdata, **_fake_vdata)
         self.assertEqual(lines[0], ','.join(csvProperties))
         self.assertEqual(lines[1], ','.join([_fake_alldata.get(p, '')
-                                             for p in csvProperties]))
+                                            for p in csvProperties]))
 
 
 if __name__ == '__main__':
 
     ps = sp.Popen(['ps', '-all'], stdout=sp.PIPE, stderr=sp.PIPE)
 
-    stdout, stderr = ps.communicate()
-    if b'mongod' not in stdout.split():
-        raise RuntimeError('Please run an instance of mongod in another shell'
-                           ' for testing')
+    #stdout, stderr = ps.communicate()
+    #if b'mongod' not in stdout.split():
+    #    raise RuntimeError('Please run an instance of mongod in another shell'
+    #                       ' for testing')
 
     unittest.main()
