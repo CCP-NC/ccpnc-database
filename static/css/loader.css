@@ -3,11 +3,12 @@ https://projects.lukehaas.me/css-loaders/
 */
 
 .loader {
-  font-size: 30px;
+  font-size: 20px;
   text-indent: -9999em;
   overflow: hidden;
   width: 1em;
   height: 1em;
+  border: 0;
   border-radius: 50%;
   margin: 72px auto;
   position: relative;

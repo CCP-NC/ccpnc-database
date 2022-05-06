@@ -2,5 +2,5 @@ secret/secret.key
 secret/orcid_details.json
 *.pyc
 .ipynb_checkpoints
-config.json
+config/config.json
 static/js/config.js

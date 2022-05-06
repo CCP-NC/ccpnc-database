@@ -3,12 +3,19 @@
   console.log('Creating Angular app...');
   var ccpncApp = angular.module('ccpncDatabaseApp', ['ngFileUpload']);
 
+  // Assign some app-wide configuration constants
+  ccpncApp.server_app = ccpnc_config.server_app;
+  ccpncApp.redirect_uri = ccpnc_config.redirect_uri;
+
   // Create a service to hold login data
+  console.log('Launching login service...');
   ccpncApp.service('loginStatus', LoginStatus);
 
   // Add directives
   console.log('Loading directives...');
   addRecordDirective(ccpncApp);
+  addEditPopupDirective(ccpncApp);
+  addEditTableDirective(ccpncApp);
 
   // Add controllers
   console.log('Loading controllers...');

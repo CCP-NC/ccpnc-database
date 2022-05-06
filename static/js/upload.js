@@ -2,95 +2,90 @@ function addUploadController(ngApp) {
     ngApp.controller('UploadController', function($scope, loginStatus, Upload) {
 
         var clearForm = function() {
+
             $scope.magres_file_name = '';
             $scope.magres_file = null; // Contents of the last uploaded file            
             $scope.uploading_now = false; // To show spinner if needed
 
-            $('#upload-form #chemname').val('');
-            $('#upload-form #doi').val('');
-            $('#upload-form #notes').val('');
+            $('#upload-form').resetForm();
 
         }
-
-        clearForm();
 
         // Form data
         $scope.chemname = '';
 
         // Status message
         $scope.status = '';
-        $scope.status_err = false; // Is the status an error?        
-        $scope.server_app = ccpnc_config.server_app;
+        $scope.status_err = false; // Is the status an error?
+
+        // Edit table
+        $scope._edit_table = new editTable($scope, {});
+
+        // Upload mode
+        $scope.upload_multi = false;
+
+        clearForm();
 
         $scope.upload = function() {
 
-            if ($scope.magres_file == null) {
-                $scope.status = 'No file to upload';
-                $scope.status_err = true;
+            // Check required fields
+            $scope.status_err = false;
+            $scope.status = '';
+            $('#upload-form input[required]').each(function(i, o) {
+                if ($(o).val() == '') {
+                    $scope.status = 'Missing file or obligatory field';
+                    $scope.status_err = true;                    
+                }
+            });
+            if ($scope.status_err) {
                 return;
             }
 
-            // Check obligatory details
-            var data = {
-                    'magres': $scope.magres_file,
-                    'chemname': $('#upload-form #chemname').val(),
-                    'doi': $('#upload-form #doi').val(),
-                    'notes': $('#upload-form #notes').val(),
-            };
-
-            var obl = {'Chemical name': 'chemname'};
-
-            for (var kname in obl) {
-                if ($.trim(data[obl[kname]]) == '') {
-                    $scope.status = kname + ' is obligatory';
-                    $scope.status_err = true;
-                    return;
-                }
+            // Compile extra data
+            var request_data = {
+                'upload_multi': $scope.upload_multi
             }
-
 
             loginStatus.verify_token(function() {
                 // Package all the data
                 details = loginStatus.get_details()
-                data.access_token = details['access_token'];
-                data.orcid = details['orcid'];
+                request_data.access_token = details['access_token'];
+                request_data.orcid = details['orcid'];
 
-                // Send an Ajax request
-                $scope.uploading_now = true;
-                $scope.$apply();
+                // Post form
+                $scope.uploading_now = true;    
+                $scope.$apply();            
+                $('#upload-form').ajaxSubmit({
+                    data: request_data,
+                    success: function(r) {
+                        // Did anything go wrong?
+                        if (r != 'Success') {
+                            $scope.status = 'ERROR: ' + r;
+                            $scope.status_err = true;
+                        } else {
+                            $scope.status = 'Successfully uploaded';
+                            $scope.status_err = false;
+                            // Also, clear
+                            clearForm();
+                        }
 
-                $.ajax({
-                    url: $scope.server_app + '/upload',
-                    type: 'POST',
-                    crossDomain: true,
-                    data: data
-                }).done(function(r) {
-                    // Did anything go wrong?
-                    if (r != 'Success') {                        
-                        $scope.status = 'ERROR: ' + r;
+                        $scope.uploading_now = false;
+                        $scope.$apply();
+
+                    },
+                    error: function(e) {
+                        $scope.status = e;
                         $scope.status_err = true;
+                        $scope.uploading_now = false;
+                        $scope.$apply();
                     }
-                    else {
-                        $scope.status = 'Successfully uploaded';
-                        $scope.status_err = false;                    
-                        // Also, clear
-                        clearForm();
-                    }
-
-                    $scope.uploading_now = false;
-                    $scope.$apply();
-
-                }).fail(function(e) {
-                    $scope.status = e;
-                    $scope.status_err = true;
-                    $scope.uploading_now = false;
-                    $scope.$apply();
                 });
 
             }, function() {
-                $scope.status = 'Could not authenticate ORCID details; please log in'
+                $scope.status = 'Could not authenticate ORCID details; please log in';
                 $scope.status_err = true;
             });
+
         }
 
         $scope.load_files = function(files) {
@@ -104,26 +99,31 @@ function addUploadController(ngApp) {
                 $scope.status = '';
                 $scope.status_err = false;
 
-                var reader = new FileReader();
-                reader.onload = (function(fevent) {
-                    var mtext = fevent.currentTarget.result;
-                    $scope.uploading_now = false;
-                    if (validateMagres(file.name, mtext)) {
-                        $scope.magres_file_name = file.name;
-                        $scope.magres_file = mtext;
-                        $scope.status_err = false;
-                        $scope.status = 'File ready to upload';
-                    } else {
-                        $scope.magres_file_name = '';
-                        $scope.magres_file = null;
-                        $scope.status_err = true;
-                        $scope.status = 'The file is not in the Magres format';
-                    }
-                    $scope.$apply();
-                });
-                $scope.uploading_now = true;
-                reader.readAsText(file);
+                if (!$scope.upload_multi) {
+                    var reader = new FileReader();
+                    reader.onload = (function(fevent) {
+                        var mtext = fevent.currentTarget.result;
+                        $scope.uploading_now = false;
+                        if (validateMagres(file.name, mtext)) {
+                            $scope.magres_file_name = file.name;
+                            $scope.status_err = false;
+                            $scope.status = 'File ready to upload';
+                        } else {
+                            $scope.magres_file_name = '';
+                            $scope.magres_file = null;
+                            $scope.status_err = true;
+                            $scope.status = 'The file is not in the Magres format';
+                        }
+                        $scope.$apply();
+                    });
+                    $scope.uploading_now = true;
+                    reader.readAsText(file);
+                }
             }
+        }
+
+        $scope.edit_additional = function() {
+            $scope._edit_form = new editFormScope($scope);
         }
 
     });

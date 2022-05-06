@@ -1,30 +1,54 @@
+import os
 import re
+import csv
 import json
 import inspect
 import tempfile
 import numpy as np
+import zipfile
+import tarfile
+import StringIO
+from copy import deepcopy
+
 from ase import io
 from datetime import datetime
+from ase.io.magres import read_magres
 from soprano.properties.nmr import MSIsotropy
+
 from pymongo import MongoClient
 from schema import SchemaError
 from gridfs import GridFS, NoFile
 from bson.objectid import ObjectId
-from db_schema import (magresDataSchema,
-                       magresVersionSchema,
+from db_schema import (magresVersionSchema,
                        magresMetadataSchema,
                        magresIndexSchema)
 
 try:
-    config = json.load(open( os.path.join(
-        os.path.abspath(os.path.dirname(__file__)), "config", "config.json"), "r"))
-except:
+    config = json.load(open(os.path.join(
+        os.path.abspath(os.path.dirname(__file__)), "config", "config.json"),
+        "r"))
+except IOError:
     config = {}
 
-_db_url = config.get("db_url","localhost")
-_db_port = config.get("db_port",27017)
+_db_url = config.get("db_url", "localhost")
+_db_port = config.get("db_port", 27017)
+
+# Convenient tool to turn a magres string into an ase.Atoms object
+
+
+class MagresStrCast(object):
+
+    def __init__(self, mstr):
+        self._mstr = mstr
+
+    def read(self):
+        return self._mstr
+
+    def atoms(self):
+        return read_magres(self)
 
 ### METHODS FOR COMPILATION OF METADATA ###
+
 
 def getFormula(magres):
 
@@ -48,11 +72,10 @@ def getMSMetadata(magres):
 
     return msdata
 
-### UPLOADING ###
 
-
-def addMagresFile(magresStr, chemname, orcid, data={}):
-    client = MongoClient(host=_db_url,port=_db_port)
+def getDBCollections():
+    # Return the database's collections after establishing a connection
+    client = MongoClient(host=_db_url, port=_db_port)
     ccpnc = client.ccpnc
 
     # Three collections:
@@ -65,16 +88,25 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
     # version
     magresIndex = ccpnc.magresIndex
 
-    with tempfile.NamedTemporaryFile(suffix='.magres') as f:
-        f.write(magresStr)
-        f.flush()
-        # WARNING: this will only work on a UNIX system! Apparently does not
-        # work on Windows NT and above. More details at
-        # https://docs.python.org/2/library/tempfile.html#tempfile.NamedTemporaryFile
-        magres = io.read(f.name)
+    return magresFilesFS, magresMetadata, magresIndex
 
-    #d = data
-    # d.update(getMSMetadata(magres))
+
+### UPLOADING ###
+
+
+def addMagresFile(magresFile, chemname, orcid, data={}):
+
+    # Inserts a file, returns index id if successful, otherwise False
+
+    magresFilesFS, magresMetadata, magresIndex = getDBCollections()
+
+    if hasattr(magresFile, 'read'):
+        magres = read_magres(magresFile)
+        magresFile.seek(0)
+        magresStr = magresFile.read()
+    else:
+        magresStr = magresFile
+        magres = read_magres(StringIO.StringIO(magresStr))
 
     # Validate metadata
     metadata = {
@@ -119,19 +151,173 @@ def addMagresFile(magresStr, chemname, orcid, data={}):
 
     magresIndexInsertion = magresIndex.insert_one(index)
 
+    # Return ID only if all went well
+    if ((magresMetadataInsertion.acknowledged and
+         magresIndexInsertion.acknowledged and
+         (magresFilesID is not None) and
+         magresMetadataUpdate.modified_count)):
+        return magresIndexInsertion.inserted_id
+    else:
+        return False
+
+
+def addMagresArchive(archive, chemname, orcid, data={}):
+    """
+    Uploads a full archive containing magres files.
+    Returns 0 for full success, 1 for some errors, 2 for total failure;
+    then returns a dict of all ids for successfully added files
+    (False for failed ones)
+    """
+
+    fileList = {}
+
+    try:
+        with zipfile.ZipFile(archive) as z:
+            for n in z.namelist():
+                name = os.path.basename(n)
+                if len(name) > 0:
+                    with z.open(n) as f:
+                        fileList.update({name: f.read()})
+    except zipfile.BadZipfile:
+        archive.seek(0) # Clear
+        try:
+            with tarfile.open(fileobj=archive) as z:
+                for ti in z.getmembers():
+                    if ti.isfile():
+                        f = z.extractfile(ti)
+                        fileList.update({os.path.basename(ti.name): f.read()})
+                        f.close()
+        except tarfile.ReadError:
+            raise RuntimeError(
+                'Uploaded archive file is not a valid zip or tar file.')
+
+    # The passed data is used as a default
+    # Anything else we get from the .csv
+
+    info = [f for name, f in fileList.items()
+            if os.path.splitext(name.lower())[1] == '.csv']
+    magresList = {name: f for name, f in fileList.items()
+                  if os.path.splitext(name.lower())[1] == '.magres'}
+
+    if len(info) > 1:
+        raise RuntimeError(
+            'Uploaded archive file must contain at most a single .csv file')
+    elif len(info) == 0:
+        csvReader = []  # Dummy
+    else:
+        csvReader = csv.DictReader(info[0].splitlines())
+
+    default_args = {'orcid': orcid,
+                    'chemname': chemname,
+                    'data': data.copy()}
+    argdict = {}
+
+    for entry in csvReader:
+        # File column is obligatory
+        try:
+            fname = entry.pop('filename')
+        except KeyError:
+            raise RuntimeError('Invalid CSV file used in archive')
+
+        # Is the file valid?
+        if os.path.splitext(fname)[1] != '.magres':
+            raise RuntimeError('File referenced in .csv is not a .magres file')
+        if fname not in magresList:
+            raise RuntimeError(
+                'Could not find {0} in the archive'.format(fname))
+
+        # Ok, we're ready to go
+        argdict[fname] = deepcopy(default_args)
+        argdict[fname]['chemname'] = entry.pop('chemname', chemname)
+        argdict[fname]['data'].update(entry)
+
+    added_ids = {}
+    success_code = 0
+    for f, magresStr in magresList.items():
+        args = argdict.get(f, default_args)
+        ind_id = addMagresFile(magresStr, **args)
+        if not ind_id:
+            success_code = 1
+        added_ids[f] = ind_id
+
+    success_code += (len(added_ids) == 0)
+
+    return success_code, added_ids
+
+
+def editMagresFile(index_id, orcid, data={}, magresFile=None):
+
+    magresFilesFS, magresMetadata, magresIndex = getDBCollections()
+
+    # Retrieve the entry from the index
+    magresIndexID = ObjectId(index_id)
+    index_entry = magresIndex.find_one({'_id': magresIndexID})
+
+    if orcid != index_entry['orcid']:
+        raise RuntimeError('Entry is not owned by user')
+
+    if index_entry is None:
+        raise RuntimeError('No entry to edit found')
+
+    # Now the metadata
+    magresMetadataID = ObjectId(index_entry['metadataID'])
+    mdata_entry = magresMetadata.find_one({'_id': magresMetadataID})
+
+    if mdata_entry is None:
+        raise RuntimeError('Metadata missing for requested entry')
+
+    # Now, if there's a new file, upload it, otherwise use the last one
+    if magresFile is not None:
+
+        if hasattr(magresFile, 'read'):
+            magres = read_magres(magresFile)
+            magresFile.seek(0)
+            magresStr = magresFile.read()
+        else:
+            magresStr = magresFile
+            magres = read_magres(StringIO.StringIO(magresStr))
+
+        # Check that the formula is right
+        formula = getFormula(magres)
+        if index_entry['formula'] != formula:
+            raise RuntimeError('Invalid Magres File for editing '
+                               '(different compound)')
+
+        magresFilesID = magresFilesFS.put(magresStr,
+                                          filename=index_entry['metadataID'],
+                                          encoding='UTF-8')
+    else:
+        magresFilesID = index_entry['latest_version']['magresFilesID']
+
+    # Create the new version
+    version = {
+        'magresFilesID': str(magresFilesID),
+        'date': datetime.utcnow()
+    }
+    version.update(data)
+    version = magresVersionSchema.validate(version)
+
+    # Then update the metadata
+    magresMetadataUpdate = magresMetadata.update_one({'_id':
+                                                      magresMetadataID},
+                                                     {'$push': {
+                                                         'version_history':
+                                                         version
+                                                     }})
+    # And update the index
+    magresIndexUpdate = magresIndex.update_one({'_id': magresIndexID},
+                                               {'$set': {
+                                                   'latest_version': version
+                                               }})
+
     # Return True only if all went well
-    return (magresMetadataInsertion.acknowledged and
-            magresIndexInsertion.acknowledged and
-            (magresFilesID is not None) and
-            magresMetadataUpdate.modified_count)
+    return (magresMetadataUpdate.modified_count and
+            magresIndexUpdate.modified_count)
 
 
 def getMagresFile(file_id):
 
-    client = MongoClient(host=_db_url)
-    ccpnc = client.ccpnc
-
-    magresFilesFS = GridFS(ccpnc, 'magresFilesFS')
+    magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
     try:
         mfile_ref = magresFilesFS.get(ObjectId(file_id))
@@ -142,20 +328,9 @@ def getMagresFile(file_id):
 
 
 def removeMagresFiles(index_id):
-
     # Only used for debug, should not be exposed to users
-    client = MongoClient(host=_db_url)
-    ccpnc = client.ccpnc
 
-    # Three collections:
-    # 1. GridFS collection for magres files
-    magresFilesFS = GridFS(ccpnc, 'magresFilesFS')
-    # 2. Metadata collection (one element per database entry,
-    # including history)
-    magresMetadata = ccpnc.magresMetadata
-    # 3. Searchable data, updated when the other two change, to the latest
-    # version
-    magresIndex = ccpnc.magresIndex
+    magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
     try:
         index_entry = magresIndex.find({'_id': ObjectId(index_id)}).next()
@@ -192,8 +367,9 @@ def makeEntry(ind, meta):
             'formula': ''.join(map(lambda x: x['species'] + str(x['n']),
                                    ind['formula'])),
             'orcid_uri': ind['orcid']['uri'],
-            'doi': meta['version_history'][-1]['doi'],
-            'version_history': meta['version_history']
+            'version_history': meta['version_history'],
+            'index_id': ind['_id'],
+            'meta_id': meta['_id']
         }
     except KeyError:
         return None
@@ -203,8 +379,7 @@ def makeEntry(ind, meta):
 
 def databaseSearch(search_spec):
 
-    client = MongoClient(host=_db_url,port=_db_port)
-    ccpnc = client.ccpnc
+    magresFilesFS, magresMetadata, magresIndex = getDBCollections()
 
     # List search functions
     search_types = {
@@ -237,12 +412,12 @@ def databaseSearch(search_spec):
         search_dict['$and'] += search_func(**args)
 
     # Carry out the actual search
-    resultsInd = ccpnc.magresIndex.find(search_dict)
+    resultsInd = magresIndex.find(search_dict)
     # Find the corresponding metadata
     results = []
     for rInd in resultsInd:
         oid = ObjectId(rInd['metadataID'])
-        mdata = [m for m in ccpnc.magresMetadata.find({'_id': oid})]
+        mdata = [m for m in magresMetadata.find({'_id': oid})]
         if len(mdata) != 1:
             # Wut?
             # Invalid entry; skip
@@ -281,9 +456,11 @@ def searchByOrcid(orcid):
         {'orcid.path': orcid}
     ]
 
+
 def searchByChemname(pattern):
 
-    regex = re.compile(pattern)
+    regex = re.compile(pattern.replace(".","\.").replace("*",".*").replace("?","."),re.IGNORECASE)
+    # escape ., convert * to any character, convert ? to a single character
 
     return [
         {'chemname': {'$regex': regex}}

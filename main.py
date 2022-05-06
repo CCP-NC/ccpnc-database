@@ -10,17 +10,25 @@ import json
 import inspect
 from flask import Flask, Response, session, request, make_response
 from orcid import OrcidConnection, OrcidError
-from db_interface import addMagresFile, databaseSearch, getMagresFile
+from db_interface import (addMagresFile, databaseSearch,
+                          getMagresFile, editMagresFile,
+                          addMagresArchive)
+from db_schema import magresVersionOptionals
 
 filepath = os.path.abspath(os.path.dirname(__file__))
 
-app = Flask('ccpnc-database', static_url_path='',static_folder = os.path.join(filepath,"static"))
+app = Flask('ccpnc-database', static_url_path='',
+            static_folder=os.path.join(filepath, "static"))
 app.secret_key = open(os.path.join(filepath, 'secret',
                                    'secret.key')).read().strip()
 
 orcid_details = json.load(open(os.path.join(filepath, 'secret',
                                             'orcid_details.json')))
-orcid_link = OrcidConnection(orcid_details, 'https://orcid.org/')
+
+if not hasattr(app, 'extensions'):
+    app.extensions = {}
+app.extensions['orcidlink'] = OrcidConnection(orcid_details,
+                                              'https://orcid.org/')
 
 # Response codes
 HTTP_200_OK = 200
@@ -31,13 +39,11 @@ HTTP_500_INTERNAL_SERVER_ERROR = 500
 # Utilities
 
 
-def user_info_auth():
+def user_info_auth(orcid_link, client_at, client_id):
     # Return user info if all tokens check out, otherwise raise OrcidError
 
     # First, check that the details are valid
     tk = orcid_link.get_tokens(session)
-    client_at = request.values.get('access_token')
-    client_id = request.values.get('orcid')
 
     if (tk is None or
             client_id != tk['orcid'] or
@@ -53,11 +59,14 @@ def user_info_auth():
 def root():
     return app.send_static_file('index.html')
 
+@app.route('/cookies')
+def cookiepol():
+    return app.send_static_file('cookies.html')
 
 @app.route('/gettokens/', defaults={'code': None})
 @app.route('/gettokens/<code>')
 def get_tokens(code):
-    tk = orcid_link.get_tokens(session, code)
+    tk = app.extensions['orcidlink'].get_tokens(session, code)
     # If they are None, return null
     if tk is None:
         return 'null'
@@ -67,16 +76,18 @@ def get_tokens(code):
 
 @app.route('/logout')
 def delete_tokens():
-    orcid_link.delete_tokens(session)
+    app.extensions['orcidlink'].delete_tokens(session)
     return 'Logged out', HTTP_200_OK
 
 
 @app.route('/upload', methods=['POST'])
 def upload():
 
-    # Ok, so pick the rest of the information
+    # Authenticate and retrieve user info
     try:
-        user_info = user_info_auth()
+        user_info = user_info_auth(app.extensions['orcidlink'],
+                                   request.values.get('access_token'),
+                                   request.values.get('orcid'))
     except OrcidError as e:
         # Something went wrong in the request itself
         return str(e), HTTP_401_UNAUTHORIZED
@@ -89,16 +100,63 @@ def upload():
         orcid = user_info['orcid-identifier']
 
         # Optional ones
-        file_entry = {
-            k: request.values.get(k) for k in ('doi', 'notes')
+        data = {
+            k: request.values.get(k) for k in magresVersionOptionals
             if (request.values.get(k) is not None and
                 len(request.values.get(k)) > 0)
         }
 
-        success = addMagresFile(request.values.get('magres'),
-                                chemname,
-                                orcid,
-                                file_entry)
+        # Magres file
+        fd = request.files['magres-file']
+
+        if request.values.get('upload_multi', 'false') == 'true':
+            succ_code, all_inds = addMagresArchive(fd, chemname,
+                                                   orcid,
+                                                   data)
+            success = (succ_code == 0)
+        else:
+            success = addMagresFile(fd,
+                                    chemname,
+                                    orcid,
+                                    data)
+
+    except Exception as e:
+        return (e.__class__.__name__ + ': ' + str(e),
+                HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if success:
+        return 'Success', HTTP_200_OK
+    else:
+        return 'Failed', HTTP_500_INTERNAL_SERVER_ERROR
+
+
+@app.route('/edit', methods=['POST'])
+def edit():
+
+    # Authenticate and retrieve user info
+    try:
+        user_info = user_info_auth(app.extensions['orcidlink'],
+                                   request.values.get('access_token'),
+                                   request.values.get('orcid'))
+    except OrcidError as e:
+        # Something went wrong in the request itself
+        return str(e), HTTP_401_UNAUTHORIZED
+
+    # Compile everything
+    try:
+        # Obligatory values
+        index_id = request.values.get('index_id')
+        orcid = user_info['orcid-identifier']
+
+        # Optional ones
+        data = {
+            k: request.values.get(k) for k in magresVersionOptionals
+            if (request.values.get(k) is not None and
+                len(request.values.get(k)) > 0)
+        }
+
+        success = editMagresFile(index_id, orcid,
+                                 data, request.files.get('magres-file'))
 
     except Exception as e:
         return (e.__class__.__name__ + ': ' + str(e),
@@ -127,13 +185,38 @@ def get_doc():
 
     doc_id = request.args.get('id')
 
-    fname = '{0}.magres'.format(doc_id)
-    
     resp = make_response(getMagresFile(doc_id))
     resp.headers['Content-Type'] = 'text/plain'
-    resp.headers['Content-Disposition'] = 'attachment; filename=' + fname
+    resp.headers['Content-Disposition'] = 'attachment'
 
     return resp
+
+
+@app.route('/optionals', methods=['GET'])
+def get_optionals():
+
+    # Return the optional arguments from the schema definition
+    return json.dumps([
+        {
+            'short_name': k,
+            'full_name': opt.full_name,
+            'input_type': opt.input_type,
+            'input_size': opt.input_size
+        }
+        for (k, opt) in magresVersionOptionals.items()
+    ])
+
+
+@app.route('/csvtemplate', methods=['GET'])
+def get_csv():
+
+    resp = make_response('filename,chemname,chemform,' +
+                         ','.join(magresVersionOptionals.keys()))
+    resp.headers['Content-Type'] = 'text/plain'
+    resp.headers.set('Content-Disposition', 'attachment', filename='info.csv')
+
+    return resp
+
 
 if __name__ == '__main__':
     # Run locally; only launch this way when testing!
@@ -142,5 +225,6 @@ if __name__ == '__main__':
     from flask_cors import CORS
     CORS(app)
 
+    app.debug = True
     app.config['SERVER_NAME'] = 'localhost:8000'
     app.run(port=8000, threaded=True)

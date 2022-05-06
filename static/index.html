@@ -13,11 +13,13 @@
     <link rel="stylesheet" href="css/capsule.min.css">
 
     <script src="vendor/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="vendor/jquery.form-4.2.2.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="vendor/angular.min.js"></script>
     <script src="vendor/capsule.min.js"></script>
     <script src="vendor/ng-file-upload-all.min.js"></script>
 
     <script src="js/config.js"></script>
+    <script src="js/edit.js"></script>
     <script src="js/record.js"></script>
     <script src="js/login.js"></script>
     <script src="js/search.js"></script>
@@ -36,7 +38,7 @@
     <div class="notification is-primary is-borderless" ng-show="!approved" ng-cloak>
         <button class="delete" ng-click="approve()"></button>
             <p>This site uses cookies in order to store and keep track of your login information. If you keep using this site,
-            we will assume you accept this as a necessary part of the service.</p>
+            we will assume you accept this as a necessary part of the service. <a href='/cookies'>Learn More</a> </p>
     </div>
 </div>
 
@@ -121,9 +123,28 @@
 <div class="main-section" ng-switch="open_tab">
     <div id="div-home" class="section" ng-switch-default  ng-cloak>
         <div class="container">
-            This is a database. It datas the bases. Sometimes, it's based on data.
-            <br><br>
-            Usually it just sort of exists.
+            <p>
+                This is a prototype for the CCP-NC database of NMR data.
+            </p>
+
+            <p>
+                <b>Login</b> using your ORCID account. Login should be persistent, but may be canceled after extended periods of time,
+                in which case, logging out and then back in will be necessary.
+            </p>
+
+            <p>
+                Use <b>Search</b> to search the database for existing entries based on various search criteria. More criteria will be
+                added based on user feedback. Any entries found this way can be downloaded with the <b>Download</b> button.
+            </p>
+
+            <p>
+                Use <b>Upload</b> to upload your own files, including metadata. Once uploaded, entries can not be deleted without admin assistance.
+            </p>
+
+            <p>
+                In <b>Your Files</b>, which appears only if logged in, you can see the entries you uploaded. For each of them multiple versions, corresponding to different files and metadata, can exist. New versions can be uploaded by clicking the <b>Edit</b> button. They will be recorded with a timestamp and will become the new default.
+            </p>
+
         </div>
     </div>
 
@@ -188,7 +209,7 @@
                                 Search pattern
                             </td>
                             <td colspan="3" rowspan="" headers="">
-                                <input class="cc-ctrl cc-bulma" type="text" placeholder="Pattern (regular expressions allowed)" ng-model="search_spec.args.pattern">
+                                <input class="cc-ctrl cc-bulma" type="text" size="50" placeholder="Pattern (* and ? wildcards allowed)" ng-model="search_spec.args.pattern">
                             </td>
                         </tr>
                     </tbody>
@@ -222,62 +243,100 @@
     </div>
 
     <div id="div-upload" class="section" ng-switch-when="upload" ng-controller="UploadController" ng-cloak>
-            
+        
+        <!-- I think this is not necessary any more...        
+            <div edit-form="_edit_form">
+            </div>
+        -->
+
+
         <div class="container has-text-centered">
-            <table id="upload-form" class="table is-fullwidth">
-                <tr>
-                    <td colspan="" rowspan="" headers="">
-                        Chemical name<sup class="has-text-danger">*</sup>
-                    </td>
-                    <td colspan="" rowspan="" headers="">
-                        <input id="chemname" class="cc-ctrl cc-bulma width-3" type="text" placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)">
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="" rowspan="" headers="">
-                        doi
-                    </td>
-                    <td colspan="" rowspan="" headers="">
-                        <input id="doi" class="cc-ctrl cc-bulma width-3" type="text" placeholder="doi pointing to the paper for which this calculation has been used">
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="" rowspan="" headers="">
-                        Notes
-                    </td>
-                    <td colspan="" rowspan="" headers="">
-                        <textarea id="notes" class="cc-ctrl cc-bulma textarea" placeholder="Useful details about calculation type, suggestion for reproducibility etc." 
-                        rows="10"></textarea>
-                    </td>
-                </tr>
-            </table>
-            <p>
+
+            <div class="tabs">
+              <ul>
+                <li ng-class="upload_multi? '' : 'is-active'"><a class="tab-link" ng-click="upload_multi=false">Single file</a></li>
+                <li ng-class="upload_multi? 'is-active' : ''"><a class="tab-link" ng-click="upload_multi=true">Archive</a></li>
+              </ul>
+            </div>
+
+            <div ng-show="upload_multi" ng-cloak>
+                <p>
+                    You can use this form to upload a <tt>.zip</tt>, <tt>.tar</tt> or <tt>.tar.gz</tt> archive containing multiple <tt>.magres</tt> files in one go. The files will be added as separate entries to the database, so please use this just to upload in group lots of different structures, not lots of versions of the same structure. The files need to be either at the top level of the archive or inside a single folder.
+                </p>
+                <p>
+                   The data in the form below will be used as the default for all the given structures. However, if you want to have custom values for some or all files in your archive, you should download <a href="csvtemplate" download="info.csv">this CSV file</a> and fill in its various fields for the structures you care about, then put it in the archive at the same level as the <tt>.magres</tt> files.
+                </p>
+                <span class="separator-1"></span>
+            </div>
+
+            <form id="upload-form" enctype="multipart/form-data" action="/upload" method="post">
+                <div class="table-container" >
+                        <table class="table is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <th colspan="" rowspan="" headers="">
+                                        Chemical name<sup class="has-text-danger">*</sup>
+                                    </th>
+                                    <td colspan="" rowspan="" headers="">
+                                        <input id="chemname" class="cc-ctrl cc-bulma" type="text" size="80" name="chemname"
+                                        placeholder="Name identifying the compound (e.g.: alanine, sodium chloride, FCC iron)"
+                                        required>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="" rowspan="" headers="">
+                                        Form
+                                    </th>
+                                    <td colspan="" rowspan="" headers="">
+                                        <input id="chemform" class="cc-ctrl cc-bulma" type="text" size="80" name="chemform" 
+                                        placeholder="Additional relevant descriptors (e.g.: phase, conformer, etc.)">
+                                    </td>                            
+                                </tr>
+                            </thead>
+                            <tbody edit-table="_edit_table">
+                            </tbody>
+                        </table>
+                </div>
                 Fields marked with <sup class="has-text-danger">*</sup> are obligatory.
-            </p>
-            <span class="separator-2"></span>
-            <div class="drag-drop-file" ngf-drop="load_files($files)" ngf-multiple="true">
-                <span id="noloaded" ng-show="magres_file_name == '' && !uploading_now">
-                    <i class="fa fa-upload" aria-hidden="true"></i>
-                    &nbsp;
-                    Drop .magres file here 
+                <span class="separator-2"></span>
+                
+                <div class="file has-name is-boxed is-primary is-medium is-centered">
+                    <label class="file-label">
+                        <input class="file-input" type="file" id="magres-file" name="magres-file" ngf-select="load_files($files)" required>
+                        <span class="file-cta">
+                            <span class="file-icon">
+                                <span ng-show="!uploading_now">
+                                    <i class="fa fa-upload"></i>
+                                </span>
+                                <span ng-show="uploading_now">
+                                    <div class="loader">Loading...</div>
+                                </span>
+                            </span>
+                            <span class="file-label">
+                                <span ng-show="!uploading_now">
+                                    Choose a file...
+                                </span>
+                                <span ng-show="uploading_now">
+                                    Uploading...
+                                </span>
+                            </span>
+                        </span>
+                        <span class="file-name" ng-show="magres_file_name">
+                            {{magres_file_name}}
+                        </span>
+                    </label>
+                </div>
+                <span class="separator-1"></span>
+                <span class="box" ng-show="status !== ''" ng-class="{
+                    'has-text-danger': status_err,
+                    'has-text-success': !status_err,
+                }">
+                    {{ status }}
                 </span>
-                <span ng-show="uploading_now">
-                    <div class="loader">Loading...</div>
-                </span>
-                <span id="loaded" ng-show="magres_file_name !== '' && !uploading_now">
-                    {{magres_file_name}}
-                </span><br>
-            </div>        
-            <span class="separator-1"></span>
-            <span class="box" ng-show="status !== ''" ng-class="{
-            'has-text-danger': status_err,
-            'has-text-success': !status_err,
-        }">
-                {{ status }}
-            </span>
-            <span class="separator-1"></span>
-            <a class="button is-primary is-large" ng-click="upload()">Upload</a>
-        </div>
+                <span class="separator-1"></span>
+                <a class="button is-primary is-large" ng-click="upload()">Upload</a>
+            </form>
+        </div>        
     </div>
 
     <div id="div-yourfiles" class="section is-relative" ng-switch-when="yourfiles" ng-controller="FileListerController" ng-cloak>
@@ -289,6 +348,15 @@
         <div class="container is-scroll-y">
             <div database-record="result" ng-repeat="result in search_results">
             </div>
+        </div>
+
+        <!-- Use for edits -->
+        <div class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-content">
+                <!-- Any other Bulma elements you want -->
+            </div>
+            <button class="modal-close is-large" aria-label="close"></button>
         </div>
     </div>
 </div>
