@@ -1,7 +1,10 @@
 #!/bin/bash
 
 # Determine backup location
-[[ -z $BACKUP_DIR ]] && BACKUP_DIR=$HOME/mongo_backup
+#[[ -z $BACKUP_DIR ]] && BACKUP_DIR=$HOME/mongo_backup
+
+# modified by PP to use larger filesystem /data
+[[ -z $BACKUP_DIR ]] && BACKUP_DIR=/data/mongo_backup
 
 # Determine if backup location exists
 [[ ! -d $BACKUP_DIR ]] && echo "Backup directory not found, exiting..." && exit 1
@@ -16,4 +19,4 @@ mongodump --archive=${BACKUP_DIR}/mongo_backup_${DATE}.gz --gzip >>${BACKUP_DIR}
 [[ $? -eq 0 ]] || echo "Backup unsuccessful, exiting..." && exit 1
 
 # Clean up files older than six months
-find ${BACKUP_DIR} -name *.gz -mtime +180 -exec rm -f {} \;
+#find ${BACKUP_DIR} -name *.gz -mtime +180 -exec rm -f {} \;
