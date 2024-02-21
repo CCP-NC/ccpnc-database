@@ -86,11 +86,11 @@ def search_by_doi(doi):
         return []
 
     doi = re.escape(doi)
-    regex = re.compile('.*{0}.*'.format(doi))
+    #regex = re.compile('.*{0}.*'.format(doi))
 
     return [
         {'last_version.doi':
-            {'$regex': regex, '$options': 'i'}
+            {'$regex': doi, '$options': 'i'}
          }
     ]
 
