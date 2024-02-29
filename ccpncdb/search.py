@@ -140,8 +140,10 @@ def search_by_chemname(pattern):
 
 def search_by_chemform(pattern):
 
-    regex = re.compile(pattern.replace(".", "\\.").replace(
-        "*", ".*").replace("?", "."), re.IGNORECASE)
+    # regex = re.compile(pattern.replace(".", "\\.").replace(
+    #     "*", ".*").replace("?", "."), re.IGNORECASE)
+    regex = pattern.replace(".", "\\.").replace(
+        "*", ".*").replace("?", ".")
     # escape ., convert * to any character, convert ? to a single character
 
     return [
