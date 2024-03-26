@@ -198,6 +198,7 @@ class MagresDBTest(unittest.TestCase):
         rdata_3['chemname'] = 'alanine'
         vdata_3 = dict(_fake_vdata)
         vdata_3['license'] = 'pddl'
+        vdata_3['doi'] = '10.1010/ABCD123456'
         res_3 = self.mdb.add_record(alastr, rdata_3, vdata_3)
 
         #Test search by chemname
@@ -209,6 +210,15 @@ class MagresDBTest(unittest.TestCase):
 
         self.assertEqual(len(found), 1)
         self.assertEqual(str(found[0]['_id']), res_1.id)
+        
+        #Test search by doi - perfect string match
+        found = self.mdb.search_record([{
+            'type': 'doi',
+            'args': {'doi': '10.1010/ABCD123456'}
+            }])
+        found = list(found)
+        self.assertEqual(len(found), 1)
+        self.assertEqual(str(found[0]['_id']), res_3.id)
 
         # Test search using tokens
         found = self.mdb.search_record([{
