@@ -85,7 +85,9 @@ def search_by_doi(doi):
     if doi is None or doi == '':
         return []
 
-    doi = re.escape(doi)
+    # doi = re.escape(doi)
+    doi = doi.replace(".", "\\.").replace(
+        "*", ".*").replace("?", ".")
     #regex = re.compile('.*{0}.*'.format(doi))
 
     return [
