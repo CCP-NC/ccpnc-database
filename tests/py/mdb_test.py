@@ -211,10 +211,56 @@ class MagresDBTest(unittest.TestCase):
         self.assertEqual(len(found), 1)
         self.assertEqual(str(found[0]['_id']), res_1.id)
         
-        #Test search by doi - perfect string match
+        #Test search by doi
+        #DOI perfect string match, all caps
         found = self.mdb.search_record([{
             'type': 'doi',
             'args': {'doi': '10.1010/ABCD123456'}
+            }])
+        found = list(found)
+        self.assertEqual(len(found), 1)
+        self.assertEqual(str(found[0]['_id']), res_3.id)
+        
+        #DOI perfect string match, lowercase letters
+        found = self.mdb.search_record([{
+            'type': 'doi',
+            'args': {'doi': '10.1010/abcd123456'}
+            }])
+        found = list(found)
+        self.assertEqual(len(found), 1)
+        self.assertEqual(str(found[0]['_id']), res_3.id)
+        
+        #DOI wrong characters on purpose
+        #this should return zero results
+        found = self.mdb.search_record([{
+            'type': 'doi',
+            'args': {'doi': '10.1010/abcd123498'}
+            }])
+        found = list(found)
+        self.assertEqual(len(found), 0)
+        
+        #DOI wildcard search - prefix
+        found = self.mdb.search_record([{
+            'type': 'doi',
+            'args': {'doi': '10.1010/*'}
+            }])
+        found = list(found)
+        self.assertEqual(len(found), 1)
+        self.assertEqual(str(found[0]['_id']), res_3.id)
+        
+        #DOI wildcard search - suffix
+        found = self.mdb.search_record([{
+            'type': 'doi',
+            'args': {'doi': '*/ABCD123456'}
+            }])
+        found = list(found)
+        self.assertEqual(len(found), 1)
+        self.assertEqual(str(found[0]['_id']), res_3.id)
+        
+        #DOI wildcard search - central characters of doi
+        found = self.mdb.search_record([{
+            'type': 'doi',
+            'args': {'doi': '*1010/ABCD*'}
             }])
         found = list(found)
         self.assertEqual(len(found), 1)
