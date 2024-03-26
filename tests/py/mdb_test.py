@@ -200,6 +200,7 @@ class MagresDBTest(unittest.TestCase):
         vdata_3['license'] = 'pddl'
         res_3 = self.mdb.add_record(alastr, rdata_3, vdata_3)
 
+        #Test search by chemname
         found = self.mdb.search_record([{
             'type': 'chemname',
             'args': {'pattern': '"Ethanol"'}
