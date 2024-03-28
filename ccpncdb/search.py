@@ -93,16 +93,14 @@ def search_by_doi(doi):
     # wildcard will return 0 results.
     if "*" in doi:
         doi = doi.replace("*", ".*")
-        return [
-            {'last_version.doi':
-                {'$regex': doi, '$options': 'i'}
-                }
-            ]
     else:
-        return [
-            {'last_version.doi':doi
-             }
-            ]
+        doi = doi.replace(".","\\.")
+        doi = '^'+doi+'$'
+    return [
+        {'last_version.doi':
+            {'$regex': doi, '$options': 'i'}
+            }
+        ]
 
     #Legacy code backup
     # doi = re.escape(doi)
