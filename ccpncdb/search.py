@@ -81,20 +81,34 @@ def search_by_efgRange(sp, minefg, maxefg):
 
 
 def search_by_doi(doi):
-
+    # Return no result if the user has left the search field 
+    # blank
     if doi is None or doi == '':
         return []
+    
+    # If a wildcard is detected in user entered search text, 
+    # escape the wildcard to perform a partial string search. 
+    # If no wildcard is detected, exact string match is 
+    # performed to search. Partial search string with no 
+    # wildcard will return 0 results.
+    if "*" in doi:
+        doi = doi.replace("*", ".*")
+        return [
+            {'last_version.doi':
+                {'$regex': doi, '$options': 'i'}
+                }
+            ]
+    else:
+        return [
+            {'last_version.doi':doi
+             }
+            ]
 
+    #Legacy code backup
     # doi = re.escape(doi)
-    doi = doi.replace(".", "\\.").replace(
-        "*", ".*").replace("?", ".")
+    # doi = doi.replace(".", "\\.").replace(
+    #     "*", ".*").replace("?", ".")
     #regex = re.compile('.*{0}.*'.format(doi))
-
-    return [
-        {'last_version.doi':
-            {'$regex': doi, '$options': 'i'}
-         }
-    ]
 
 
 def search_by_orcid(orcid):
