@@ -246,13 +246,27 @@ def build_search(search_spec):
 
         # Find arguments
         args = inspect.getfullargspec(search_func).args
-
+        
+        #Extract boolean choice for function
+        bool_inspect = src.get('boolean')
+        
         # Get them as dict
         try:
             args = {a: src['args'][a] for a in args}
         except KeyError:
             raise ValueError('Invalid search arguments')
 
-        search_dict['$and'] += search_func(**args)
+        # Receive query in a buffer variable first
+        query_buffer = search_func(**args)
+        query_add=[]
+        # Make choice to pass query as such or negate it based on user's Boolean filtering choice
+        if bool_inspect == '10':
+            query_add=query_buffer
+        elif bool_inspect == '01':
+            query_add=[{'$nor':[query_buffer[0]]}]
+        # Retain old code for search_dict as backup
+        # search_dict['$and'] += search_func(**args)
+        # Add query to search_dict after applying changes as necessary
+        search_dict['$and'] += query_add
 
     return search_dict
