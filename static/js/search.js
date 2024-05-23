@@ -25,7 +25,8 @@ function addSearchController(ngApp) {
         $scope.add_spec = function() {
             $scope.search_specs.push({
                 'type': 'doi',
-                'args': {}
+                'args': {},
+                'boolean': '10'
             });
         }
 
@@ -34,6 +35,7 @@ function addSearchController(ngApp) {
             $scope.search_specs.push({
                 'type': 'doi',
                 'args': {},
+                'boolean': '10'
             });
         
             $scope.boolean_tracker.push('10'); //value '10' for AND operations
@@ -43,7 +45,8 @@ function addSearchController(ngApp) {
         $scope.add_spec_not = function() {
             $scope.search_specs.push({
                 'type': 'doi',
-                'args': {}
+                'args': {},
+                'boolean': '01'
             });
         
             $scope.boolean_tracker.push('01'); //value '01' for NOT operations
