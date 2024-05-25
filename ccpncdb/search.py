@@ -54,7 +54,7 @@ def _expr_nmrrange(sp, var, expr, minv, maxv):
         }
     ]}
 
-    all_query = [
+    all_query = [{'$and':[
         {'nmrdata.{0}'.format(var): {'$exists': True}},
         {'$expr': {'$anyElementTrue': {
             '$map': {
@@ -64,7 +64,7 @@ def _expr_nmrrange(sp, var, expr, minv, maxv):
             }
         }
         }
-        },
+        },]}
     ]
 
     return all_query
@@ -263,7 +263,7 @@ def build_search(search_spec):
         if bool_inspect == '10':
             query_add=query_buffer
         elif bool_inspect == '01':
-            query_add=[{'$nor':[query_buffer[0]]}]
+            query_add=[{'$nor':query_buffer}]
         # Retain old code for search_dict as backup
         # search_dict['$and'] += search_func(**args)
         # Add query to search_dict after applying changes as necessary
