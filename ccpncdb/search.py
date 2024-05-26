@@ -260,10 +260,16 @@ def build_search(search_spec):
         query_buffer = search_func(**args)
         query_add=[]
         # Make choice to pass query as such or negate it based on user's Boolean filtering choice
-        if bool_inspect == '10':
-            query_add=query_buffer
-        elif bool_inspect == '01':
-            query_add=[{'$nor':query_buffer}]
+        if bool_inspect == '10': #AND - pass query as is
+            if src.get('type') == 'extref': #catch code to ensure database name and reference code are non-empty in returned records
+                query_add=[{'$and':[query_buffer[0],{'last_version.extref_type':{'$ne': None}},{'last_version.extref_code':{'$ne': None}}]}]
+            else:
+                query_add=query_buffer
+        elif bool_inspect == '01': #NOT - negate search query
+            if src.get('type') == 'extref': #catch code to ensure database name and reference code are non-empty in returned records even when negating
+                query_add=[{'$and':[{'$nor':query_buffer},{'last_version.extref_type':{'$ne': None}},{'last_version.extref_code':{'$ne': None}}]}]
+            else:
+                query_add=[{'$nor':query_buffer}]
         # Retain old code for search_dict as backup
         # search_dict['$and'] += search_func(**args)
         # Add query to search_dict after applying changes as necessary
