@@ -200,6 +200,11 @@ def search_by_molecule(formula):
 def search_by_extref(reftype, refcode):
 
     q = {}
+    
+    if refcode == '':
+        refcode = None
+    if reftype == '':
+        reftype = None
 
     if reftype is not None:
         q['$or'] = [
