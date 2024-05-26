@@ -207,11 +207,14 @@ def search_by_extref(reftype, refcode):
         reftype = None
 
     if reftype is not None:
+        reftype_exact = re.compile(rf"^{reftype}$",re.IGNORECASE)
+        reftype_other = re.compile(reftype, re.IGNORECASE)
+        
         q['$or'] = [
-            {'last_version.extref_type': {'$regex': reftype, '$options': 'i'}},
+            {'last_version.extref_type': {'$regex': reftype_exact}},
             {'$and': [{'last_version.extref_type': 'other'},
                       {'last_version.extref_other':
-                       {'$regex': reftype, '$options': 'i'}}]}
+                       {'$regex': reftype_other}}]}
         ]
     if refcode is not None:
         q['last_version.extref_code'] = {'$regex': refcode, '$options': 'i'}
