@@ -217,7 +217,28 @@ def search_by_extref(reftype, refcode):
                        {'$regex': reftype_other}}]}
         ]
     if refcode is not None:
-        q['last_version.extref_code'] = {'$regex': refcode, '$options': 'i'}
+        if '*' in refcode:
+            count_wildcard=refcode.count('*')
+            if count_wildcard==1:
+                if refcode.endswith('*'):
+                    regex_pattern = re.compile(rf"^{refcode[:-1]}.*",re.IGNORECASE)
+                elif refcode.startswith('*'):
+                    regex_pattern = re.compile(rf".*{refcode[1:]}$",re.IGNORECASE)
+                q['last_version.extref_code'] = {'$regex': regex_pattern}
+            elif count_wildcard==2:
+                if (refcode.startswith('*') & refcode.endswith('*')):
+                    parts = refcode.split('*')                    
+                    regex_pattern = re.compile(rf"(?!^{parts[1]})(?!{parts[1]}$).*{parts[1]}.*",re.IGNORECASE)
+                    q['last_version.extref_code'] = {"$regex": regex_pattern}
+                else:
+                    regex_pattern = 'XXXXXX' #dummy string to return 0 results
+                    q['last_version.extref_code'] = {"$regex": regex_pattern}
+        else:
+            #replaced original code to treat search string as an exact match
+            regex_pattern = '^' + refcode + '$'
+            q['last_version.extref_code'] = {'$regex': regex_pattern, '$options': 'i'}
+        #legacy code    
+        # q['last_version.extref_code'] = {'$regex': refcode, '$options': 'i'}
 
     return [q]
 
