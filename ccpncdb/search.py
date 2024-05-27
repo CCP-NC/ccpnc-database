@@ -201,11 +201,18 @@ def search_by_extref(reftype, refcode):
 
     q = {}
     
+    # If user types text and deletes it from field, 
+    # the entry is registered as '' rather than None. 
+    # For simplicity of handling, empty values are always 
+    # to be recorded as None for use by function.
     if refcode == '':
         refcode = None
     if reftype == '':
         reftype = None
 
+    # The external database name is always to be searched 
+    # as an exact match. Partial search strings are not 
+    # applicable for this freetext search.
     if reftype is not None:
         reftype_exact = re.compile(rf"^{reftype}$",re.IGNORECASE)
         reftype_other = re.compile(reftype, re.IGNORECASE)
@@ -216,6 +223,11 @@ def search_by_extref(reftype, refcode):
                       {'last_version.extref_other':
                        {'$regex': reftype_other}}]}
         ]
+        
+    # The external database reference code can be searched as an exactly matched 
+    # or partially matched string. This code block accommodates wildcard searches 
+    # where the string begins or ends with a single wildcard or has two wildcards 
+    # at the start and end with search text in the middle.
     if refcode is not None:
         if '*' in refcode:
             count_wildcard=refcode.count('*')
@@ -230,10 +242,10 @@ def search_by_extref(reftype, refcode):
                     parts = refcode.split('*')                    
                     regex_pattern = re.compile(rf"(?!^{parts[1]})(?!{parts[1]}$).*{parts[1]}.*",re.IGNORECASE)
                     q['last_version.extref_code'] = {"$regex": regex_pattern}
-                else:
+                else: #return no results when wildcard pattern does not match any of the above
                     regex_pattern = 'XXXXXX' #dummy string to return 0 results
                     q['last_version.extref_code'] = {"$regex": regex_pattern}
-        else:
+        else: #absence of wildards in freetext uses the search string for an exact string match search
             #replaced original code to treat search string as an exact match
             regex_pattern = '^' + refcode + '$'
             q['last_version.extref_code'] = {'$regex': regex_pattern, '$options': 'i'}
