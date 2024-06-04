@@ -269,7 +269,7 @@ class MainServer(object):
 
     def get_record(self):
         mdbref = request.json['mdbref']
-        query = [{'type': 'mdbref', 'args': {'mdbref': mdbref}, 'boolean': '10'}]
+        query = [{'type': 'mdbref', 'args': {'mdbref': mdbref}, 'boolean': False}]
         results = list(self._db.search_record(query))
 
         n = len(results)
