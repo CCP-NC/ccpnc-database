@@ -19,43 +19,17 @@ function addSearchController(ngApp) {
 
         $scope.search_specs = [];
 
-        // Declaring the boolean_tracker variable with default value '10'
-        $scope.boolean_tracker=['10'];
-
         $scope.add_spec = function() {
             $scope.search_specs.push({
                 'type': 'doi',
                 'args': {},
-                'boolean': '10'
+                'boolean': 'false'
             });
-        }
-
-        // Function that triggers action when 'AND' button is clicked
-        $scope.add_spec_and = function() {
-            $scope.search_specs.push({
-                'type': 'doi',
-                'args': {},
-                'boolean': '10'
-            });
-        
-            $scope.boolean_tracker.push('10'); //value '10' for AND operations
-        }
-
-        // Function that triggers action when 'NOT' button is clicked
-        $scope.add_spec_not = function() {
-            $scope.search_specs.push({
-                'type': 'doi',
-                'args': {},
-                'boolean': '01'
-            });
-        
-            $scope.boolean_tracker.push('01'); //value '01' for NOT operations
         }
 
         $scope.remove_spec = function(i) {
             if ($scope.search_specs.length > 1)
                 $scope.search_specs.splice(i, 1);
-                $scope.boolean_tracker.splice(i,1); //delete boolean_tracker to track with deleted search_specs
         }
 
         $scope.reset_search_args = function(new_type) {
