@@ -451,17 +451,10 @@
                             </tr>
                         </table>
 
-                        <!-- Replace + button with two buttons 'AND' and 'NOT' to facilitate Boolean data filtering -->
-                        <!-- Button clicks on AND or NOT triggers the respective search actions within the Search Controller -->
-                        <div class="add-spec-buttons" ng-show="$index == search_specs.length-1">
-                            <!-- <button class="button is-primary is-medium" ng-click="add_spec()">
+                        <!-- + button to add search criteria -->
+                        <div class="plus-button" ng-show="$index == search_specs.length-1">
+                            <button class="button is-primary is-medium" ng-click="add_spec()">
                                 <i class="fa fa-plus" aria-hidden="true"></i>
-                            </button> -->
-                            <button class="button is-primary is-medium" style='margin-right:16px' ng-click="add_spec_and()">
-                                AND
-                            </button>
-                            <button class="button is-primary is-medium" ng-click="add_spec_not()">
-                                NOT
                             </button>
                         </div>
                     </div>
