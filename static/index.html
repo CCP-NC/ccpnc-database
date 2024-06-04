@@ -433,6 +433,22 @@
                                     </td>
                                 </tr>
                             </tbody>
+                            <!-- Add a new row at the end of the table for the toggle switch -->
+                            <tr>
+                                <td colspan="4">
+                                    <!--Add a toggle switch to allow the user to switch between AND and NOT search-->
+                                    <!-- Default search is AND with toggle switch 'off', NOT corresponds to toggle 'on' -->
+                                    <div class="control is-pulled-right">
+                                        <label class="switch">
+                                            <input type="checkbox" ng-model="search_spec.boolean">
+                                            <span class="slider round">
+                                                <span class="on">NOT</span>
+                                                <span class="off">AND</span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
                         </table>
 
                         <!-- Replace + button with two buttons 'AND' and 'NOT' to facilitate Boolean data filtering -->
