@@ -229,22 +229,11 @@ def search_by_extref(reftype, refcode):
     # where the string begins or ends with a single wildcard or has two wildcards 
     # at the start and end with search text in the middle.
     if refcode is not None:
-        if '*' in refcode:
-            count_wildcard=refcode.count('*')
-            if count_wildcard==1:
-                if refcode.endswith('*'):
-                    regex_pattern = re.compile(rf"^{refcode[:-1]}.*",re.IGNORECASE)
-                elif refcode.startswith('*'):
-                    regex_pattern = re.compile(rf".*{refcode[1:]}$",re.IGNORECASE)
-                q['last_version.extref_code'] = {'$regex': regex_pattern}
-            elif count_wildcard==2:
-                if (refcode.startswith('*') & refcode.endswith('*')):
-                    parts = refcode.split('*')                    
-                    regex_pattern = re.compile(rf"(?!^{parts[1]})(?!{parts[1]}$).*{parts[1]}.*",re.IGNORECASE)
-                    q['last_version.extref_code'] = {"$regex": regex_pattern}
-                else: #return no results when wildcard pattern does not match any of the above
-                    regex_pattern = 'XXXXXX' #dummy string to return 0 results
-                    q['last_version.extref_code'] = {"$regex": regex_pattern}
+        if '*' in refcode or '?' in refcode:
+            # Replace '*' with '.*' to match any number of characters
+            # Replace '?' with '.' to match any single character
+            regex_pattern = re.compile(rf"^{refcode.replace('*', '.*').replace('?', '.')}$", re.IGNORECASE)
+            q['last_version.extref_code'] = {'$regex': regex_pattern}
         else: #absence of wildards in freetext uses the search string for an exact string match search
             #replaced original code to treat search string as an exact match
             regex_pattern = '^' + refcode + '$'
