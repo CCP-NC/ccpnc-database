@@ -226,8 +226,7 @@ def search_by_extref(reftype, refcode):
         
     # The external database reference code can be searched as an exactly matched 
     # or partially matched string. This code block accommodates wildcard searches 
-    # where the string begins or ends with a single wildcard or has two wildcards 
-    # at the start and end with search text in the middle.
+    # with * indicating any number of characters and ? indicating a single character.
     if refcode is not None:
         if '*' in refcode or '?' in refcode:
             # Replace '*' with '.*' to match any number of characters
