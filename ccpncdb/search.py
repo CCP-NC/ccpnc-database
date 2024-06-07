@@ -54,6 +54,8 @@ def _expr_nmrrange(sp, var, expr, minv, maxv):
         }
     ]}
 
+    # Build the overall query by checking ifthe nmrdata exists combined with the 
+    # single_query for the ranged search
     all_query = [{'$and':[
         {'nmrdata.{0}'.format(var): {'$exists': True}},
         {'$expr': {'$anyElementTrue': {
@@ -197,22 +199,23 @@ def search_by_molecule(formula):
     }}]
 
 
-def search_by_extref(reftype, refcode, other_reftype=None):
+def search_by_extref(reftype, refcode, other_reftype=None): #other_reftype is only used when reftype is 'other'
 
     q = {}
     
-    # If user types text and deletes it from field, 
-    # the entry is registered as '' rather than None. 
-    # For simplicity of handling, empty values are always 
-    # to be recorded as None for use by function.
+    # If no database name has been selected by the user from the dropdown list in search form, 
+    # the refcode carries the value ''. For MongoDB search quesy, the empty string needs to be 
+    # converted to None for the query to work.
     if refcode == '':
         refcode = None
+    # If user types text and deletes it from field, the entry is registered as '' rather 
+    # than None. For simplicity of handling, empty values are always to be recorded as None 
+    # for use by function.
     if reftype == '':
         reftype = None
 
-    # The external database name is always to be searched 
-    # as an exact match. Partial search strings are not 
-    # applicable for this freetext search.
+    # The external database name chosen fro m the dropdown list in search form has to be searched 
+    # as an exact match. Partial search strings are permissible for the freetext search when refcode = 'other'.
     if reftype is not None:
         if reftype == 'other':
             #ignore doing the exact match search for user entered database names in free text
@@ -225,16 +228,14 @@ def search_by_extref(reftype, refcode, other_reftype=None):
                 q['$or'] = [{'$and': [{'last_version.extref_type': 'other'},
                                       {'last_version.extref_other': {'$regex': reftype_other, '$options': 'i'}}]}]
         else:
+            #ignore the other category in extref_type if user has chosen a database name from the dropdown list
             reftype_exact = re.compile(rf"^{reftype}$",re.IGNORECASE)
             reftype_other = None
 
         if reftype_exact:
             q['$or'] = [{'last_version.extref_type': {'$regex': reftype_exact}}]
 
-        if reftype_other:
-            q['$or'] = [{'$and': [{'last_version.extref_type': 'other'},
-                                  {'last_version.extref_other': {'$regex': reftype_other}}]}]
-        
+        #legacy code
         # q['$or'] = [
         #     {'last_version.extref_type': {'$regex': reftype_exact}},
         #     {'$and': [{'last_version.extref_type': 'other'},
@@ -242,9 +243,9 @@ def search_by_extref(reftype, refcode, other_reftype=None):
         #                {'$regex': reftype_other}}]}
         # ]
         
-    # The external database reference code can be searched as an exactly matched 
-    # or partially matched string. This code block accommodates wildcard searches 
-    # with * indicating any number of characters and ? indicating a single character.
+    # The external database reference code can be searched as an exactly matched or partially matched string. 
+    # This code block accommodates wildcard searches with * indicating any number of characters and ? indicating 
+    # a single character.
     if refcode is not None:
         if '*' in refcode or '?' in refcode:
             # Replace '*' with '.*' to match any number of characters
@@ -294,7 +295,7 @@ def build_search(search_spec):
         # Find arguments
         args = inspect.getfullargspec(search_func).args
         
-        #Extract boolean choice for function
+        #Extract boolean choice to determine how to manipulate the query returned by search functions
         bool_inspect = src.get('boolean')
         
         # Get them as dict
@@ -306,16 +307,16 @@ def build_search(search_spec):
         # Receive query in a buffer variable first
         query_buffer = search_func(**args)
         query_add=[]
-        # Make choice to pass query as such or negate it based on user's Boolean filtering choice
+        # Make choice to pass query as such or negate it based on user's Boolean filtering choice in 'boolean' key
         if bool_inspect == False: #AND - pass query as is
             if src.get('type') == 'extref': #catch code to ensure database name and reference code are non-empty in returned records
                 query_add=[{'$and':[query_buffer[0],{'last_version.extref_type':{'$ne': None}},{'last_version.extref_code':{'$ne': None}}]}]
-            else:
+            else: # search parameters other than extref
                 query_add=query_buffer
         elif bool_inspect == True: #NOT - negate search query
             if src.get('type') == 'extref': #catch code to ensure database name and reference code are non-empty in returned records even when negating
                 query_add=[{'$and':[{'$nor':query_buffer},{'last_version.extref_type':{'$ne': None}},{'last_version.extref_code':{'$ne': None}}]}]
-            else:
+            else: # search parameters other than extref
                 query_add=[{'$nor':query_buffer}]
         # Retain old code for search_dict as backup
         # search_dict['$and'] += search_func(**args)
