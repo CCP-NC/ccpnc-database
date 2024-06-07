@@ -197,7 +197,7 @@ def search_by_molecule(formula):
     }}]
 
 
-def search_by_extref(reftype, refcode):
+def search_by_extref(reftype, refcode, other_reftype=None):
 
     q = {}
     
@@ -214,15 +214,26 @@ def search_by_extref(reftype, refcode):
     # as an exact match. Partial search strings are not 
     # applicable for this freetext search.
     if reftype is not None:
-        reftype_exact = re.compile(rf"^{reftype}$",re.IGNORECASE)
-        reftype_other = re.compile(reftype, re.IGNORECASE)
+        if reftype == 'other':
+            reftype_exact = None
+            reftype_other = re.compile(other_reftype, re.IGNORECASE)
+        else:
+            reftype_exact = re.compile(rf"^{reftype}$",re.IGNORECASE)
+            reftype_other = None
+
+        if reftype_exact:
+            q['$or'] = [{'last_version.extref_type': {'$regex': reftype_exact}}]
+
+        if reftype_other:
+            q['$or'] = [{'$and': [{'last_version.extref_type': 'other'},
+                                  {'last_version.extref_other': {'$regex': reftype_other}}]}]
         
-        q['$or'] = [
-            {'last_version.extref_type': {'$regex': reftype_exact}},
-            {'$and': [{'last_version.extref_type': 'other'},
-                      {'last_version.extref_other':
-                       {'$regex': reftype_other}}]}
-        ]
+        # q['$or'] = [
+        #     {'last_version.extref_type': {'$regex': reftype_exact}},
+        #     {'$and': [{'last_version.extref_type': 'other'},
+        #               {'last_version.extref_other':
+        #                {'$regex': reftype_other}}]}
+        # ]
         
     # The external database reference code can be searched as an exactly matched 
     # or partially matched string. This code block accommodates wildcard searches 
