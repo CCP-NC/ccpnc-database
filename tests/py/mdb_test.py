@@ -204,7 +204,8 @@ class MagresDBTest(unittest.TestCase):
         #Test search by chemname
         found = self.mdb.search_record([{
             'type': 'chemname',
-            'args': {'pattern': '"Ethanol"'}
+            'args': {'pattern': '"Ethanol"'},
+            'boolean': False
         }])
         found = list(found)
 
@@ -215,7 +216,8 @@ class MagresDBTest(unittest.TestCase):
         #DOI perfect string match, all caps
         found = self.mdb.search_record([{
             'type': 'doi',
-            'args': {'doi': '10.1010/ABCD123456'}
+            'args': {'doi': '10.1010/ABCD123456'},
+            'boolean': False
             }])
         found = list(found)
         self.assertEqual(len(found), 1)
@@ -224,7 +226,8 @@ class MagresDBTest(unittest.TestCase):
         #DOI perfect string match, lowercase letters
         found = self.mdb.search_record([{
             'type': 'doi',
-            'args': {'doi': '10.1010/abcd123456'}
+            'args': {'doi': '10.1010/abcd123456'},
+            'boolean': False
             }])
         found = list(found)
         self.assertEqual(len(found), 1)
@@ -234,7 +237,8 @@ class MagresDBTest(unittest.TestCase):
         #this should return zero results
         found = self.mdb.search_record([{
             'type': 'doi',
-            'args': {'doi': '10.1010/abcd123498'}
+            'args': {'doi': '10.1010/abcd123498'},
+            'boolean': False
             }])
         found = list(found)
         self.assertEqual(len(found), 0)
@@ -242,7 +246,8 @@ class MagresDBTest(unittest.TestCase):
         #DOI wildcard search - prefix
         found = self.mdb.search_record([{
             'type': 'doi',
-            'args': {'doi': '10.1010/*'}
+            'args': {'doi': '10.1010/*'},
+            'boolean': False
             }])
         found = list(found)
         self.assertEqual(len(found), 1)
@@ -251,7 +256,8 @@ class MagresDBTest(unittest.TestCase):
         #DOI wildcard search - suffix
         found = self.mdb.search_record([{
             'type': 'doi',
-            'args': {'doi': '*/ABCD123456'}
+            'args': {'doi': '*/ABCD123456'},
+            'boolean': False
             }])
         found = list(found)
         self.assertEqual(len(found), 1)
@@ -260,7 +266,8 @@ class MagresDBTest(unittest.TestCase):
         #DOI wildcard search - central characters of doi
         found = self.mdb.search_record([{
             'type': 'doi',
-            'args': {'doi': '*1010/ABCD*'}
+            'args': {'doi': '*1010/ABCD*'},
+            'boolean': False
             }])
         found = list(found)
         self.assertEqual(len(found), 1)
@@ -269,7 +276,8 @@ class MagresDBTest(unittest.TestCase):
         # Test search using tokens
         found = self.mdb.search_record([{
             'type': 'chemname',
-            'args': {'pattern': 'alcohol ethyl'}
+            'args': {'pattern': 'alcohol ethyl'},
+            'boolean': False
         }])
         found = list(found)
 
@@ -279,7 +287,8 @@ class MagresDBTest(unittest.TestCase):
         # Test by mdbref
         found = self.mdb.search_record([{
             'type': 'mdbref',
-            'args': {'mdbref': '0000002'}
+            'args': {'mdbref': '0000002'},
+            'boolean': False
         }])
         found = list(found)
 
@@ -289,7 +298,8 @@ class MagresDBTest(unittest.TestCase):
         # Test by formula
         found = self.mdb.search_record([{
             'type': 'formula',
-            'args': {'formula': 'C2H6O', 'subset': False}
+            'args': {'formula': 'C2H6O', 'subset': False},
+            'boolean': False
         }])
         found = list(found)
 
@@ -298,7 +308,8 @@ class MagresDBTest(unittest.TestCase):
         # Try with subset
         found = self.mdb.search_record([{
             'type': 'formula',
-            'args': {'formula': 'N4', 'subset': True}
+            'args': {'formula': 'N4', 'subset': True},
+            'boolean': False
         }])
         found = list(found)
 
@@ -310,7 +321,8 @@ class MagresDBTest(unittest.TestCase):
         # Test by license
         found = self.mdb.search_record([{
             'type': 'license',
-            'args': {'license': 'cc-by'}
+            'args': {'license': 'cc-by'},
+            'boolean': False
         }])
         found = list(found)
 
@@ -325,7 +337,8 @@ class MagresDBTest(unittest.TestCase):
         else:
             found = self.mdb.search_record([{
                 'type': 'msRange',
-                'args': {'sp': 'N', 'minms': 100.0, 'maxms': 200.0}
+                'args': {'sp': 'N', 'minms': 100.0, 'maxms': 200.0},
+                'boolean': False
             }])
             found = list(found)
 
@@ -343,7 +356,8 @@ class MagresDBTest(unittest.TestCase):
         # Search only by type
         found = self.mdb.search_record([{
             'type': 'extref',
-            'args': {'reftype': 'csd', 'refcode': None}
+            'args': {'reftype': 'csd', 'other_reftype': None, 'refcode': None},
+            'boolean': False
         }])
         found = list(found)
 
@@ -352,7 +366,8 @@ class MagresDBTest(unittest.TestCase):
         # Add code
         found = self.mdb.search_record([{
             'type': 'extref',
-            'args': {'reftype': 'csd', 'refcode': 'ABC123'}
+            'args': {'reftype': 'csd', 'other_reftype': None, 'refcode': 'ABC123'},
+            'boolean': False
         }])
         found = list(found)
 
