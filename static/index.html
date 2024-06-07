@@ -400,17 +400,39 @@
                                         External reference
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
-                                        <div class="control">
+                                        <!-- <div class="control">
                                             <input class="input" type="text" size="15" placeholder="Database name"
                                                 ng-model="search_spec.args.reftype"
                                                 ng-init="search_spec.args.reftype = null">                                            
+                                        </div> -->
+                                        <div class="select" style="width: 100%;">
+                                            <select name="extref_type"
+                                                    ng-model="search_spec.args.reftype"
+                                                    ng-init="search_spec.args.reftype = null"
+                                                    ng-init="search_spec.args.other_reftype = null"
+                                                    style="width: 100%;">
+                                                <option value="" disabled selected hidden>Database name</option>
+                                                <option value="csd">CSD</option>
+                                                <option value="icsd">ICSD</option>
+                                                <option value="cod">COD</option>
+                                                <option value="other">Other</option>
+                                            </select>                
                                         </div>
                                     </td>
-                                    <td colspan="2" rowspan="" headers="">
+                                    <td colspan="1" rowspan="" headers="">
                                         <div class="control">
+                                            <input class="input" type="text" size="15" placeholder="Database name"
+                                                ng-model="search_spec.args.other_reftype"
+                                                ng-init="search_spec.args.other_reftype = null"
+                                                ng-show="search_spec.args.reftype == 'other'">                
+                                        </div>
+                                    </td>
+                                    <td colspan="1" rowspan="" headers="">
+                                        <div class="control" style="width: 100%;">
                                             <input class="input" type="text" size="15" placeholder="Database code"
                                                 ng-model="search_spec.args.refcode"
-                                                ng-init="search_spec.args.refcode = null">                                            
+                                                ng-init="search_spec.args.refcode = null"
+                                                style="width: 100%;">                                            
                                         </div>
                                     </td>
                                 </tr>
