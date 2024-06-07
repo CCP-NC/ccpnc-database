@@ -215,8 +215,15 @@ def search_by_extref(reftype, refcode, other_reftype=None):
     # applicable for this freetext search.
     if reftype is not None:
         if reftype == 'other':
-            reftype_exact = None
-            reftype_other = re.compile(other_reftype, re.IGNORECASE)
+            #ignore doing the exact match search for user entered database names in free text
+            if other_reftype is not None: #user enters database name as free text
+                reftype_other = re.compile(other_reftype, re.IGNORECASE)
+                q['$or'] = [{'$and': [{'last_version.extref_type': 'other'},
+                                      {'last_version.extref_other': {'$regex': reftype_other}}]}]
+            else: #user does not enter database name as free text
+                reftype_other = "None"
+                q['$or'] = [{'$and': [{'last_version.extref_type': 'other'},
+                                      {'last_version.extref_other': {'$regex': reftype_other, '$options': 'i'}}]}]
         else:
             reftype_exact = re.compile(rf"^{reftype}$",re.IGNORECASE)
             reftype_other = None
