@@ -5,3 +5,4 @@ secret/orcid_details.json
 config/config.json
 config/smtpconfig.json
 static/js/config.js
+.venv
