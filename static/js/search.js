@@ -22,7 +22,8 @@ function addSearchController(ngApp) {
         $scope.add_spec = function() {
             $scope.search_specs.push({
                 'type': 'doi',
-                'args': {}
+                'args': {},
+                'boolean': 'false' //'boolean' variable to track user's choice of AND/OR using the toggle switch
             });
         }
 

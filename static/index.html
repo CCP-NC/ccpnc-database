@@ -202,8 +202,10 @@
                                 <td class="width-3" colspan="3" rowspan="" headers="">
                                     <div class="control is-pulled-right">
                                         <div class="select">
+                                            <!-- Present long menu for search if 'boolean' value in search_spec in false -->
+                                            <!-- 'boolean' value is set to false when form loads first time, false can be set by toggle switch for AND search condition -->
                                             <select ng-model="search_spec.type"
-                                                ng-change="reset_search_args(search_spec.type)">
+                                                ng-change="reset_search_args(search_spec.type)" ng-show="!search_spec.boolean" ng-init="search_spec.boolean = false">
                                                 <option value="doi">doi</option>
                                                 <option value="msRange">Magnetic Shielding</option>
                                                 <option value="efgRange">Electric Field Gradient V<sub>zz</sub></option>
@@ -212,6 +214,16 @@
                                                 <option value="formula">Unit cell formula</option>
                                                 <option value="molecule">Molecular formula</option>
                                                 <option value="mdbref">MRD reference number</option>
+                                                <option value="extref">External database reference</option>
+                                                <option value="license">License</option>
+                                            </select>
+                                            <!-- Present restricted menu for search if 'boolean' value in search_spec in true -->
+                                            <!-- 'boolean' value is set to true by toggle switch for NOT search condition -->
+                                            <select ng-model="search_spec.type"
+                                                ng-change="reset_search_args(search_spec.type)" ng-show="search_spec.boolean">
+                                                <option value="doi">doi</option>
+                                                <option value="msRange">Magnetic Shielding</option>
+                                                <option value="efgRange">Electric Field Gradient V<sub>zz</sub></option>
                                                 <option value="extref">External database reference</option>
                                                 <option value="license">License</option>
                                             </select>
@@ -387,18 +399,43 @@
                                     <td colspan="1" rowspan="" headers="">
                                         External reference
                                     </td>
+                                    <!-- Database name can be chosen from dropdown list or 'Other' option chosen to enter name manually -->
                                     <td colspan="1" rowspan="" headers="">
-                                        <div class="control">
+                                        <!-- <div class="control">
                                             <input class="input" type="text" size="15" placeholder="Database name"
                                                 ng-model="search_spec.args.reftype"
                                                 ng-init="search_spec.args.reftype = null">                                            
+                                        </div> -->
+                                        <div class="select" style="width: 100%;">
+                                            <select name="extref_type"
+                                                    ng-model="search_spec.args.reftype"
+                                                    ng-init="search_spec.args.reftype = null"
+                                                    ng-init="search_spec.args.other_reftype = null"
+                                                    style="width: 100%;">
+                                                <option value="" disabled selected hidden>Database name</option>
+                                                <option value="csd">CSD</option>
+                                                <option value="icsd">ICSD</option>
+                                                <option value="cod">COD</option>
+                                                <option value="other">Other</option>
+                                            </select>                
                                         </div>
                                     </td>
-                                    <td colspan="2" rowspan="" headers="">
+                                    <!-- Database name to be entered manually. Textbox appears if Other option chosen from database name dropdown list -->
+                                    <td colspan="1" rowspan="" headers="">
                                         <div class="control">
+                                            <input class="input" type="text" size="15" placeholder="Database name"
+                                                ng-model="search_spec.args.other_reftype"
+                                                ng-init="search_spec.args.other_reftype = null"
+                                                ng-show="search_spec.args.reftype == 'other'">                
+                                        </div>
+                                    </td>
+                                    <!-- Database reference code to be entrered in textbox -->
+                                    <td colspan="1" rowspan="" headers="">
+                                        <div class="control" style="width: 100%;">
                                             <input class="input" type="text" size="15" placeholder="Database code"
                                                 ng-model="search_spec.args.refcode"
-                                                ng-init="search_spec.args.refcode = null">                                            
+                                                ng-init="search_spec.args.refcode = null"
+                                                style="width: 100%;">                                            
                                         </div>
                                     </td>
                                 </tr>
@@ -423,8 +460,25 @@
                                     </td>
                                 </tr>
                             </tbody>
+                            <!-- Add a new row at the end of the table for the toggle switch -->
+                            <tr>
+                                <td colspan="4">
+                                    <!--Add a toggle switch to allow the user to switch between AND and NOT search-->
+                                    <!-- Default search is AND with toggle switch 'off', NOT corresponds to toggle 'on' -->
+                                    <div class="control is-pulled-right">
+                                        <label class="switch">
+                                            <input type="checkbox" ng-model="search_spec.boolean">
+                                            <span class="slider round">
+                                                <span class="on">NOT</span>
+                                                <span class="off">AND</span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
                         </table>
 
+                        <!-- + button to add search criteria -->
                         <div class="plus-button" ng-show="$index == search_specs.length-1">
                             <button class="button is-primary is-medium" ng-click="add_spec()">
                                 <i class="fa fa-plus" aria-hidden="true"></i>

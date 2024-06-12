@@ -54,7 +54,9 @@ def _expr_nmrrange(sp, var, expr, minv, maxv):
         }
     ]}
 
-    all_query = [
+    # Build the overall query by checking ifthe nmrdata exists combined with the 
+    # single_query for the ranged search
+    all_query = [{'$and':[
         {'nmrdata.{0}'.format(var): {'$exists': True}},
         {'$expr': {'$anyElementTrue': {
             '$map': {
@@ -64,7 +66,7 @@ def _expr_nmrrange(sp, var, expr, minv, maxv):
             }
         }
         }
-        },
+        },]}
     ]
 
     return all_query
@@ -197,19 +199,65 @@ def search_by_molecule(formula):
     }}]
 
 
-def search_by_extref(reftype, refcode):
+def search_by_extref(reftype, refcode, other_reftype=None): #other_reftype is only used when reftype is 'other'
 
     q = {}
+    
+    # If no database name has been selected by the user from the dropdown list in search form, 
+    # the refcode carries the value ''. For MongoDB search quesy, the empty string needs to be 
+    # converted to None for the query to work.
+    if refcode == '':
+        refcode = None
+    # If user types text and deletes it from field, the entry is registered as '' rather 
+    # than None. For simplicity of handling, empty values are always to be recorded as None 
+    # for use by function.
+    if reftype == '':
+        reftype = None
 
+    # The external database name chosen fro m the dropdown list in search form has to be searched 
+    # as an exact match. Partial search strings are permissible for the freetext search when refcode = 'other'.
     if reftype is not None:
-        q['$or'] = [
-            {'last_version.extref_type': {'$regex': reftype, '$options': 'i'}},
-            {'$and': [{'last_version.extref_type': 'other'},
-                      {'last_version.extref_other':
-                       {'$regex': reftype, '$options': 'i'}}]}
-        ]
+        if reftype == 'other':
+            #ignore doing the exact match search for user entered database names in free text
+            if other_reftype is not None: #user enters database name as free text
+                reftype_other = re.compile(other_reftype, re.IGNORECASE)
+                q['$or'] = [{'$and': [{'last_version.extref_type': 'other'},
+                                      {'last_version.extref_other': {'$regex': reftype_other}}]}]
+            else: #user does not enter database name as free text
+                reftype_other = "None"
+                q['$or'] = [{'$and': [{'last_version.extref_type': 'other'},
+                                      {'last_version.extref_other': {'$regex': reftype_other, '$options': 'i'}}]}]
+        else:
+            #ignore the other category in extref_type if user has chosen a database name from the dropdown list
+            reftype_exact = re.compile(rf"^{reftype}$",re.IGNORECASE)
+            reftype_other = None
+
+        if reftype_exact:
+            q['$or'] = [{'last_version.extref_type': {'$regex': reftype_exact}}]
+
+        #legacy code
+        # q['$or'] = [
+        #     {'last_version.extref_type': {'$regex': reftype_exact}},
+        #     {'$and': [{'last_version.extref_type': 'other'},
+        #               {'last_version.extref_other':
+        #                {'$regex': reftype_other}}]}
+        # ]
+        
+    # The external database reference code can be searched as an exactly matched or partially matched string. 
+    # This code block accommodates wildcard searches with * indicating any number of characters and ? indicating 
+    # a single character.
     if refcode is not None:
-        q['last_version.extref_code'] = {'$regex': refcode, '$options': 'i'}
+        if '*' in refcode or '?' in refcode:
+            # Replace '*' with '.*' to match any number of characters
+            # Replace '?' with '.' to match any single character
+            regex_pattern = re.compile(rf"^{refcode.replace('*', '.*').replace('?', '.')}$", re.IGNORECASE)
+            q['last_version.extref_code'] = {'$regex': regex_pattern}
+        else: #absence of wildards in freetext uses the search string for an exact string match search
+            #replaced original code to treat search string as an exact match
+            regex_pattern = '^' + refcode + '$'
+            q['last_version.extref_code'] = {'$regex': regex_pattern, '$options': 'i'}
+        #legacy code    
+        # q['last_version.extref_code'] = {'$regex': refcode, '$options': 'i'}
 
     return [q]
 
@@ -246,13 +294,33 @@ def build_search(search_spec):
 
         # Find arguments
         args = inspect.getfullargspec(search_func).args
-
+        
+        #Extract boolean choice to determine how to manipulate the query returned by search functions
+        bool_inspect = src.get('boolean')
+        
         # Get them as dict
         try:
             args = {a: src['args'][a] for a in args}
         except KeyError:
             raise ValueError('Invalid search arguments')
 
-        search_dict['$and'] += search_func(**args)
+        # Receive query in a buffer variable first
+        query_buffer = search_func(**args)
+        query_add=[]
+        # Make choice to pass query as such or negate it based on user's Boolean filtering choice in 'boolean' key
+        if bool_inspect == False: #AND - pass query as is
+            if src.get('type') == 'extref': #catch code to ensure database name and reference code are non-empty in returned records
+                query_add=[{'$and':[query_buffer[0],{'last_version.extref_type':{'$ne': None}},{'last_version.extref_code':{'$ne': None}}]}]
+            else: # search parameters other than extref
+                query_add=query_buffer
+        elif bool_inspect == True: #NOT - negate search query
+            if src.get('type') == 'extref': #catch code to ensure database name and reference code are non-empty in returned records even when negating
+                query_add=[{'$and':[{'$nor':query_buffer},{'last_version.extref_type':{'$ne': None}},{'last_version.extref_code':{'$ne': None}}]}]
+            else: # search parameters other than extref
+                query_add=[{'$nor':query_buffer}]
+        # Retain old code for search_dict as backup
+        # search_dict['$and'] += search_func(**args)
+        # Add query to search_dict after applying changes as necessary
+        search_dict['$and'] += query_add
 
     return search_dict
