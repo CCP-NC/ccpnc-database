@@ -222,6 +222,17 @@ class MagresDBTest(unittest.TestCase):
         found = list(found)
         self.assertEqual(len(found), 1)
         self.assertEqual(str(found[0]['_id']), res_3.id)
+
+        #Now a negated DOI search - perfect string match, all caps
+        found = self.mdb.search_record([{
+            'type': 'doi',
+            'args': {'doi': '10.1010/ABCD123456'},
+            'boolean': True
+            }])
+        found = list(found)
+        self.assertEqual(len(found), 2) #search should return res_1 and res_2
+        self.assertEqual(str(found[0]['_id']), res_1.id)
+        self.assertEqual(str(found[1]['_id']), res_2.id)
         
         #DOI perfect string match, lowercase letters
         found = self.mdb.search_record([{
@@ -232,9 +243,19 @@ class MagresDBTest(unittest.TestCase):
         found = list(found)
         self.assertEqual(len(found), 1)
         self.assertEqual(str(found[0]['_id']), res_3.id)
+
+        #Now a negated DOI search - perfect string match, lowercase letters
+        found = self.mdb.search_record([{
+            'type': 'doi',
+            'args': {'doi': '10.1010/abcd123456'},
+            'boolean': True
+            }])
+        found = list(found)
+        self.assertEqual(len(found), 2) #search should return res_1 and res_2, same as for uppercase
+        self.assertEqual(str(found[0]['_id']), res_1.id) #should produce same result as for uppercase
+        self.assertEqual(str(found[1]['_id']), res_2.id) #should produce same result as for uppercase
         
-        #DOI wrong characters on purpose
-        #this should return zero results
+        #DOI wrong characters on purpose this should return zero results
         found = self.mdb.search_record([{
             'type': 'doi',
             'args': {'doi': '10.1010/abcd123498'},
@@ -242,6 +263,15 @@ class MagresDBTest(unittest.TestCase):
             }])
         found = list(found)
         self.assertEqual(len(found), 0)
+
+        #Now a negated DOI search with wrong characters on purpose this should return all results
+        found = self.mdb.search_record([{
+            'type': 'doi',
+            'args': {'doi': '10.1010/abcd123498'},
+            'boolean': True
+            }])
+        found = list(found)
+        self.assertEqual(len(found), 3) #search should return res_1, res_2 and res_3
         
         #DOI wildcard search - prefix
         found = self.mdb.search_record([{
@@ -252,6 +282,15 @@ class MagresDBTest(unittest.TestCase):
         found = list(found)
         self.assertEqual(len(found), 1)
         self.assertEqual(str(found[0]['_id']), res_3.id)
+
+        #Negated DOI wildcard search - prefix
+        found = self.mdb.search_record([{
+            'type': 'doi',
+            'args': {'doi': '10.1010/*'},
+            'boolean': True
+            }])
+        found = list(found)
+        self.assertEqual(len(found), 2) #search should return res_1 and res_2
         
         #DOI wildcard search - suffix
         found = self.mdb.search_record([{
@@ -262,6 +301,15 @@ class MagresDBTest(unittest.TestCase):
         found = list(found)
         self.assertEqual(len(found), 1)
         self.assertEqual(str(found[0]['_id']), res_3.id)
+
+        #Negated DOI wildcard search - suffix
+        found = self.mdb.search_record([{
+            'type': 'doi',
+            'args': {'doi': '*/ABCD123456'},
+            'boolean': True
+            }])
+        found = list(found)
+        self.assertEqual(len(found), 2) #search should return res_1 and res_2
         
         #DOI wildcard search - central characters of doi
         found = self.mdb.search_record([{
@@ -272,6 +320,15 @@ class MagresDBTest(unittest.TestCase):
         found = list(found)
         self.assertEqual(len(found), 1)
         self.assertEqual(str(found[0]['_id']), res_3.id)
+
+        #Negated DOI wildcard search - central characters of doi
+        found = self.mdb.search_record([{
+            'type': 'doi',
+            'args': {'doi': '*1010/ABCD*'},
+            'boolean': True
+            }])
+        found = list(found)
+        self.assertEqual(len(found), 2) #search should return res_1 and res_2
 
         # Test search using tokens
         found = self.mdb.search_record([{
@@ -329,6 +386,17 @@ class MagresDBTest(unittest.TestCase):
         self.assertEqual(len(found), 1)
         self.assertEqual(str(found[0]['_id']), res_2.id)
 
+        # Negated search for license
+        found = self.mdb.search_record([{
+            'type': 'license',
+            'args': {'license': 'cc-by'},
+            'boolean': True
+        }])
+        found = list(found)
+
+        self.assertEqual(len(found), 1) # there is one record with 'pddl' license which should be returned
+        self.assertEqual(str(found[0]['_id']), res_3.id) # the returned rcord should be res_3
+
         # Test by MS
 
         if isinstance(self.mdb.client, mongomock.MongoClient):
@@ -363,6 +431,24 @@ class MagresDBTest(unittest.TestCase):
 
         self.assertEqual(len(found), 2)
 
+        # Negated search for reftype only - reftype csd
+        found = self.mdb.search_record([{
+            'type': 'extref',
+            'args': {'reftype': 'csd', 'other_reftype': None, 'refcode': None},
+            'boolean': True
+        }])
+        found = list(found)
+        self.assertEqual(len(found), 0) # No other records should be returned
+
+        # Negated search for reftype only - reftype icsd
+        found = self.mdb.search_record([{
+            'type': 'extref',
+            'args': {'reftype': 'icsd', 'other_reftype': None, 'refcode': None},
+            'boolean': True
+        }])
+        found = list(found)
+        self.assertEqual(len(found), 2) # Both records with 'csd' reftype should be returned
+
         # Add code
         found = self.mdb.search_record([{
             'type': 'extref',
@@ -372,6 +458,16 @@ class MagresDBTest(unittest.TestCase):
         found = list(found)
 
         self.assertEqual(len(found), 1)
+
+        # Negated search for code
+        found = self.mdb.search_record([{
+            'type': 'extref',
+            'args': {'reftype': 'csd', 'other_reftype': None, 'refcode': 'ABC123'},
+            'boolean': True
+        }])
+        found = list(found)
+        self.assertEqual(len(found), 1) # One record where refcode is 'ABC456' should be returned
+        self.assertEqual(str(found[0]['last_version']['extref_code']), 'ABC456') #verfiy that the returned record's refcode is indeed 'ABC456'
 
     @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
     @clean_db
