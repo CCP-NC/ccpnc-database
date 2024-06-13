@@ -139,7 +139,8 @@ def search_by_chemname(pattern):
         # regex = re.compile(sb.replace(".", "\\.").replace(
         # "*", ".*").replace("?", "."), re.IGNORECASE)
         regex = re.compile(sb.replace("*", ".*"), re.IGNORECASE)
-        sbquery = {'chemname': {'$regex': regex, '$options': 'i'}}
+        # sbquery = {'chemname': {'$regex': regex, '$options': 'i'}}
+        sbquery = {'chemname': {'$regex': regex}} #regex already includes re.IGNORECASE, setting $options to 'i' is redundant and causes an error
         query['$or'][0]['$and'].append(sbquery)
         pattern = pattern.replace('"{0}"'.format(sb), '')
 
