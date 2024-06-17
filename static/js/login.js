@@ -84,6 +84,11 @@ LoginStatus.prototype = {
 
     is_admin: function() {
         var details = this.get_details();
+        // If details is null, then user is not logged in
+        if (details === null) {
+            // Handle the case where details is null
+            return false; // 'Hide record' button will be hidden
+        }
         return (details['admin'] == true);
     },
 
