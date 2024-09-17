@@ -29,6 +29,11 @@
   addFileListerController(ccpncApp);
   addRecordController(ccpncApp);
 
+  //Add services
+  console.log('Loading services...');
+  addSelectionService(ccpncApp);
+  addSingleSelectionService(ccpncApp);
+
   // Manual bootstrap (automatic one creates problem with order in which scripts are loaded)
   console.log('Bootstrapping app...');
   angular.element(function() {
