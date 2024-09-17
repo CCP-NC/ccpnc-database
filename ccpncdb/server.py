@@ -5,6 +5,7 @@ import json
 from datetime import timedelta
 from flask import Flask, Response, session, request, make_response
 from flask_mail import Mail, Message
+import zipfile
 
 
 from ccpncdb.config import Config
@@ -15,6 +16,7 @@ from ccpncdb.utils import split_data, get_name_from_orcid, get_schema_keys
 from ccpncdb.schemas import (magresRecordSchemaUser,
                              magresVersionSchemaUser, csvProperties)
 from ccpncdb.archive import MagresArchive, MagresArchiveError
+from ccpncdb.metadataexport import MetadataExport
 
 
 def make_csv_response(for_uploading=False):
@@ -48,6 +50,7 @@ class MainServer(object):
         self._path = path
         self._static_folder = os.path.join(path, 'static')
         self._config_folder = os.path.join(path, 'config')
+        self.metadata_exporter = MetadataExport()
 
         self._app = Flask('ccpnc-database', static_url_path='',
                           static_folder=self._static_folder)
@@ -256,6 +259,158 @@ class MainServer(object):
         else:
             return ('Unknown database error',
                     self.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def unpack_file(self, file):
+        """
+        Unpacks the file information from the given dictionary.
+
+        Args:
+            file (dict): The dictionary containing the file information.
+
+        Returns:
+            tuple: A tuple containing the file ID, filename, and database record JSON.
+        """
+        file_id = file['fileID'] #Magres file ID
+        filename = file['filename'] #Magres file name for download
+        db_record_json = file['jsonData'] #JSON data for cleanup
+
+        return file_id, filename, db_record_json
+
+    def json_metadata_prepare(self, json_data, fs_id, is_archive=False):
+        """
+        Prepare the JSON metadata for export to either an archive in bulk downloads or a standalone JSON file 
+        download.
+
+        Args:
+            json_data (dict): The JSON data to be prepared.
+            fs_id (str): The ID of the corresponding Magres file.
+            is_archive (bool, optional): Indicates if the data is for an archive. Defaults to False.
+
+        Returns:
+            dict: The prepared JSON metadata.
+
+        Comments:
+            - This function prepares the JSON metadata for export by performing clearance and cleanup operations.
+            - The `json_data` parameter should be a dictionary containing the JSON data to be prepared.
+            - The `fs_id` parameter should be a string representing a Magres File ID.
+            - The `is_archive` parameter is an optional boolean flag indicating if the data is for an archive.
+              It defaults to False if not provided, this option is used when individual JSOn metadata is downloaded
+              for Magres database records.
+            - The function returns a dictionary containing the prepared JSON metadata.
+        """
+        json_cleaned = self.metadata_exporter.metadata_clearance(json_data, is_archive) #Remove redundant metadata
+        json_final = self.metadata_exporter.metadata_cleanup(json_cleaned, fs_id, is_archive) #Clean up - include relevant file version metadata
+
+        return json_final
+    
+    def download_selection_json(self):
+        """
+        Downloads the selected JSON file from the server.
+
+        Returns:
+            - If the file is valid:
+                - A response object containing the JSON data.
+                - HTTP status code 200 (OK).
+            - If the file is invalid:
+                - An error message indicating the invalid file content.
+                - HTTP status code 400 (Bad Request).
+            - If there is an error retrieving the file:
+                - An error message indicating the file retrieval error.
+                - HTTP status code 400 (Bad Request).
+        """
+        file = request.json['files'][0] #Get the selected file from the request
+        fs_id, filename, json_data = self.unpack_file(file) #unpack file information
+
+        try:
+            mfile = self._db.get_magres_file(fs_id) #Retrieve Magres file from database
+            if isinstance(mfile, bytes): #Check if the file content is valid
+                # Preparing to write metadata to JSON file
+                json_final = self.json_metadata_prepare(json_data, fs_id)
+                json_str = json.dumps(json_final, indent=1)
+
+                # Create a response object with the JSON data
+                response = Response(json_str, mimetype='application/json')
+                response.headers['Content-Disposition'] = f'inline; filename={filename}.json'
+                return response, self.HTTP_200_OK #Return the response object and HTTP status code 200 (OK)
+            else: # Log error and return invalid file content message
+                self._logger.log('Error: Invalid file content', json_data['orcid']['path'], {'Magres_id': fs_id})
+                return f"Invalid file content for {fs_id}: {mfile}", self.HTTP_400_BAD_REQUEST
+            
+        except MagresDBError as e: # Log error and return file retrieval error message
+            self._logger.log(f"Error retrieving file: {e}", json_data['orcid']['path'], {'Magres_id': fs_id})
+            return f"Error retrieving file {fs_id}: {e}", self.HTTP_400_BAD_REQUEST
+    
+    def download_selection_zip(self):
+        """
+        Downloads a selection of Magres files as a zip archive with a JSOn metadata file and a human-readable 
+        CSV metadata file included.
+        
+        Returns:
+            A Response object containing the zip archive as the response content and the HTTP status code.
+        
+        Comments:
+            - This function allows the user to download a selection of Magres files as a zip archive.
+            - The files to be included in the archive are specified in the request JSON.
+            - The function creates a zip archive in memory and adds each selected file to the archive.
+            - It also prepares and includes metadata for each file in the archive.
+            - The function returns a Response object with the zip archive as the response content.
+            - The HTTP status code indicates the success or failure of the operation.
+        """
+        
+        files = request.json['files'] #Get the list of files from the request
+        archive = io.BytesIO() #Create an in-memory byte stream for the zip archive
+        json_metadata = {} #Create an empty dictionary to store the JSON metadata for each file
+
+        # Create a CSV file in memory
+        csv_file = io.StringIO()
+        props = ['filename'] + list(csvProperties) #Include filename in the CSV file header
+        writer = csv.DictWriter(csv_file, props, extrasaction='ignore') # Create a CSV writer object
+        writer.writeheader() # Write the header to the CSV file
+
+        with zipfile.ZipFile(archive, 'w') as zipf:
+            for file in files: # loop through the selected files
+                fs_id, filename, json_data = self.unpack_file(file) #Unpack file information
+                try:
+                    mfile = self._db.get_magres_file(fs_id) #Retrieve Magres file from database
+                    if isinstance(mfile, bytes): #Check if the file content is valid
+                        zipf.writestr(f"{filename}.magres", mfile)
+                    else: #Log error and continue to the next file
+                        self._logger.log('Error: Invalid file content', 
+                                         json_data['orcid']['path'], 
+                                         {'Magres_id': fs_id})
+                        continue
+
+                    # Preparing to write metadata to JSON file
+                    json_final = self.json_metadata_prepare(json_data, fs_id, True) #Prepare metadata for export
+                    json_metadata[f"{filename}.magres metadata"] = json_final  #Add metadata to the JSON metadata dictionary with filename as key
+
+                    #Preparing to write metadata to CSV file
+                    json_csv = json_final.copy() #Create a shallow copy of the JSON metadata
+                    json_csv['filename'] = filename #Add the filename to the JSON metadata
+                    csv_version = json_csv['last_version'] #Get the last version metadata
+                    row = dict(json_csv, **csv_version) #Combine the record and version metadata
+                    writer.writerow(row) #Write the metadata to the CSV file, as per the schema
+
+                except MagresDBError as e:
+                    # Log error and continue to the next file
+                    self._logger.log(f"Error retrieving file: {e}", 
+                                     json_data['orcid']['path'], 
+                                     {'Magres_id': fs_id})
+                    continue
+
+            json_metadata_str = json.dumps(json_metadata, indent=1) #Convert the JSON metadata dictionary to a string
+            zipf.writestr("Magres_metadata.json", json_metadata_str) #Write the JSON metadata to the archive
+
+            # Move to the CSV file next
+            csv_file.seek(0) #Move the cursor to the beginning of the file
+            zipf.writestr("Magres_metadata.csv", csv_file.getvalue()) #Write the CSV file to the archive
+        
+        archive.seek(0) #Move the cursor to the beginning of the archive
+
+        # Return the zip archive as a response object
+        return Response(archive.getvalue(),
+                        mimetype='application/zip',
+                        headers={'Content-Disposition': 'attachment;filename=selected_files.zip'}), self.HTTP_200_OK
 
     def search(self):
 

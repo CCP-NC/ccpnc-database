@@ -83,6 +83,16 @@ def get_csv_template():
     return serv.get_csv_template()
 
 
+@app.route('/download_selection_zip', methods=['POST'])
+def download_selection_zip():
+    return serv.download_selection_zip()
+
+
+@app.route('/download_selection_json', methods=['POST'])
+def download_selection_json():
+    return serv.download_selection_json()
+
+
 @app.route('/sendmail', methods=['POST'])
 def send_mail():
     return serv.send_mail()
