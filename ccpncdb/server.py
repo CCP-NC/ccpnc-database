@@ -45,7 +45,7 @@ class MainServer(object):
     LOG_ADDARCHIVE = 1
     LOG_ADDVERSION = 2
 
-    def __init__(self, path=''):
+    def __init__(self, path='', db=None): #db is None for production/development server, recieves db object for CI testing
 
         self._path = path
         self._static_folder = os.path.join(path, 'static')
@@ -72,12 +72,15 @@ class MainServer(object):
             self._orcid_details, session)
         self._orcid = self._app.extensions['orcidlink']
 
-        self._config = Config(os.path.join(self._config_folder,
+        if db is None:
+            self._config = Config(os.path.join(self._config_folder,
                                            'config.json'))
-        self._client = self._config.client()
-        self._dbname = self._config.db_name
-        self._db = MagresDB(client=self._client, dbname=self._dbname)
-        self._logger = Logger(client=self._client, dbname=self._dbname)
+            self._client = self._config.client()
+            self._dbname = self._config.db_name
+            self._db = MagresDB(client=self._client, dbname=self._dbname)
+            self._logger = Logger(client=self._client, dbname=self._dbname)
+        else:
+            self._db = db
 
         # Load mail config
         with open(os.path.join(self._config_folder, 'smtpconfig.json')) as f:

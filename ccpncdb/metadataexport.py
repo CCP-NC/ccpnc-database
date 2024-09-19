@@ -58,23 +58,38 @@ class MetadataExport:
         return json_result_new
     
     def format_date(self, date_str):
-        try:
-            dt = datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S.%f")
-        except ValueError:
-            dt = datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
-        return dt.strftime("%Y-%m-%d %H:%M:%S")
+        date_formats= [
+            "%Y-%m-%d %H:%M:%S.%f",  # Existing format with microseconds
+            "%Y-%m-%d %H:%M:%S",     # Existing format without microseconds
+            "%a, %d %b %Y %H:%M:%S %Z"  # New format (e.g., "Thu, 19 Sep 2024 10:10:36 GMT") for CI tests
+            ]
+        for date_format in date_formats:
+            try:
+                dt = datetime.datetime.strptime(date_str, date_format)
+                return dt.strftime("%Y-%m-%d %H:%M:%S")
+            except ValueError:
+                continue
+
+        # If none of the formats match, raise an error
+        raise ValueError(f"Date format not recognized: {date_str}")
     
     def calc_metadata_extract(self, calc_string):
-        calc_string_unwrap = json.loads(calc_string)
         target_dict = {}
-        for dict_elem in calc_string_unwrap:
-            if len(calc_string_unwrap[dict_elem][0]) == 1:
-                target_dict[dict_elem] = calc_string_unwrap[dict_elem][0][0]
-            elif dict_elem == 'calc_pspot':
-                final_elem = []
-                for elem in calc_string_unwrap[dict_elem]:
-                    final_elem.append(' '.join(elem))
-                target_dict[dict_elem] = final_elem
-            else:
-                target_dict[dict_elem] = ' '.join(calc_string_unwrap[dict_elem][0])
+        if calc_string is None:
+            # This metadata error is in place for CI tests that may not have calculation metadata,
+            # Magres files in the database should by default contain calculation metadata, so this 
+            # code block should not be reached
+            target_dict = {"Metadata Error": "Calculation metadata unavailable"}
+        else:
+            calc_string_unwrap = json.loads(calc_string)
+            for dict_elem in calc_string_unwrap:
+                if len(calc_string_unwrap[dict_elem][0]) == 1:
+                    target_dict[dict_elem] = calc_string_unwrap[dict_elem][0][0]
+                elif dict_elem == 'calc_pspot':
+                    final_elem = []
+                    for elem in calc_string_unwrap[dict_elem]:
+                        final_elem.append(' '.join(elem))
+                        target_dict[dict_elem] = final_elem
+                    else:
+                        target_dict[dict_elem] = ' '.join(calc_string_unwrap[dict_elem][0])
         return target_dict
