@@ -205,7 +205,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'chemname',
             'args': {'pattern': '"Ethanol"'},
-            'boolean': False
+            'negate_query': False
         }])
         found = list(found)
 
@@ -217,7 +217,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'doi',
             'args': {'doi': '10.1010/ABCD123456'},
-            'boolean': False
+            'negate_query': False
             }])
         found = list(found)
         self.assertEqual(len(found), 1)
@@ -227,7 +227,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'doi',
             'args': {'doi': '10.1010/ABCD123456'},
-            'boolean': True
+            'negate_query': True
             }])
         found = list(found)
         self.assertEqual(len(found), 2) #search should return res_1 and res_2
@@ -238,7 +238,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'doi',
             'args': {'doi': '10.1010/abcd123456'},
-            'boolean': False
+            'negate_query': False
             }])
         found = list(found)
         self.assertEqual(len(found), 1)
@@ -248,7 +248,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'doi',
             'args': {'doi': '10.1010/abcd123456'},
-            'boolean': True
+            'negate_query': True
             }])
         found = list(found)
         self.assertEqual(len(found), 2) #search should return res_1 and res_2, same as for uppercase
@@ -259,7 +259,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'doi',
             'args': {'doi': '10.1010/abcd123498'},
-            'boolean': False
+            'negate_query': False
             }])
         found = list(found)
         self.assertEqual(len(found), 0)
@@ -268,7 +268,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'doi',
             'args': {'doi': '10.1010/abcd123498'},
-            'boolean': True
+            'negate_query': True
             }])
         found = list(found)
         self.assertEqual(len(found), 3) #search should return res_1, res_2 and res_3
@@ -277,7 +277,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'doi',
             'args': {'doi': '10.1010/*'},
-            'boolean': False
+            'negate_query': False
             }])
         found = list(found)
         self.assertEqual(len(found), 1)
@@ -287,7 +287,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'doi',
             'args': {'doi': '10.1010/*'},
-            'boolean': True
+            'negate_query': True
             }])
         found = list(found)
         self.assertEqual(len(found), 2) #search should return res_1 and res_2
@@ -296,7 +296,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'doi',
             'args': {'doi': '*/ABCD123456'},
-            'boolean': False
+            'negate_query': False
             }])
         found = list(found)
         self.assertEqual(len(found), 1)
@@ -306,7 +306,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'doi',
             'args': {'doi': '*/ABCD123456'},
-            'boolean': True
+            'negate_query': True
             }])
         found = list(found)
         self.assertEqual(len(found), 2) #search should return res_1 and res_2
@@ -315,7 +315,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'doi',
             'args': {'doi': '*1010/ABCD*'},
-            'boolean': False
+            'negate_query': False
             }])
         found = list(found)
         self.assertEqual(len(found), 1)
@@ -325,7 +325,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'doi',
             'args': {'doi': '*1010/ABCD*'},
-            'boolean': True
+            'negate_query': True
             }])
         found = list(found)
         self.assertEqual(len(found), 2) #search should return res_1 and res_2
@@ -334,7 +334,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'chemname',
             'args': {'pattern': 'alcohol ethyl'},
-            'boolean': False
+            'negate_query': False
         }])
         found = list(found)
 
@@ -345,7 +345,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'mdbref',
             'args': {'mdbref': '0000002'},
-            'boolean': False
+            'negate_query': False
         }])
         found = list(found)
 
@@ -356,7 +356,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'formula',
             'args': {'formula': 'C2H6O', 'subset': False},
-            'boolean': False
+            'negate_query': False
         }])
         found = list(found)
 
@@ -366,7 +366,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'formula',
             'args': {'formula': 'N4', 'subset': True},
-            'boolean': False
+            'negate_query': False
         }])
         found = list(found)
 
@@ -379,7 +379,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'license',
             'args': {'license': 'cc-by'},
-            'boolean': False
+            'negate_query': False
         }])
         found = list(found)
 
@@ -390,7 +390,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'license',
             'args': {'license': 'cc-by'},
-            'boolean': True
+            'negate_query': True
         }])
         found = list(found)
 
@@ -406,7 +406,7 @@ class MagresDBTest(unittest.TestCase):
             found = self.mdb.search_record([{
                 'type': 'msRange',
                 'args': {'sp': 'N', 'minms': 100.0, 'maxms': 200.0},
-                'boolean': False
+                'negate_query': False
             }])
             found = list(found)
 
@@ -425,7 +425,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'extref',
             'args': {'reftype': 'csd', 'other_reftype': None, 'refcode': None},
-            'boolean': False
+            'negate_query': False
         }])
         found = list(found)
 
@@ -435,7 +435,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'extref',
             'args': {'reftype': 'csd', 'other_reftype': None, 'refcode': None},
-            'boolean': True
+            'negate_query': True
         }])
         found = list(found)
         self.assertEqual(len(found), 0) # No other records should be returned
@@ -444,7 +444,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'extref',
             'args': {'reftype': 'icsd', 'other_reftype': None, 'refcode': None},
-            'boolean': True
+            'negate_query': True
         }])
         found = list(found)
         self.assertEqual(len(found), 2) # Both records with 'csd' reftype should be returned
@@ -453,7 +453,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'extref',
             'args': {'reftype': 'csd', 'other_reftype': None, 'refcode': 'ABC123'},
-            'boolean': False
+            'negate_query': False
         }])
         found = list(found)
 
@@ -463,7 +463,7 @@ class MagresDBTest(unittest.TestCase):
         found = self.mdb.search_record([{
             'type': 'extref',
             'args': {'reftype': 'csd', 'other_reftype': None, 'refcode': 'ABC123'},
-            'boolean': True
+            'negate_query': True
         }])
         found = list(found)
         self.assertEqual(len(found), 1) # One record where refcode is 'ABC456' should be returned
