@@ -309,7 +309,7 @@ def build_search(search_spec):
         query_buffer = search_func(**args)
         query_add=[]
         # Make choice to pass query as such or negate it based on user's Boolean filtering choice in 'boolean' key
-        if negate_query is False or negate_query is None: #AND - pass query as is
+        if not negate_query: #AND - pass query as is
             if src.get('type') == 'extref': #catch code to ensure database name and reference code are non-empty in returned records
                 query_add=[{'$and':[query_buffer[0],{'last_version.extref_type':{'$ne': None}},{'last_version.extref_code':{'$ne': None}}]}]
             else: # search parameters other than extref
