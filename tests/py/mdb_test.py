@@ -50,7 +50,7 @@ class MagresDBTest(unittest.TestCase):
     @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
     def setUp(self):
 
-        from ccpncdb.gridfs_patch import enable_gridfs_integration
+        from tests.py.gridfs_patch import enable_gridfs_integration
         enable_gridfs_integration()
         
         from ccpncdb.config import Config
