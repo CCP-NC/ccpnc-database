@@ -10,4 +10,4 @@
     pyyaml>=6.0.1
     requests~=2.32
     numpy~=1.24
-    mongomock~=4.0
+    mongomock~=4.1
