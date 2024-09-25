@@ -46,6 +46,7 @@ class MDBServerTest(unittest.TestCase):
 
     @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
     def setUp(self):
+        
         enable_gridfs_integration()
 
         from ccpncdb.server import MainServer

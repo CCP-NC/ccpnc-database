@@ -202,10 +202,10 @@
                                 <td class="width-3" colspan="3" rowspan="" headers="">
                                     <div class="control is-pulled-right">
                                         <div class="select">
-                                            <!-- Present long menu for search if 'boolean' value in search_spec in false -->
-                                            <!-- 'boolean' value is set to false when form loads first time, false can be set by toggle switch for AND search condition -->
+                                            <!-- Present long menu for search if 'negate_query' value in search_spec in false -->
+                                            <!-- 'negate_query' value is set to false when form loads first time, false can be set by toggle switch for AND search condition -->
                                             <select ng-model="search_spec.type"
-                                                ng-change="reset_search_args(search_spec.type)" ng-show="!search_spec.boolean" ng-init="search_spec.boolean = false">
+                                                ng-change="reset_search_args(search_spec.type)" ng-show="!search_spec.negate_query" ng-init="search_spec.negate_query = false">
                                                 <option value="doi">doi</option>
                                                 <option value="msRange">Magnetic Shielding</option>
                                                 <option value="efgRange">Electric Field Gradient V<sub>zz</sub></option>
@@ -217,10 +217,10 @@
                                                 <option value="extref">External database reference</option>
                                                 <option value="license">License</option>
                                             </select>
-                                            <!-- Present restricted menu for search if 'boolean' value in search_spec in true -->
-                                            <!-- 'boolean' value is set to true by toggle switch for NOT search condition -->
+                                            <!-- Present restricted menu for search if 'negate_query' value in search_spec in true -->
+                                            <!-- 'negate_query' value is set to true by toggle switch for NOT search condition -->
                                             <select ng-model="search_spec.type"
-                                                ng-change="reset_search_args(search_spec.type)" ng-show="search_spec.boolean">
+                                                ng-change="reset_search_args(search_spec.type)" ng-show="search_spec.negate_query">
                                                 <option value="doi">doi</option>
                                                 <option value="msRange">Magnetic Shielding</option>
                                                 <option value="efgRange">Electric Field Gradient V<sub>zz</sub></option>
@@ -467,7 +467,7 @@
                                     <!-- Default search is AND with toggle switch 'off', NOT corresponds to toggle 'on' -->
                                     <div class="control is-pulled-right">
                                         <label class="switch">
-                                            <input type="checkbox" ng-model="search_spec.boolean">
+                                            <input type="checkbox" ng-model="search_spec.negate_query">
                                             <span class="slider round">
                                                 <span class="on">NOT</span>
                                                 <span class="off">AND</span>

@@ -24,7 +24,7 @@ function addFileListerController(ngApp) {
                     'type': 'orcid',
                     'args': {
                         'orcid': details.orcid,
-                    },
+                    }
                 }, ]
             }),
             success: function(d, statusText, xhr) {
