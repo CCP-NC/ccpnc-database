@@ -24,10 +24,7 @@ function addFileListerController(ngApp) {
                     'type': 'orcid',
                     'args': {
                         'orcid': details.orcid,
-                    },
-                    'boolean': false
-                    //'boolean' variable tracks user's choice of AND/OR using the toggle switch
-                    // for displaying user uploaded files, default value of false is set constantly
+                    }
                 }, ]
             }),
             success: function(d, statusText, xhr) {

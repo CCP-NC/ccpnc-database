@@ -297,7 +297,7 @@ def build_search(search_spec):
         args = inspect.getfullargspec(search_func).args
         
         #Extract boolean choice to determine how to manipulate the query returned by search functions
-        bool_inspect = src.get('boolean')
+        negate_query = src.get('negate_query')
         
         # Get them as dict
         try:
@@ -309,12 +309,12 @@ def build_search(search_spec):
         query_buffer = search_func(**args)
         query_add=[]
         # Make choice to pass query as such or negate it based on user's Boolean filtering choice in 'boolean' key
-        if not bool_inspect: #AND - pass query as is
+        if negate_query is False or negate_query is None: #AND - pass query as is
             if src.get('type') == 'extref': #catch code to ensure database name and reference code are non-empty in returned records
                 query_add=[{'$and':[query_buffer[0],{'last_version.extref_type':{'$ne': None}},{'last_version.extref_code':{'$ne': None}}]}]
             else: # search parameters other than extref
                 query_add=query_buffer
-        elif bool_inspect: #NOT - negate search query
+        else: #NOT - negate search query
             if src.get('type') == 'extref': #catch code to ensure database name and reference code are non-empty in returned records even when negating
                 query_add=[{'$and':[{'$nor':query_buffer},{'last_version.extref_type':{'$ne': None}},{'last_version.extref_code':{'$ne': None}}]}]
             else: # search parameters other than extref
