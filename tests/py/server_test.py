@@ -14,7 +14,7 @@ from soprano.selection import AtomSelection
 from soprano.properties.nmr import MSIsotropy
 
 import mongomock
-# from mongomock.gridfs import enable_gridfs_integration
+from mongomock.gridfs import enable_gridfs_integration
 
 file_path = os.path.split(__file__)[0]
 data_path = os.path.join(file_path, '../data')
@@ -47,7 +47,7 @@ class MDBServerTest(unittest.TestCase):
     @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
     def setUp(self):
         
-        from tests.py.gridfs_patch import enable_gridfs_integration
+        # from tests.py.gridfs_patch import enable_gridfs_integration
         enable_gridfs_integration()
 
         from ccpncdb.server import MainServer
