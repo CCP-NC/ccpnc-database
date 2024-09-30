@@ -146,7 +146,7 @@ function addRecordDirective(ngApp) {
                     scope.mcalc_blocks.push(JSON.parse(scope.databaseRecord.version_history[i].magres_calc));
                 }
 
-                scope.selectionChange = function(result) {
+                scope.selectionChange = function(result, version_num) {
                     var target_val = result.last_version.magresFilesID;
                     var index_t = SelectionService.selectedItems.findIndex(item => item.fileID === target_val);
                     var filename = 'MRD' + result.immutable_id;
@@ -154,15 +154,15 @@ function addRecordDirective(ngApp) {
                         SelectionService.selectedItems.splice(index_t, 1);
                     }
                     else {
-                        SelectionService.selectedItems.push({fileID: target_val, filename: filename, jsonData: result});
+                        SelectionService.selectedItems.push({fileID: target_val, filename: filename, jsonData: result, version: version_num});
                     }
                 }
 
-                scope.jsonretrieve = function(result,version_num) {
+                scope.jsonretrieve = function(result, version_num) {
                     SelectionService.clearSelections();
                     var target_val = result.version_history[version_num].magresFilesID;
                     var filename = scope.filename();
-                    SelectionService.singleSelectJSON.push({fileID: target_val, filename: filename, jsonData: result});
+                    SelectionService.singleSelectJSON.push({fileID: target_val, filename: filename, jsonData: result, version: version_num});
                     SelectionService.downloadSelectionJSON();
                 }
             }

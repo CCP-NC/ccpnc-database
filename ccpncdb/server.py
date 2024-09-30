@@ -276,10 +276,11 @@ class MainServer(object):
         file_id = file['fileID'] #Magres file ID
         filename = file['filename'] #Magres file name for download
         db_record_json = file['jsonData'] #JSON data for cleanup
+        version_num = file['version'] #Version number for metadata
 
-        return file_id, filename, db_record_json
+        return file_id, filename, db_record_json, version_num
 
-    def json_metadata_prepare(self, json_data, fs_id, is_archive=False):
+    def json_metadata_prepare(self, json_data, fs_id, version_num):
         """
         Prepare the JSON metadata for export to either an archive in bulk downloads or a standalone JSON file 
         download.
@@ -301,8 +302,8 @@ class MainServer(object):
               for Magres database records.
             - The function returns a dictionary containing the prepared JSON metadata.
         """
-        json_cleaned = self.metadata_exporter.metadata_clearance(json_data, is_archive) #Remove redundant metadata
-        json_final = self.metadata_exporter.metadata_cleanup(json_cleaned, fs_id, is_archive) #Clean up - include relevant file version metadata
+        json_cleaned = self.metadata_exporter.metadata_clearance(json_data) #Remove redundant metadata
+        json_final = self.metadata_exporter.metadata_cleanup(json_cleaned, version_num, fs_id) #Clean up - include relevant file version metadata
 
         return json_final
     
@@ -322,13 +323,13 @@ class MainServer(object):
                 - HTTP status code 400 (Bad Request).
         """
         file = request.json['files'][0] #Get the selected file from the request
-        fs_id, filename, json_data = self.unpack_file(file) #unpack file information
+        fs_id, filename, json_data, version_num = self.unpack_file(file) #unpack file information
 
         try:
             mfile = self._db.get_magres_file(fs_id) #Retrieve Magres file from database
             if isinstance(mfile, bytes): #Check if the file content is valid
                 # Preparing to write metadata to JSON file
-                json_final = self.json_metadata_prepare(json_data, fs_id)
+                json_final = self.json_metadata_prepare(json_data, fs_id, version_num)
                 json_str = json.dumps(json_final, indent=1)
 
                 # Create a response object with the JSON data
@@ -372,7 +373,7 @@ class MainServer(object):
 
         with zipfile.ZipFile(archive, 'w') as zipf:
             for file in files: # loop through the selected files
-                fs_id, filename, json_data = self.unpack_file(file) #Unpack file information
+                fs_id, filename, json_data, version_num = self.unpack_file(file) #Unpack file information
                 try:
                     mfile = self._db.get_magres_file(fs_id) #Retrieve Magres file from database
                     if isinstance(mfile, bytes): #Check if the file content is valid
@@ -384,7 +385,7 @@ class MainServer(object):
                         continue
 
                     # Preparing to write metadata to JSON file
-                    json_final = self.json_metadata_prepare(json_data, fs_id, True) #Prepare metadata for export
+                    json_final = self.json_metadata_prepare(json_data, fs_id, version_num) #Prepare metadata for export
                     json_metadata[f"{filename}.magres metadata"] = json_final  #Add metadata to the JSON metadata dictionary with filename as key
 
                     #Preparing to write metadata to CSV file
