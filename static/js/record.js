@@ -158,7 +158,7 @@ function addRecordDirective(ngApp) {
                     }
                 }
 
-                scope.jsonretrieve = function(result, version_num) {
+                scope.jsonRetrieve = function(result, version_num) {
                     SelectionService.clearSelections();
                     var target_val = result.version_history[version_num].magresFilesID;
                     var filename = scope.filename();
