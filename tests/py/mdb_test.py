@@ -11,6 +11,7 @@ import zipfile
 import json
 import csv
 import io
+import re
 from io import BytesIO
 from flask import Flask
 
@@ -524,6 +525,7 @@ class MagresDBTest(unittest.TestCase):
     @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
     @clean_db
     def testBulkDownload(self):
+
         # Add test records to the database with additional version data to each record
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
             res1 = self.mdb.add_record(f, _fake_rdata, _fake_vdata_bulk1)
@@ -553,8 +555,8 @@ class MagresDBTest(unittest.TestCase):
 
         # Compile list of files for bulk download to simulate a file payload
         selectedItems = {
-            'files': [{'fileID':fs_id1,'filename':filename1, 'jsonData':rec1},
-                      {'fileID':fs_id2,'filename':filename2, 'jsonData':rec2}]
+            'files': [{'fileID':fs_id1,'filename':filename1, 'jsonData':rec1, 'version':0},
+                      {'fileID':fs_id2,'filename':filename2, 'jsonData':rec2, 'version':0}]
                       }
         
         # Simulate a request to download the selected files
@@ -590,6 +592,35 @@ class MagresDBTest(unittest.TestCase):
             self.assertEqual(len(rows), 2)
             self.assertEqual(rows[0]['filename'], f"{filename1}")
             self.assertEqual(rows[1]['filename'], f"{filename2}")
+
+        # Define a function to check magres file contents
+        def magres_check(filename, magres_data, should_raise_error=False):
+            # Check for the presence of the mandatory calculation metadata block, log error if absent
+            calculation_pattern = re.compile(r'(\[calculation\].*?\[/calculation\])|(<calculation>.*?</calculation>)', re.DOTALL)
+            if should_raise_error:
+                with self.assertRaises(AssertionError, msg=f"Calculation metadata block is missing in {filename}.magres"):
+                    self.assertRegex(magres_data, calculation_pattern, "Calculation metadata block is missing")
+            else:
+                self.assertRegex(magres_data, calculation_pattern, "Calculation metadata block is missing")
+
+            # Check for the presence of the mandatory atoms data block, log error if absent
+            atoms_pattern = re.compile(r'(\[atoms\].*?\[/atoms\])|(<atoms>.*?</atoms>)', re.DOTALL)
+            self.assertRegex(magres_data, atoms_pattern, "Atoms data block is missing")
+
+            # Check for the presence of the mandatory magres data block, log error if absent
+            magres_pattern = re.compile(r'(\[magres\].*?\[/magres\])|(<magres>.*?</magres>)', re.DOTALL)
+            self.assertRegex(magres_data, magres_pattern, "Magres data block is missing")
+
+        # Check the contents of the first magres file
+        with archive.open(f"{filename1}.magres") as magres_file:
+            magres_data = magres_file.read().decode('utf-8') #decode the binary file object from read() to a string
+            magres_check(filename1, magres_data)
+
+        # Check the contents of the second magres file
+        with archive.open(f"{filename2}.magres") as magres_file:
+            magres_data = magres_file.read().decode('utf-8') #decode the binary file object from read() to a string
+            magres_check(filename2, magres_data, should_raise_error=True)
+            
 
 if __name__ == '__main__':
 
