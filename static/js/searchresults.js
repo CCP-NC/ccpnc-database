@@ -56,7 +56,7 @@ function addSearchResultsDirective(ngApp) {
 
                 // Use SelectionService to download all results as a zip archive
                 sR.download_all_zip = function() {
-                    SelectionService.clearSelections();
+                    SelectionService.clearAllSelections();
                     for (var i = 0; i < sR.unwrapped_results.length; i++) {
                         sR.unwrapped_results[i].isChecked = true;
                         SingleSelectionService.singleSelection(sR.unwrapped_results[i]);

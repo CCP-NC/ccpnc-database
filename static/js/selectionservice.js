@@ -8,8 +8,11 @@ function addSelectionService(ngApp) {
             singleSelectJSON: [],
 
             //Method to clear the selectedItems array
-            clearSelections: function() {
+            clearAllSelections: function() {
                 this.selectedItems.length = 0; //clear the array
+                this.singleSelectJSON.length = 0;
+            },
+            clearSingleSelection: function() {
                 this.singleSelectJSON.length = 0;
             },
             //Method to create a zip archive of the selected items for download

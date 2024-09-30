@@ -84,7 +84,7 @@ function addSearchController(ngApp) {
             }
 
             // Clear the selections before performing a new search
-            SelectionService.clearSelections();
+            SelectionService.clearAllSelections();
 
             $.ajax(query);
             last_query = query;
