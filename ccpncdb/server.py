@@ -291,16 +291,7 @@ class MainServer(object):
             is_archive (bool, optional): Indicates if the data is for an archive. Defaults to False.
 
         Returns:
-            dict: The prepared JSON metadata.
-
-        Comments:
-            - This function prepares the JSON metadata for export by performing clearance and cleanup operations.
-            - The `json_data` parameter should be a dictionary containing the JSON data to be prepared.
-            - The `fs_id` parameter should be a string representing a Magres File ID.
-            - The `is_archive` parameter is an optional boolean flag indicating if the data is for an archive.
-              It defaults to False if not provided, this option is used when individual JSOn metadata is downloaded
-              for Magres database records.
-            - The function returns a dictionary containing the prepared JSON metadata.
+            json_final (dict): The prepared JSON metadata.
         """
         json_cleaned = self.metadata_exporter.metadata_clearance(json_data) #Remove redundant metadata
         json_final = self.metadata_exporter.metadata_cleanup(json_cleaned, version_num, fs_id) #Clean up - include relevant file version metadata
@@ -391,7 +382,7 @@ class MainServer(object):
                     #Preparing to write metadata to CSV file
                     json_csv = json_final.copy() #Create a shallow copy of the JSON metadata
                     json_csv['filename'] = filename #Add the filename to the JSON metadata
-                    csv_version = json_csv['last_version'] #Get the last version metadata
+                    csv_version = json_csv['version_metadata'] #Get the last version metadata
                     row = dict(json_csv, **csv_version) #Combine the record and version metadata
                     writer.writerow(row) #Write the metadata to the CSV file, as per the schema
 
