@@ -38,23 +38,23 @@ function addSearchResultsDirective(ngApp) {
                     sR.unwrapped_results = results;
                     for (var i = 0; i < results.length; i += sR.max_results) {
                         sR.results.push(results.slice(i, i+sR.max_results));
-                        sR.select_all_states.push(false); // Initialize select all state for each page
+                        sR.select_all_states.push(false); // Initialise select all state for each page
                     }
                     sR.search_complete = true;
                     sR.found_results = results.length;
                 }
 
-                // Use SelevtionService to download selected items as zip archive
+                // Use SelectionService to download selected items as zip archive
                 sR.download_selected_zip = function() {
                     SelectionService.downloadSelectionZip();
                 }
 
-                // Use SelevtionService to download selected items as a single JSON file
+                // Use SelectionService to download selected items as a single JSON file
                 sR.download_json = function() {
                     SelectionService.downloadSelectionJSON();
                 }
 
-                // Use SelevtionService to download all results as a zip archive
+                // Use SelectionService to download all results as a zip archive
                 sR.download_all_zip = function() {
                     SelectionService.clearSelections();
                     for (var i = 0; i < sR.unwrapped_results.length; i++) {
