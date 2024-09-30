@@ -24,6 +24,7 @@ from mongomock.gridfs import enable_gridfs_integration
 
 file_path = os.path.split(__file__)[0]
 data_path = os.path.join(file_path, '../data')
+serv_path = os.path.join(file_path, '../serv')
 sys.path.append(os.path.abspath(os.path.join(file_path, '../../')))
 
 
@@ -101,7 +102,7 @@ class MagresDBTest(unittest.TestCase):
             self.eth = read_magres_file(f)
 
         self.app = Flask(__name__)
-        self.server = MainServer(db=self.mdb)
+        self.server = MainServer(path=serv_path,db=self.mdb)
         self.test_client = self.app.test_client()
 
         # Add a route to simulate the download_selection_zip flask endpoint
