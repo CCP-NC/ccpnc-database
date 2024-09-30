@@ -146,10 +146,11 @@ function addRecordDirective(ngApp) {
                     scope.mcalc_blocks.push(JSON.parse(scope.databaseRecord.version_history[i].magres_calc));
                 }
 
-                scope.selectionChange = function(result, version_num) {
+                scope.selectionChange = function(result) {
                     var target_val = result.last_version.magresFilesID;
                     var index_t = SelectionService.selectedItems.findIndex(item => item.fileID === target_val);
                     var filename = 'MRD' + result.immutable_id;
+                    var version_num = (parseInt(result.version_count)-1); // version number of the selected item (latest version by default)
                     if (index_t > -1) {
                         SelectionService.selectedItems.splice(index_t, 1);
                     }
