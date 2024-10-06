@@ -4,7 +4,8 @@ import json
 class MetadataExport:
     """Metadata export class"""
 
-    def metadata_clearance(self, json_result):
+    @staticmethod
+    def metadata_clearance(json_result):
         """
         Cleans up metadata by removing redundant fields and restructuring specific entries.
 
@@ -28,7 +29,8 @@ class MetadataExport:
 
         return json_result
                                                                                                                                                                                                                                                                                                                                            
-    def metadata_cleanup(self, json_result, version_num, file_id = None):
+    @staticmethod
+    def metadata_cleanup(json_result, version_num, file_id = None):
         """
         Cleans up and reorders metadata for a given JSON dataset.
 
@@ -57,9 +59,9 @@ class MetadataExport:
                 del json_buffer['magresFilesID']
                 for item in json_buffer:
                     if item == 'date':
-                        json_buffer[item] = self.format_date(json_buffer[item])
+                        json_buffer[item] = MetadataExport.format_date(json_buffer[item])
                     elif item == 'magres_calc':
-                        json_buffer[item] = self.calc_metadata_extract(json_buffer[item])
+                        json_buffer[item] = MetadataExport.calc_metadata_extract(json_buffer[item])
                     else:
                         json_buffer[item] = json_buffer[item]
 
@@ -68,11 +70,12 @@ class MetadataExport:
                 json_result_new[key] = json_result[key]
         del json_result_new['version_count']
 
-        json_result_ordered = self.reorder_keys(json_result_new)
+        json_result_ordered = MetadataExport.reorder_keys(json_result_new)
 
         return json_result_ordered
     
-    def reorder_keys(self, json_result):
+    @staticmethod
+    def reorder_keys(json_result):
         """
         Reorders the keys in a given JSON dictionary according to a predefined order.The resulting dictionary will 
         contain only the keys that are present in the predefined list and in the input dictionary, arranged in the 
@@ -97,7 +100,8 @@ class MetadataExport:
 
         return json_result_ordered
     
-    def format_date(self, date_str):
+    @staticmethod
+    def format_date(date_str):
         """
         Formats a date string into a standardised form. If the date string matches any of the predefined formats, 
         it is converted to the standardised format "%Y-%m-%d %H:%M:%S". If none of the formats match, a ValueError
@@ -133,7 +137,8 @@ class MetadataExport:
         # If none of the formats match, raise an error
         raise ValueError(f"Date format not recognized: {date_str}")
     
-    def calc_metadata_extract(self, calc_string):
+    @staticmethod
+    def calc_metadata_extract(calc_string):
         """
         Extracts calculation metadata from a JSON string and formats into a dictionary.
 
