@@ -164,9 +164,9 @@ class MetadataExport:
                 if len(calc_string_unwrap[dict_elem][0]) == 1:
                     target_dict[dict_elem] = calc_string_unwrap[dict_elem][0][0]
                 elif dict_elem == 'calc_pspot':
-                    final_elem = []
+                    final_elem = {}
                     for elem in calc_string_unwrap[dict_elem]:
-                        final_elem.append(' '.join(elem))
+                        final_elem[elem[0]] = elem[1]
                         target_dict[dict_elem] = final_elem
                 else:
                     target_dict[dict_elem] = ' '.join(calc_string_unwrap[dict_elem][0])
