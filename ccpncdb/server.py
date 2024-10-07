@@ -72,15 +72,17 @@ class MainServer(object):
             self._orcid_details, session)
         self._orcid = self._app.extensions['orcidlink']
 
-        if db is None:
-            self._config = Config(os.path.join(self._config_folder,
+        self._config = Config(os.path.join(self._config_folder,
                                            'config.json'))
-            self._client = self._config.client()
-            self._dbname = self._config.db_name
+        self._client = self._config.client()
+        self._dbname = self._config.db_name
+
+        if db is None:
             self._db = MagresDB(client=self._client, dbname=self._dbname)
-            self._logger = Logger(client=self._client, dbname=self._dbname)
         else:
             self._db = db
+
+        self._logger = Logger(client=self._client, dbname=self._dbname)
 
         # Load mail config
         with open(os.path.join(self._config_folder, 'smtpconfig.json')) as f:
