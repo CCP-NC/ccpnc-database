@@ -1,6 +1,15 @@
 function addSelectionService(ngApp) {
 
     ngApp.service('SelectionService', ['$http', function($http) {
+
+        // Ensure ccpnc_config is defined when loading js/config.js into index.html
+        if (typeof ccpnc_config === 'undefined') {
+            console.error('ccpnc_config is not defined');
+            return;
+        }
+
+        const apiBaseUrl = ccpnc_config.server_app;
+
         // This service is used to store the selected items in the selection page and to download the selected items 
         // as a zip archive or a single JSOn file depending on user selection
         var service = {
@@ -17,7 +26,7 @@ function addSelectionService(ngApp) {
             },
             //Method to create a zip archive of the selected items for download
             downloadSelectionZip: function() {
-                $http.post('/download_selection_zip', { files: this.selectedItems }, { responseType: 'arraybuffer' })
+                $http.post(`${apiBaseUrl}/download_selection_zip`, { files: this.selectedItems }, { responseType: 'arraybuffer' })
                     .then(function(response) {
                         var blob = new Blob([response.data], { type: 'application/zip' });
                         var downloadUrl = window.URL.createObjectURL(blob);
@@ -35,7 +44,7 @@ function addSelectionService(ngApp) {
             },
             //Method to create a single JSON file of the selected record metadata for download
             downloadSelectionJSON: function() {
-                $http.post('/download_selection_json', { files: this.singleSelectJSON }, { responseType: 'json' })
+                $http.post(`${apiBaseUrl}/download_selection_json`, { files: this.singleSelectJSON }, { responseType: 'json' })
                     .then(function(response) {
                         var jsonStr = JSON.stringify(response.data, null, 2);
                         var blob = new Blob([jsonStr], { type: 'application/json' });
