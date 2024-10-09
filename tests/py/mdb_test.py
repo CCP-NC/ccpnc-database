@@ -7,6 +7,14 @@ import functools
 import numpy as np
 import subprocess as sp
 from hashlib import md5
+import zipfile
+import json
+import csv
+import io
+import re
+from io import BytesIO
+from flask import Flask
+
 from bson.objectid import ObjectId
 from soprano.selection import AtomSelection
 from soprano.properties.nmr import MSIsotropy
@@ -16,6 +24,7 @@ from mongomock.gridfs import enable_gridfs_integration
 
 file_path = os.path.split(__file__)[0]
 data_path = os.path.join(file_path, '../data')
+serv_path = os.path.join(file_path, '../serv')
 sys.path.append(os.path.abspath(os.path.join(file_path, '../../')))
 
 _fake_orcid = {
@@ -30,10 +39,37 @@ _fake_rdata = {
     'user_name': 'John Smith'
 }
 
+_fake_rdata2 = {
+    'chemname': 'alanine',
+    'orcid': _fake_orcid,
+    'user_name': 'John Smith'
+}
+
 _fake_vdata = {
     'license': 'cc-by',
 }
 
+_fake_vdata_bulk1 = {
+    'license': 'cc-by',
+    'doi': '10.5281/zenodo.1234567',
+    'extref_code': '1234567',
+    'extref_type': 'dbname',
+    'extref_other': None,
+    'chemform': None,
+    'notes': 'This is a test version 1',
+    'date': '2024-09-18 11:00:00.123456'
+}
+
+_fake_vdata_bulk2 = {
+    'license': 'cc-by',
+    'doi': '10.5281/zenodo.7654321',
+    'extref_code': '7654321',
+    'extref_type': 'dbname',
+    'extref_other': None,
+    'chemform': None,
+    'notes': 'This is a test version 2',
+    'date': '2024-09-18 11:20:00'
+}
 
 def clean_db(method):
     @functools.wraps(method)
@@ -55,6 +91,7 @@ class MagresDBTest(unittest.TestCase):
         from ccpncdb.config import Config
         from ccpncdb.magresdb import MagresDB
         from ccpncdb.utils import read_magres_file
+        from ccpncdb.server import MainServer
 
         config = Config()
         client = config.client()
@@ -62,6 +99,15 @@ class MagresDBTest(unittest.TestCase):
         self.mdb = MagresDB(client, 'ccpnc-test')
         with open(os.path.join(data_path, 'ethanol.magres')) as f:
             self.eth = read_magres_file(f)
+
+        self.app = Flask(__name__)
+        self.server = MainServer(path=serv_path,db=self.mdb)
+        self.test_client = self.app.test_client()
+
+        # Add a route to simulate the download_selection_zip flask endpoint
+        @self.app.route('/download_selection_zip', methods=['POST'])
+        def download_selection_zip():
+            return self.server.download_selection_zip()
 
     @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
     @clean_db
@@ -482,6 +528,105 @@ class MagresDBTest(unittest.TestCase):
         self.assertEqual(self.mdb.generate_id(), '0000002')
         self.assertEqual(self.mdb.generate_id(), '0000003')
 
+    @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
+    @clean_db
+    def testBulkDownload(self):
+
+        # Add test records to the database with additional version data to each record
+        with open(os.path.join(data_path, 'ethanol.magres')) as f:
+            res1 = self.mdb.add_record(f, _fake_rdata, _fake_vdata_bulk1)
+
+        with open(os.path.join(data_path, 'alanine.magres')) as f:
+            res2 = self.mdb.add_record(f, _fake_rdata2, _fake_vdata_bulk2)
+
+        # Retrieve records from the database
+        rec1 = self.mdb.magresIndex.find_one({'_id': ObjectId(res1.id)})
+        rec2 = self.mdb.magresIndex.find_one({'_id': ObjectId(res2.id)})
+
+        # Read the files' magresFileIDs
+        fs_id1 = str(rec1['last_version']['magresFilesID'])
+        fs_id2 = str(rec2['last_version']['magresFilesID'])
+
+        # Assign filenames for bulk download
+        filename1 = 'MRD'+rec1['immutable_id']
+        filename2 = 'MRD'+rec2['immutable_id']
+
+        # Convert ObjectId fields in rec1 and rec2 to strings
+        for item in rec1:
+            if isinstance(rec1[item], ObjectId):
+                rec1[item] = str(rec1[item])
+        for item in rec2:
+            if isinstance(rec2[item], ObjectId):
+                rec2[item] = str(rec2[item])
+
+        # Compile list of files for bulk download to simulate a file payload
+        selectedItems = {
+            'files': [{'fileID':fs_id1,'filename':filename1, 'jsonData':rec1, 'version':0},
+                      {'fileID':fs_id2,'filename':filename2, 'jsonData':rec2, 'version':0}]
+                      }
+        
+        # Simulate a request to download the selected files
+        response = self.test_client.post('/download_selection_zip', json=selectedItems)
+
+        # Check the response status code for successful download
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the response content type is a ZIP archive
+        self.assertEqual(response.mimetype, 'application/zip')
+
+        # Read the ZIP archive from the response for checking its contents
+        archive = zipfile.ZipFile(BytesIO(response.data))
+
+        # Check that the expected files are in the archive
+        self.assertIn('Magres_metadata.json', archive.namelist()) # Check for JSON metadata file
+        self.assertIn('Magres_metadata.csv', archive.namelist()) # Check for CSV metadata file
+        self.assertIn(f"{filename1}.magres", archive.namelist()) # Check for correctly named first magres file
+        self.assertIn(f"{filename2}.magres", archive.namelist()) # Check for correctly named second magres file
+
+        # Check the contents of the JSON metadata file
+        with archive.open('Magres_metadata.json') as json_file:
+            json_metadata = json.load(json_file)
+            self.assertIn(f"{filename1}.magres metadata", json_metadata)
+            self.assertIn(f"{filename2}.magres metadata", json_metadata)
+
+        # Check the contents of the CSV metadata file
+        with archive.open('Magres_metadata.csv') as csv_file:
+            # Wrap the binary file object with TextIOWrapper to decode it to a string
+            text_csv = io.TextIOWrapper(csv_file, encoding='utf-8')
+            csv_reader = csv.DictReader(text_csv)
+            rows = list(csv_reader)
+            self.assertEqual(len(rows), 2)
+            self.assertEqual(rows[0]['filename'], f"{filename1}")
+            self.assertEqual(rows[1]['filename'], f"{filename2}")
+
+        # Define a function to check magres file contents
+        def magres_check(filename, magres_data, should_raise_error=False):
+            # Check for the presence of the mandatory calculation metadata block, log error if absent
+            calculation_pattern = re.compile(r'(\[calculation\].*?\[/calculation\])|(<calculation>.*?</calculation>)', re.DOTALL)
+            if should_raise_error:
+                with self.assertRaises(AssertionError, msg=f"Calculation metadata block is missing in {filename}.magres"):
+                    self.assertRegex(magres_data, calculation_pattern, "Calculation metadata block is missing")
+            else:
+                self.assertRegex(magres_data, calculation_pattern, "Calculation metadata block is missing")
+
+            # Check for the presence of the mandatory atoms data block, log error if absent
+            atoms_pattern = re.compile(r'(\[atoms\].*?\[/atoms\])|(<atoms>.*?</atoms>)', re.DOTALL)
+            self.assertRegex(magres_data, atoms_pattern, "Atoms data block is missing")
+
+            # Check for the presence of the mandatory magres data block, log error if absent
+            magres_pattern = re.compile(r'(\[magres\].*?\[/magres\])|(<magres>.*?</magres>)', re.DOTALL)
+            self.assertRegex(magres_data, magres_pattern, "Magres data block is missing")
+
+        # Check the contents of the first magres file
+        with archive.open(f"{filename1}.magres") as magres_file:
+            magres_data = magres_file.read().decode('utf-8') #decode the binary file object from read() to a string
+            magres_check(filename1, magres_data)
+
+        # Check the contents of the second magres file
+        with archive.open(f"{filename2}.magres") as magres_file:
+            magres_data = magres_file.read().decode('utf-8') #decode the binary file object from read() to a string
+            magres_check(filename2, magres_data, should_raise_error=True)
+            
 
 if __name__ == '__main__':
 

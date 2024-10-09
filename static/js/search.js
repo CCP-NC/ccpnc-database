@@ -13,7 +13,7 @@ function parseSearchResults(s) {
 
 function addSearchController(ngApp) {
 
-    ngApp.controller('SearchController', function($scope) {
+    ngApp.controller('SearchController', ['$scope','SelectionService', function($scope, SelectionService) {
 
         $scope.message = '';
 
@@ -83,6 +83,9 @@ function addSearchController(ngApp) {
                 }
             }
 
+            // Clear the selections before performing a new search
+            SelectionService.clearAllSelections();
+
             $.ajax(query);
             last_query = query;
         }
@@ -94,5 +97,5 @@ function addSearchController(ngApp) {
             }
         }
 
-    });
+    }]);
 }

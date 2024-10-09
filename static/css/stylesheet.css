@@ -100,6 +100,15 @@ tt {
     width: 900px;
 }
 
+.hseparator {
+    margin-left: 25px;
+}
+
+.separator-p5 {
+    display: block;
+    margin-bottom: 10px;
+}
+
 .separator-1 {
     display: block;
     margin-bottom: 20px;
@@ -126,7 +135,7 @@ tt {
 .is-scroll-y {
     position: relative;
     overflow-y: scroll;
-    max-height: 55vh;
+    max-height: 87vh;
 }
 
 .database-record {
@@ -215,19 +224,54 @@ p.faq span {
 }
 
 /* A checkbox emulating the style of Bulma text boxes */
-.large-checkbox { 
+/* .large-checkbox { 
     width: 2.5em;
     padding: 10%;
+} */
+ .checkbox-table-container {
+    display: flex;
+    align-items: center;
+ }
+
+ .checkbox-top {
+    align-self: flex-start;
+}
+
+ .table {
+    flex-grow: 1;
+ }
+
+.large-checkbox { 
+    width: 15px;
+    height: 15px; /* Ensure height is also set */
+    padding: 2px;
+    margin-right: 10px;
+    appearance: none; /* Remove default checkbox styling */
+    border: 2px solid #000; /* Add border to make it visible */
+    border-radius: 4px; /* Optional: rounded corners */
+    display: inline-block; /* Ensure it behaves like a checkbox */
+    position: relative; /* For positioning the checkmark */
 }
 
 .large-checkbox:checked::after {
+    content: ' ';
+    position: absolute; /* Position relative to the checkbox */
+    top: 10%; /* Adjust to center the checkmark */
+    left: 10%; /* Adjust to center the checkmark */
+    height: 80%; /* Adjust size of the checkmark */
+    width: 80%; /* Adjust size of the checkmark */
+    border-radius: 4px;
+    background-color: #00b89c;
+}
+
+/* .large-checkbox:checked::after {
     content: ' ';
     margin: 0;
     height: 100%;
     width: 100%;
     border-radius: 4px;
     background-color: #00b89c;
-}
+} */
 
 /* A slider toggle switch */
 .switch {
