@@ -3,7 +3,7 @@
 // Directive for database records
 function addRecordDirective(ngApp) {
 
-    ngApp.directive('databaseRecord', ['SelectionService', 'loginStatus', function(SelectionService,loginStatus) {
+    ngApp.directive('databaseRecord', ['SelectionService', 'loginStatus', 'DoiAuthorsService', function(SelectionService,loginStatus,DoiAuthorsService) {
         return {
             templateUrl: 'templates/database_record.html',
             scope: {
@@ -168,6 +168,22 @@ function addRecordDirective(ngApp) {
                 }
 
                 scope.isExpanded = false;
+
+                // Function to fetch author information
+                function fetchAuthorInfo(doi) {
+                    if (doi) {
+                        DoiAuthorsService.getAuthorInfo(doi).then(function(authorsList) {
+                            scope.authorsList = authorsList;
+                        });
+                    } else {
+                        scope.authorsList = 'Author information loading...';
+                    }
+                }
+
+                scope.$watch('_selected_index', function(newVal, oldVal) {
+                    fetchAuthorInfo(scope.databaseRecord.version_history[newVal].doi);
+                });
+
             }
         };
     }]);
