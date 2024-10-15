@@ -166,6 +166,8 @@ function addRecordDirective(ngApp) {
                     SelectionService.singleSelectJSON.push({fileID: target_val, filename: filename, jsonData: result, version: version_num});
                     SelectionService.downloadSelectionJSON();
                 }
+
+                scope.isExpanded = false;
             }
         };
     }]);

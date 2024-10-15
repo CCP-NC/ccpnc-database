@@ -84,8 +84,8 @@
             </tr>            
             <tr ng-if="databaseRecord.version_history[_selected_index].magres_calc">
                 <th class="width-1">Calculation details:</th>
-                <td class="width-3" colspan="3">
-                    <pre class="expandable">
+                <td class="width-3" colspan="3" ng-click="isExpanded = !isExpanded" ng-class="{'expanded': isExpanded}">
+                    <pre class="expandable" ng-class="{'expanded': isExpanded}">
                         <p ng-repeat="(name, value) in mcalc_blocks[_selected_index]">{{name}}: {{value[0]}}</p>
                     </pre>
                 </td>
