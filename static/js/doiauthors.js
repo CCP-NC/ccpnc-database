@@ -1,6 +1,6 @@
 function addAuthorsService(ngApp) {
 
-    ngApp.service('DoiAuthorsService', ['$http', function($http) {
+    ngApp.service('DoiAuthorsService', ['$http', '$sce', function($http, $sce) {
 
         // Ensure ccpnc_config is defined when loading js/config.js into index.html
         if (typeof ccpnc_config === 'undefined') {
@@ -14,7 +14,7 @@ function addAuthorsService(ngApp) {
             getAuthorInfo: function(doi) {
                 return $http.get(`${apiBaseUrl}/api/works`, { params: { doi: doi } })
                     .then(function(response) {
-                        return response.data;
+                        return $sce.trustAsHtml(response.data);
                     })
                     .catch(function(error) {
                         console.error('Error fetching author information:', error);

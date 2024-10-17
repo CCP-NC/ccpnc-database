@@ -266,14 +266,17 @@ class MainServer(object):
             return ('Unknown database error',
                     self.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    
     def get_author_info(self, doi):
         try:
             response = requests.get(f'https://api.crossref.org/works/{doi}')
             response.raise_for_status()
             data = response.json()
             authors = data['message']['author']
-            authors_list = ', '.join([f"{author['given']} {author['family']}" for author in authors])
+            orcid_authors = [
+                f'<a href="{author["ORCID"]}" target="_blank">{author["given"]} {author["family"]}</a>' if 'ORCID' in author else f"{author['given']} {author['family']}"
+                for author in authors
+                ]
+            authors_list = ',<br>'.join(orcid_authors)
             return jsonify(authors_list), self.HTTP_200_OK
         except requests.exceptions.RequestException as e:
             print(f"Error fetching author information: {e}")
