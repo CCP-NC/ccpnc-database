@@ -24,6 +24,16 @@
                 <td class="width-1"><a href="{{databaseRecord.orcid.uri}}" target="_blank">{{databaseRecord.orcid.path}}</a></td>
             </tr>
         </thead>
+        <tbody ng-if="is_page">
+            <tr>
+                <th class="width-1">Unit cell formula:</th>
+                <td class="width-3" colspan="3">
+                    <span ng-repeat="el in databaseRecord.formula">
+                        {{el.species}}<sub>{{el.n}}</sub>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
         <tbody>
             <tr>
                 <th class="width-1">Number of versions: </th>
