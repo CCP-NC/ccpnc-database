@@ -203,6 +203,22 @@ function addRecordDirective(ngApp) {
                     fetchAuthorInfo(scope.databaseRecord.version_history[newVal].doi);
                 });
 
+                scope.toggleExpand = function() {
+                    scope.isExpanded = !scope.isExpanded;
+                };
+
+                scope.copyToClipboard = function(event, index) {
+                    var textToCopy = JSON.stringify(scope.mcalc_blocks[index], null, 2);
+                    textToCopy = textToCopy.slice(1, -1); // Remove the first and last characters (the curly braces)
+                
+                    // Use the Clipboard API to copy text
+                    navigator.clipboard.writeText(textToCopy).then(function() {
+                        alert('Calculation details copied to clipboard!');
+                    }).catch(function(err) {
+                        console.error('Failed to copy text: ', err);
+                    });
+                };
+
             }
         };
     }]);
