@@ -143,7 +143,26 @@ function addRecordDirective(ngApp) {
                 scope.mcalc_blocks = [];
 
                 for (var i = 0; i < scope.databaseRecord.version_history.length; ++i) {
-                    scope.mcalc_blocks.push(JSON.parse(scope.databaseRecord.version_history[i].magres_calc));
+                    // scope.mcalc_blocks.push(JSON.parse(scope.databaseRecord.version_history[i].magres_calc));
+                    let calcString = scope.databaseRecord.version_history[i].magres_calc;
+                    let calcStringUnwrap = JSON.parse(calcString);
+                    let targetDict = {};
+
+                    for (let dictElem in calcStringUnwrap) {
+                        if (calcStringUnwrap[dictElem][0].length === 1) {
+                            targetDict[dictElem] = calcStringUnwrap[dictElem][0][0];
+                        } else if (dictElem === 'calc_pspot') {
+                            let finalElem = {};
+                            for (let elem of calcStringUnwrap[dictElem]) {
+                                finalElem[elem[0]] = elem[1];
+                            }
+                            targetDict[dictElem] = finalElem;
+                        } else {
+                            targetDict[dictElem] = calcStringUnwrap[dictElem][0].join(' ');
+                        }
+                    }
+
+                    scope.mcalc_blocks.push(targetDict);
                 }
 
                 scope.selectionChange = function(result) {
