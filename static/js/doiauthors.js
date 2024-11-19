@@ -12,7 +12,7 @@ function addAuthorsService(ngApp) {
 
         var service = {
             getAuthorInfo: function(doi) {
-                return $http.get(`${apiBaseUrl}/api/works`, { params: { doi: doi } })
+                return $http.get(`${apiBaseUrl}/get_authors`, { params: { doi: doi } })
                     .then(function(response) {
                         return $sce.trustAsHtml(response.data);
                     })

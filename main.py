@@ -64,7 +64,7 @@ def search():
     return serv.search()
 
 
-@app.route('/api/works', methods=['GET'])
+@app.route('/get_authors', methods=['GET'])
 def get_author_info():
     doi = request.args.get('doi')
     return serv.get_author_info(doi)
