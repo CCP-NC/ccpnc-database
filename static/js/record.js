@@ -194,8 +194,6 @@ function addRecordDirective(ngApp) {
                         DoiAuthorsService.getAuthorInfo(doi).then(function(authorsList) {
                             scope.authorsList = authorsList;
                         });
-                    } else {
-                        scope.authorsList = 'Author information loading...';
                     }
                 }
 
