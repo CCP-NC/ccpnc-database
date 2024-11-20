@@ -39,6 +39,7 @@ class MainServer(object):
     HTTP_200_OK = 200
     HTTP_400_BAD_REQUEST = 400
     HTTP_401_UNAUTHORIZED = 401
+    HTTP_404_NOT_FOUND = 404
     HTTP_500_INTERNAL_SERVER_ERROR = 500
 
     # Log types
@@ -280,7 +281,7 @@ class MainServer(object):
             return jsonify(authors_list), self.HTTP_200_OK
         except requests.exceptions.RequestException as e:
             print(f"Error fetching author information: {e}")
-            return jsonify('Error fetching author information'), self.HTTP_500_INTERNAL_SERVER_ERROR
+            return jsonify('Error fetching author information'), self.HTTP_404_NOT_FOUND
     
     def unpack_file(self, file):
         """

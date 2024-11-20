@@ -9,19 +9,38 @@ function addAuthorsService(ngApp) {
         }
 
         const apiBaseUrl = ccpnc_config.server_app;
+        const requestTimeout = 10000; // 10 seconds timeout
+        const maxRetries = 2; // Number of retries
 
         var service = {
             getAuthorInfo: function(doi) {
-                return $http.get(`${apiBaseUrl}/get_authors`, { params: { doi: doi } })
-                    .then(function(response) {
-                        return $sce.trustAsHtml(response.data);
-                    })
-                    .catch(function(error) {
-                        console.error('Error fetching author information:', error);
-                        return 'Error fetching author information';
-                    });
+                return makeRequest(doi, maxRetries);
+            }
+        };
+
+        function makeRequest(doi, retries) {
+            return $http({
+                method: 'GET',
+                url: `${apiBaseUrl}/get_authors`,
+                params: { doi: doi },
+                timeout: requestTimeout
+            })
+            .then(function(response) {
+                return $sce.trustAsHtml(response.data);
+            })
+            .catch(function(error) {
+                if (error.status === 404) {
+                    console.error('DOI not found:', error);
+                    return $sce.trustAsHtml('DOI not found on Crossref. Please check the DOI again.');
+                } else if (retries > 0) {
+                    console.warn(`Retrying... (${maxRetries - retries + 1}/${maxRetries})`);
+                    return makeRequest(doi, retries - 1);
+                } else if (error.status === -1) {
+                    console.error('Request timed out.');
+                    return $sce.trustAsHtml('Request timed out. Please try again later.');
+                }
+            });
         }
-    };
     
     return service;
 }]);
