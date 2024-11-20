@@ -193,12 +193,23 @@ function addRecordDirective(ngApp) {
                     if (doi) {
                         DoiAuthorsService.getAuthorInfo(doi).then(function(authorsList) {
                             scope.authorsList = authorsList;
+                        }).catch(function(error) {
+                            scope.authorsList = error;
                         });
                     }
                 }
 
-                scope.$watch('_selected_index', function(newVal, oldVal) {
-                    fetchAuthorInfo(scope.databaseRecord.version_history[newVal].doi);
+                // scope.$watch('_selected_index', function(newVal, oldVal) {
+                //     fetchAuthorInfo(scope.databaseRecord.version_history[newVal].doi);
+                // });
+                // Watch for changes in _selected_index and is_page
+                scope.$watchGroup(['_selected_index', 'is_page'], function(newValues, oldValues) {
+                    var newIndex = newValues[0];
+                    var isPage = newValues[1];
+                    
+                    if (isPage && scope.databaseRecord.version_history[newIndex].doi) {
+                        fetchAuthorInfo(scope.databaseRecord.version_history[newIndex].doi);
+                    }
                 });
 
                 scope.toggleExpand = function() {
