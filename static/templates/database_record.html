@@ -57,9 +57,6 @@
         </tbody>
         <tbody ng-if="is_page">
             <tr>
-                <td colspan="4"></td>
-            </tr>
-            <tr>
                 <th class="width-1">License:</th>
                 <td class="width-3" ng-switch="databaseRecord.version_history[_selected_index].license" colspan="3">
                     <a class="has-text-weight-bold" href="http://www.opendatacommons.org/licenses/pddl/1.0/" ng-switch-when="pddl" target="_blank">PDDL</a>
@@ -87,6 +84,10 @@
                 <th class="width-1">DOI:</th>
                 <td class="width-3" colspan="3"><a href="https://doi.org/{{databaseRecord.version_history[_selected_index].doi}}" target="_blank">{{databaseRecord.version_history[_selected_index].doi}}</a></td>
             </tr>
+            <tr ng-if="databaseRecord.version_history[_selected_index].doi">
+                <th class="width-1">Authors:</th>
+                <td class="width-3" colspan="3" ng-bind-html="authorsList"></td>
+            </tr>
             <tr ng-if="databaseRecord.version_history[_selected_index].chemform">
                 <th class="width-1">Additional structural descriptors:</th>
                 <td class="width-3" colspan="3">{{databaseRecord.version_history[_selected_index].chemform}}</td>
@@ -94,13 +95,20 @@
             <tr ng-if="databaseRecord.version_history[_selected_index].notes">
                 <th class="width-1">Notes:</th>
                 <td class="width-3" colspan="3">{{databaseRecord.version_history[_selected_index].notes}}</td>
-            </tr>            
+            </tr>
             <tr ng-if="databaseRecord.version_history[_selected_index].magres_calc">
                 <th class="width-1">Calculation details:</th>
                 <td class="width-3" colspan="3">
-                    <pre class="expandable">
-                        <p ng-repeat="(name, value) in mcalc_blocks[_selected_index]">{{name}}: {{value[0]}}</p>
-                    </pre>
+                    <div class="expandable-container">
+                        <pre class="expandable" ng-click="toggleExpand()" ng-class="{'expanded': isExpanded}">
+                            <p ng-repeat="(name, value) in mcalc_blocks[_selected_index]">{{name}}: {{value}}</p>
+                        </pre>
+                    </div>
+                    <span class="separator-p5"></span>
+                    <div style="text-align: center;">
+                        <button class="button is-success is-normal" ng-if="isExpanded" ng-click="copyToClipboard($event, _selected_index)">Copy calculation details</button>
+                    </div>
+                    <span class="separator-p5"></span>
                 </td>
             </tr>
         </tbody>

@@ -13,7 +13,7 @@ import csv
 import io
 import re
 from io import BytesIO
-from flask import Flask
+from flask import Flask, request
 
 from bson.objectid import ObjectId
 from soprano.selection import AtomSelection
@@ -71,6 +71,11 @@ _fake_vdata_bulk2 = {
     'date': '2024-09-18 11:20:00'
 }
 
+_fake_vdata_good_doi = {
+    'license': 'cc-by',
+    'doi': '10.1016/j.ssnmr.2020.101662'
+}
+
 def clean_db(method):
     @functools.wraps(method)
     def clean_method(self):
@@ -108,6 +113,12 @@ class MagresDBTest(unittest.TestCase):
         @self.app.route('/download_selection_zip', methods=['POST'])
         def download_selection_zip():
             return self.server.download_selection_zip()
+        
+        # Add a route to simulate the get_author_info flask endpoint
+        @self.app.route('/get_authors', methods=['GET'])
+        def get_author_info():
+            doi = request.args.get('doi')
+            return self.server.get_author_info(doi)
 
     @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
     @clean_db
@@ -626,7 +637,57 @@ class MagresDBTest(unittest.TestCase):
         with archive.open(f"{filename2}.magres") as magres_file:
             magres_data = magres_file.read().decode('utf-8') #decode the binary file object from read() to a string
             magres_check(filename2, magres_data, should_raise_error=True)
-            
+
+    @mongomock.patch("mongodb://localhost:27017", on_new="pymongo")
+    @clean_db
+    def testFetchAuthorInfo(self):
+        
+        # Add test records to the database with bad and good doi
+        # Record with good doi
+        with open(os.path.join(data_path, 'ethanol.magres')) as f:
+            res1 = self.mdb.add_record(f, _fake_rdata, _fake_vdata_good_doi)
+
+        # Record with bad doi
+        with open(os.path.join(data_path, 'alanine.magres')) as f:
+            res2 = self.mdb.add_record(f, _fake_rdata2, _fake_vdata_bulk2)
+
+        # Retrieve records from the database
+        rec1 = self.mdb.magresIndex.find_one({'_id': ObjectId(res1.id)})
+        rec2 = self.mdb.magresIndex.find_one({'_id': ObjectId(res2.id)})
+        
+        # Test DOI values for fetching author info
+        valid_doi = rec1['last_version']['doi']
+        invalid_doi = rec2['last_version']['doi']
+
+        # Define the expected author names
+        expected_authors = [
+            "Emily K. Corlett",
+            "Helen Blade",
+            "Leslie P. Hughes",
+            "Philip J. Sidebottom",
+            "David Walker",
+            "Richard I. Walton",
+            "Steven P. Brown"
+        ]
+
+        # Test api response for valid doi
+        with self.app.test_request_context():
+            response = self.test_client.get(f'/get_authors?doi={valid_doi}')
+            response_data = response.data.decode('utf-8')
+
+            # Check that each expected author name is present in the response data
+            for author in expected_authors:
+                self.assertIn(author, response_data)
+
+        # Test api response for invalid doi
+        with self.app.test_request_context():
+            response = self.test_client.get(f'/get_authors?doi={invalid_doi}')
+            response_data = response.data.decode('utf-8')
+
+            # Assert that the response data contains the error message
+            self.assertIn('Error fetching author information', response_data)
+            # Check the response status code for resource not found
+            self.assertEqual(response.status_code, 404)
 
 if __name__ == '__main__':
 

@@ -10,6 +10,7 @@ import json
 import inspect
 import ase
 import flask
+from flask import request
 import soprano
 from ccpncdb.server import MainServer
 
@@ -61,6 +62,12 @@ def hide():
 @app.route('/search', methods=['POST'])
 def search():
     return serv.search()
+
+
+@app.route('/get_authors', methods=['GET'])
+def get_author_info():
+    doi = request.args.get('doi')
+    return serv.get_author_info(doi)
 
 
 @app.route('/get_record', methods=['POST'])

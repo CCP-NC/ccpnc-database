@@ -33,6 +33,7 @@
   console.log('Loading services...');
   addSelectionService(ccpncApp);
   addSingleSelectionService(ccpncApp);
+  addAuthorsService(ccpncApp);
 
   // Manual bootstrap (automatic one creates problem with order in which scripts are loaded)
   console.log('Bootstrapping app...');
