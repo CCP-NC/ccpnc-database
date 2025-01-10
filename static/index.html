@@ -143,10 +143,51 @@
 
         <div class="main-section" ng-switch="open_tab">
             <div id="div-home" class="section" ng-switch-default ng-cloak>
-                <div class="container">
-                    <p>
-                        This is the prototype interface for the CCP-NC database of calculated NMR data.
+                <div class="content">
+                    <p class="title is-4">
+                        Welcome to the CCP-NC Magres Database
                     </p>
+                    <p>
+                        The Magres database is a repository of first-principle computational results for solid-state NMR Crystallography, stored in the <a href="https://www.ccpnc.ac.uk/docs/magres/magres-format.pdf">magres</a> format. This resource provides a central platform for researchers to share, explore, and utilise data associated with calculations of NMR parameters in solid-state structures.
+                    </p>
+                    <div style="margin-bottom: 20px;"></div>
+                    <p class="subtitle is-5">
+                        What is the Magres Format?
+                    </p>
+                    <div style="margin-bottom: 5px;"></div>
+                    <p>
+                        The <a href="https://www.ccpnc.ac.uk/docs/magres/magres-format.pdf">magres format</a> is a text-based file format developed within CCP-NC to archive the results of ab initio calculations of NMR parameters. It serves as a comprehensive, self-sufficient, archival format, ensuring that all relevant computational details are preserved for future reference. Supported by major computational codes such as <a href="https://www.castep.org/">CASTEP</a> and <a href="https://www.quantum-espresso.org/">Quantum ESPRESSO</a>, the magres format enables seamless data sharing and processing within the NMR Crystallography community.
+                    </p>
+
+                    <p class="subtitle is-5">
+                        Who Can Contribute?
+                    </p>
+                    <p>
+                        Contributions to the database are encouraged from:
+                        <ul>
+                            <li>NMR spectroscopists,</li>
+                            <li>Crystallographers,</li>
+                            <li>Materials scientists,</li>
+                            <li>Computational modelers.</li>
+                        </ul> 
+                        Deposits require an ORCID ID and must be in the magres format.
+                    </p>
+        
+                    <p class="subtitle is-5">
+                        Supported Tools and Software
+                    </p>
+                    <ul>
+                        <li>
+                            <a href="https://www.castep.org/">CASTEP</a> and <a href="https://www.quantum-espresso.org/">Quantum ESPRESSO</a> for generating magres files
+                        </li>
+                        <li>
+                            <a href="https://ccp-nc.github.io/magresview-2/">MagresView</a> and <a href="https://ccp-nc.github.io/soprano/intro.html">Soprano</a> for visualising and processing magres data
+                        </li>
+                    </ul>
+
+                    <!-- <p>
+                        This is the prototype interface for the CCP-NC database of calculated NMR data.
+                    </p> -->
 
                     <p>
                         For more information and help on how to use the website, <a href="faqs.html">visit our FAQs page.</a>
