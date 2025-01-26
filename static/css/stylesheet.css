@@ -29,6 +29,10 @@ a.navbar-item:hover {
     color: #ffcc00 !important;
 }
 
+input::placeholder {
+    color: #999999 !important; /* Light gray color for placeholder text */
+}
+
 /* I'm not sure if we need this customisation - I can't test on local */
 
 /* .tabs li.is-active a {
