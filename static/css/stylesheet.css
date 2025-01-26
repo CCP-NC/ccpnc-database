@@ -21,6 +21,14 @@ a.navbar-item:hover {
     color: #adbfd2;
 }
 
+.navbar-item .has-text-primary {
+    color: #ffff00 !important;
+}
+
+.navbar-item .has-text-primary:hover {
+    color: #ffcc00 !important;
+}
+
 /* I'm not sure if we need this customisation - I can't test on local */
 
 /* .tabs li.is-active a {
