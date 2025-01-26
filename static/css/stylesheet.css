@@ -29,8 +29,20 @@ a.navbar-item:hover {
     color: #ffcc00 !important;
 }
 
+.navbar-item .has-text-primary:focus {
+    color: #ffcc00 !important;
+}
+
 input::placeholder {
     color: #999999 !important; /* Light gray color for placeholder text */
+}
+
+.contact-link:hover {
+    color: #adbfd2 !important; /* Slightly darker yellow for the link text on hover and focus */
+}
+
+.contact-link:focus {
+    color: #ffcc00 !important;
 }
 
 /* I'm not sure if we need this customisation - I can't test on local */
