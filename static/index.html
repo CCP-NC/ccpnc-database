@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="en">
 <html>
 <head>
     <meta charset="utf-8">
@@ -45,7 +46,7 @@
 <body ng-controller="NavigateController">
 
     <div ng-controller="CookieLawController">
-        <div class="notification is-primary is-borderless" ng-show="!approved" ng-cloak>
+        <div class="notification is-info is-borderless has-text-dark" ng-show="!approved" ng-cloak>
             <button class="delete" ng-click="approve()"></button>
             <p>This site uses cookies in order to store and keep track of your login information. If you keep using this
                 site,
@@ -57,7 +58,7 @@
     <div ng-if="!(recordref)">
         <nav class="navbar">
             <div class="navbar-brand">
-                <a class="nabvar-item has-text-centered" href="https://www.ccpnc.ac.uk">
+                <a class="nabvar-item has-text-centered has-text-info" href="https://www.ccpnc.ac.uk">
                     <span id="ccpnc-logo" class="is-size-1">CCP-NC</span>
                 </a>
                 <div class="navbar-burger burger is-size-2" ng-click="show_menu_mobile();" data-target="#navBarCCPNC">
@@ -93,7 +94,7 @@
 <!--                
                     *This used to be its own tab, but now redirects to a contact form on the CCP-NC website*
  -->
-                    <a class="navbar-item" href="https://www.ccpnc.ac.uk/contact-us" target="_blank">
+                    <a class="navbar-item contact-link" href="https://www.ccpnc.ac.uk/contact-us" target="_blank">
                         Contact us
                         &nbsp;
                         <i class="fa fa-file-text" aria-hidden="true"></i>
@@ -234,11 +235,11 @@
 
                 <div class="container has-text-centered">
 
-                    <div class="notification has-background-grey-lighter" ng-repeat="search_spec in search_specs">
+                    <div class="notification" ng-repeat="search_spec in search_specs">
 
                         <button class="delete" ng-click="remove_spec($index)"></button>
 
-                        <table class="table is-fullwidth is-bordered has-background-light is-fixed search-form">
+                        <table class="table is-fullwidth is-bordered is-fixed search-form">
                             <tr>
                                 <td class="width-1" colspan="1" rowspan="" headers="" style="vertical-align: middle;">
                                     Search type
@@ -580,7 +581,7 @@
 
                 <form id="upload-form" enctype="multipart/form-data" action="upload" method="post">
                     <div class="table-container" >
-                            <table class="table is-fullwidth is-narrow has-background-light">
+                            <table class="table is-fullwidth is-narrow">
                                 <thead record-table="{}">
                                 </thead>
                                 <tbody version-table="{license: 'pddl', extref_type: 'csd'}"> <!-- The license thing here helps initialise the values -->
@@ -672,7 +673,7 @@
     <div ng-if="recordref" ng-controller="RecordController" ng-cloak>
         <nav class="navbar">
             <div class="navbar-brand">
-                <a class="nabvar-item has-text-centered" href="https://www.ccpnc.ac.uk">
+                <a class="nabvar-item has-text-centered has-text-info" href="https://www.ccpnc.ac.uk">
                     <span id="ccpnc-logo" class="is-size-1">CCP-NC</span>
                 </a>
             </div>

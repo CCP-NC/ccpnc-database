@@ -8,18 +8,49 @@ body {
     flex-direction: column;
 }
 
-a {
-    color: hsl(171, 100%, 41%);
+.button.is-primary:hover {
+    background-color: #a1cee9;
+    color: #000;
+}
+
+.notification.is-info.has-text-dark a {
+    color: #34495e; /* Dark color for links */
 }
 
 a.navbar-item:hover {
-    color: hsl(171, 100%, 41%);
+    color: #adbfd2;
 }
 
-.tabs li.is-active a {
+.navbar-item .has-text-primary {
+    color: #ffff00 !important;
+}
+
+.navbar-item .has-text-primary:hover {
+    color: #ffcc00 !important;
+}
+
+.navbar-item .has-text-primary:focus {
+    color: #ffcc00 !important;
+}
+
+input::placeholder {
+    color: #999999 !important; /* Light gray color for placeholder text */
+}
+
+.contact-link:hover {
+    color: #adbfd2 !important; /* Slightly darker yellow for the link text on hover and focus */
+}
+
+.contact-link:focus {
+    color: #ffcc00 !important;
+}
+
+/* I'm not sure if we need this customisation - I can't test on local */
+
+/* .tabs li.is-active a {
     color: hsl(171, 100%, 41%);
     border-bottom-color: hsl(171, 100%, 41%);
-}
+} */
 
 tt {
     background-color: #eeeeee;
@@ -141,9 +172,7 @@ tt {
 .database-record {
     display: block;
     padding: 15px;
-    background-color: #ffffff;
     margin-bottom: 5px;
-    border: solid 1px #00d1b2;
     border-radius: 5px;
 }
 
@@ -245,10 +274,7 @@ p.faq span {
  }
 
 .large-checkbox { 
-    width: 15px;
-    height: 15px; /* Ensure height is also set */
-    padding: 2px;
-    margin-right: 10px;
+    padding: 0.75%;
     appearance: none; /* Remove default checkbox styling */
     border: 2px solid #000; /* Add border to make it visible */
     border-radius: 4px; /* Optional: rounded corners */

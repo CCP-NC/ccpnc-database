@@ -1,7 +1,7 @@
 <div class="database-record">
     <div class="checkbox-table-container">
     <input type="checkbox" ng-show="!is_page" ng-model="databaseRecord.isChecked" ng-click="selectionChange(databaseRecord)" style="margin-right: 10px;" class="large-checkbox checkbox-top"> <!--Adding a checkbox-->
-    <table class="table is-fullwidth is-bordered is-fixed has-background-light">
+    <table class="table is-fullwidth is-bordered is-fixed">
         <thead ng-if="!is_page">
             <tr>
                 <th class="width-1">Name:</th>
@@ -106,7 +106,7 @@
                     </div>
                     <span class="separator-p5"></span>
                     <div style="text-align: center;">
-                        <button class="button is-success is-normal" ng-if="isExpanded" ng-click="copyToClipboard($event, _selected_index)">Copy calculation details</button>
+                        <button class="button is-primary is-normal" ng-if="isExpanded" ng-click="copyToClipboard($event, _selected_index)">Copy calculation details</button>
                     </div>
                     <span class="separator-p5"></span>
                 </td>
