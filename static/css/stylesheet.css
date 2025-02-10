@@ -45,6 +45,10 @@ input::placeholder {
     color: #ffcc00 !important;
 }
 
+.select::placeholder {
+    color: #999999 !important; /* Light gray color for placeholder text */
+}
+
 /* I'm not sure if we need this customisation - I can't test on local */
 
 /* .tabs li.is-active a {
