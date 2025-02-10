@@ -251,11 +251,11 @@
                                             <!-- 'negate_query' value is set to false when form loads first time, false can be set by toggle switch for AND search condition -->
                                             <select ng-model="search_spec.type"
                                                 ng-change="reset_search_args(search_spec.type)" ng-show="!search_spec.negate_query" ng-init="search_spec.negate_query = false">
-                                                <option value="doi">doi</option>
+                                                <option value="doi">Publication doi</option>
                                                 <option value="msRange">Magnetic Shielding</option>
                                                 <option value="efgRange">Electric Field Gradient V<sub>zz</sub></option>
                                                 <option value="chemname">Chemical name</option>
-                                                <option value="chemform">Form</option>
+                                                <option value="chemform">Polymorphic Form</option>
                                                 <option value="formula">Unit cell formula</option>
                                                 <option value="molecule">Molecular formula</option>
                                                 <option value="mdbref">MRD reference number</option>
@@ -266,7 +266,7 @@
                                             <!-- 'negate_query' value is set to true by toggle switch for NOT search condition -->
                                             <select ng-model="search_spec.type"
                                                 ng-change="reset_search_args(search_spec.type)" ng-show="search_spec.negate_query">
-                                                <option value="doi">doi</option>
+                                                <option value="doi">Publication doi</option>
                                                 <option value="msRange">Magnetic Shielding</option>
                                                 <option value="efgRange">Electric Field Gradient V<sub>zz</sub></option>
                                                 <option value="extref">External database reference</option>
