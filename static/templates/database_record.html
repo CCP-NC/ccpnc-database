@@ -1,7 +1,7 @@
 <div class="database-record">
     <div class="checkbox-table-container">
     <input type="checkbox" ng-show="!is_page" ng-model="databaseRecord.isChecked" ng-click="selectionChange(databaseRecord)" style="margin-right: 10px;" class="large-checkbox checkbox-top"> <!--Adding a checkbox-->
-    <table class="table is-fullwidth is-bordered is-fixed">
+    <table class="table is-fullwidth is-bordered is-fixed large-font">
         <thead ng-if="!is_page">
             <tr>
                 <th class="width-1">Name:</th>
@@ -105,8 +105,8 @@
                         </pre>
                     </div>
                     <span class="separator-p5"></span>
-                    <div style="text-align: center;">
-                        <button class="button is-primary is-normal" ng-if="isExpanded" ng-click="copyToClipboard($event, _selected_index)">Copy calculation details</button>
+                    <div style="text-align: center;" class="large-font">
+                        <button class="button is-primary is-normal large-font" ng-if="isExpanded" ng-click="copyToClipboard($event, _selected_index)">Copy calculation details</button>
                     </div>
                     <span class="separator-p5"></span>
                 </td>
@@ -115,20 +115,20 @@
     </table>
     </div>
     <span class="separator-p5"></span>
-    <a class="button is-primary hseparator" href="get_magres?magres_id={{databaseRecord.version_history[_selected_index].magresFilesID}}" download="{{filename()}}.magres">
+    <a class="button is-primary hseparator large-font" href="get_magres?magres_id={{databaseRecord.version_history[_selected_index].magresFilesID}}" download="{{filename()}}.magres">
         Download&nbsp;<i class="fa fa-download"></i>
     </a>
-    <a class="button is-primary" href="get_csv?oid={{databaseRecord.id}}&amp;v={{_selected_index}}" download="{{filename()}}.csv">
+    <a class="button is-primary large-font" href="get_csv?oid={{databaseRecord.id}}&amp;v={{_selected_index}}" download="{{filename()}}.csv">
         Download metadata (CSV)&nbsp;<i class="fa fa-download"></i>
     </a>
-    <a class="button is-primary" ng-click="jsonRetrieve(databaseRecord,_selected_index)">
+    <a class="button is-primary large-font" ng-click="jsonRetrieve(databaseRecord,_selected_index)">
         Download metadata (JSON)&nbsp;<i class="fa fa-download"></i>
     </a>
     <!-- ADMIN ONLY -->
-    <div class="button is-danger" ng-show="isadmin()" ng-click="hideshow()">
+    <div class="button is-danger large-font" ng-show="isadmin()" ng-click="hideshow()">
         Hide record
     </div>
-    <div class="button is-primary is-pulled-right" ng-click="edit()" ng-show="isown()" download>
+    <div class="button is-primary is-pulled-right large-font" ng-click="edit()" ng-show="isown()" download>
         Edit&nbsp;<i class="fa fa-edit"></i>
     </div>
 
@@ -142,7 +142,7 @@
           <p class="modal-card-title">Confirm Hide operation</p>
           <button class="delete" aria-label="close" ng-click="hideshow()"></button>
         </header>
-        <section class="modal-card-body">
+        <section class="modal-card-body large-font">
             <p>
                 Warning: hiding a record is an admin-only operation that can not be undone 
                 from the web interface. The hidden record will not be returned any more in searches
@@ -155,8 +155,8 @@
             </p>
         </section>
         <footer class="modal-card-foot">
-          <button class="button is-danger" ng-click="hide()">Hide record</button>
-          <button class="button" ng-click="hideshow()">Cancel</button>
+          <button class="button is-danger large-font" ng-click="hide()">Hide record</button>
+          <button class="button large-font" ng-click="hideshow()">Cancel</button>
         </footer>
       </div>
     </div>

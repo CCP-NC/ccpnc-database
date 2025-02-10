@@ -1,12 +1,12 @@
 <div class="container">
-    <div class="notification" ng-show="searchResults.search_complete" ng-class="searchResults.found_results? 'is-primary' : 'is-warning'">
+    <div class="notification large-font" ng-show="searchResults.search_complete" ng-class="searchResults.found_results? 'is-primary' : 'is-warning'">
         {{searchResults.found_results}} results found
     </div>
     <div class="has-text-centered">
-        <a class="button is-primary is-centered" ng-show="searchResults.search_complete" ng-click="searchResults.download_selected_zip()">
+        <a class="button is-primary is-centered large-font" ng-show="searchResults.search_complete" ng-click="searchResults.download_selected_zip()">
             Download Selection (.zip)&nbsp;<i class="fa fa-download"></i>
         </a>
-        <a class="button is-primary is-centered" ng-show="searchResults.search_complete" ng-click="searchResults.download_all_zip()">
+        <a class="button is-primary is-centered large-font" ng-show="searchResults.search_complete" ng-click="searchResults.download_all_zip()">
             Download All Results (.zip)&nbsp;<i class="fa fa-download"></i>
         </a>
     </div> 
