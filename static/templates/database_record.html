@@ -5,7 +5,7 @@
         <thead ng-if="!is_page">
             <tr>
                 <th class="width-1">Name:</th>
-                <td class="width-3" colspan="3"><a href="?mdbref={{databaseRecord.immutable_id}}" target="_blank">{{databaseRecord.chemname}}</a></td>
+                <td class="width-3" colspan="3"><a href="?mdbref={{databaseRecord.immutable_id}}" target="_blank" style="font-weight: bold; text-decoration: underline;">{{databaseRecord.chemname}}</a></td>
             </tr>
             <tr>
                 <th class="width-1">Unit cell formula:</th>
@@ -15,13 +15,13 @@
                     </span>
                 </td>
                 <th class="width-1">MRD Number:</th>
-                <td class="width-1"><a href="?mdbref={{databaseRecord.immutable_id}}" target="_blank">{{databaseRecord.immutable_id}}</a></td>
+                <td class="width-1"><a href="?mdbref={{databaseRecord.immutable_id}}" target="_blank" style="font-weight: bold; text-decoration: underline;">{{databaseRecord.immutable_id}}</a></td>
             </tr>
             <tr>
                 <th class="width-1">Submitter:</th>
                 <td class="width-1">{{databaseRecord.user_name? databaseRecord.user_name : "N/A"}}</td>
                 <th class="width-1">ORCID:</th>
-                <td class="width-1"><a href="{{databaseRecord.orcid.uri}}" target="_blank">{{databaseRecord.orcid.path}}</a></td>
+                <td class="width-1"><a href="{{databaseRecord.orcid.uri}}" target="_blank" style="font-weight: bold; text-decoration: underline;">{{databaseRecord.orcid.path}}</a></td>
             </tr>
         </thead>
         <tbody ng-if="is_page">
@@ -59,18 +59,18 @@
             <tr>
                 <th class="width-1">License:</th>
                 <td class="width-3" ng-switch="databaseRecord.version_history[_selected_index].license" colspan="3">
-                    <a class="has-text-weight-bold" href="http://www.opendatacommons.org/licenses/pddl/1.0/" ng-switch-when="pddl" target="_blank">PDDL</a>
-                    <a class="has-text-weight-bold" href="https://opendatacommons.org/licenses/by/1-0/index.html" ng-switch-when="odc-by" target="_blank">ODC-By</a>
-                    <a class="has-text-weight-bold" href="https://creativecommons.org/licenses/by/4.0" ng-switch-when="cc-by" target="_blank">CC-By</a>
+                    <a class="has-text-weight-bold" href="http://www.opendatacommons.org/licenses/pddl/1.0/" ng-switch-when="pddl" target="_blank" style="font-weight: bold; text-decoration: underline;">PDDL</a>
+                    <a class="has-text-weight-bold" href="https://opendatacommons.org/licenses/by/1-0/index.html" ng-switch-when="odc-by" target="_blank" style="font-weight: bold; text-decoration: underline;">ODC-By</a>
+                    <a class="has-text-weight-bold" href="https://creativecommons.org/licenses/by/4.0" ng-switch-when="cc-by" target="_blank" style="font-weight: bold; text-decoration: underline;">CC-By</a>
                 </td>
             </tr>
             <tr ng-if="databaseRecord.version_history[_selected_index].extref_code">
                 <th class="width-1">Database reference:</th>
                 <td class="width-3" ng-switch="databaseRecord.version_history[_selected_index].extref_type" colspan="1">
                     <span ng-if="databaseRecord.version_history[_selected_index].extref_type != 'other'">
-                        <a class="has-text-weight-bold" href="https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/" ng-switch-when="csd" target="_blank">CSD</a>
-                        <a class="has-text-weight-bold" href="https://www.psds.ac.uk/icsd" ng-switch-when="icsd" target="_blank">ICSD</a>
-                        <a class="has-text-weight-bold" href="http://www.crystallography.net/cod/index.php" ng-switch-when="cod" target="_blank">COD</a>
+                        <a class="has-text-weight-bold" href="https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/" ng-switch-when="csd" target="_blank" style="font-weight: bold; text-decoration: underline;">CSD</a>
+                        <a class="has-text-weight-bold" href="https://www.psds.ac.uk/icsd" ng-switch-when="icsd" target="_blank" style="font-weight: bold; text-decoration: underline;">ICSD</a>
+                        <a class="has-text-weight-bold" href="http://www.crystallography.net/cod/index.php" ng-switch-when="cod" target="_blank" style="font-weight: bold; text-decoration: underline;">COD</a>
                     </span>
                     <span ng-else>
                         {{databaseRecord.version_history[_selected_index].extref_other}}
@@ -82,7 +82,7 @@
             </tr>
             <tr ng-if="databaseRecord.version_history[_selected_index].doi">
                 <th class="width-1">DOI:</th>
-                <td class="width-3" colspan="3"><a href="https://doi.org/{{databaseRecord.version_history[_selected_index].doi}}" target="_blank">{{databaseRecord.version_history[_selected_index].doi}}</a></td>
+                <td class="width-3" colspan="3"><a href="https://doi.org/{{databaseRecord.version_history[_selected_index].doi}}" target="_blank" style="font-weight: bold; text-decoration: underline;">{{databaseRecord.version_history[_selected_index].doi}}</a></td>
             </tr>
             <tr ng-if="databaseRecord.version_history[_selected_index].doi">
                 <th class="width-1">Authors:</th>
