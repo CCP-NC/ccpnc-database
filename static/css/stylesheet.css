@@ -420,4 +420,47 @@ input:checked + .slider .off
     margin-right: auto;
     max-width: 1300px; /* Adjust the max-width as needed */
 }
+
+.large-font {
+    font-size: 1.1rem;
+}
+
+.medium-font {
+    font-size: 16px;
+}
+
+.center-select {
+    text-align: center;
+    text-align-last: center; /* For modern browsers */
+    font-size: 14px;
+}
+.center-select option {
+    text-align: center;
+    font-size: 16px;
+}
+
+.title.is-4 {
+    font-size: 2rem; /* Title in landing page */
+}
+.subtitle.is-5 {
+    font-size: 1.5rem; /* Subheadings in landing page */
+}
+.content p {
+    font-size: 1.2rem; /* Paragraph blocks content */
+}
+.content ul {
+    font-size: 1.1rem; /* Size of list items */
+}
+.content li {
+    font-size: 1.1rem; /* Size of list items */
+}
+
+.tabs ul {
+    font-size: 1.2rem; /* Tab text */
+}
+.tabs ul li {
+    font-size: 1.1rem; /* Size of tab list items */
+}
+.tabs ul li a {
+    font-size: 1.1rem; /* Size of tab list items */
 }
