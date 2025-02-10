@@ -45,6 +45,10 @@ input::placeholder {
     color: #ffcc00 !important;
 }
 
+.select::placeholder {
+    color: #999999 !important; /* Light gray color for placeholder text */
+}
+
 /* I'm not sure if we need this customisation - I can't test on local */
 
 /* .tabs li.is-active a {
@@ -248,7 +252,7 @@ ul.discs li {
 }
 
 p.faq {
-    padding-bottom: 2em;
+    padding-bottom: 0.5em;
 }
 
 p.faq span {
@@ -293,6 +297,28 @@ p.faq span {
     background-color: #00b89c;
 }
 
+.unitcell-checkbox { 
+    padding: 0.75%;
+    appearance: none; /* Remove default checkbox styling */
+    border: 2px solid #000; /* Add border to make it visible */
+    border-radius: 4px; /* Optional: rounded corners */
+    display: inline-block; /* Ensure it behaves like a checkbox */
+    position: relative; /* For positioning the checkmark */
+    width: 30px; /* Fixed width */
+    height: 30px; /* Fixed height */
+}
+
+.unitcell-checkbox:checked::after {
+    content: ' ';
+    position: absolute; /* Position relative to the checkbox */
+    top: 10%; /* Adjust to center the checkmark */
+    left: 10%; /* Adjust to center the checkmark */
+    height: 80%; /* Adjust size of the checkmark */
+    width: 80%; /* Adjust size of the checkmark */
+    border-radius: 4px;
+    background-color: #00b89c;
+}
+
 /* .large-checkbox:checked::after {
     content: ' ';
     margin: 0;
@@ -323,7 +349,7 @@ p.faq span {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #2EC4B6;
+    background-color: #17635C;
     -webkit-transition: .4s;
     transition: .4s;
   }
@@ -388,9 +414,53 @@ input:checked + .slider .off
 .content {
     border-left: 0; /* Adjust the border width and color as needed */
     border-right: 0; /* Adjust the border width and color as needed */
-    padding-left: 20px; /* Add some padding to the left */
-    padding-right: 20px; /* Add some padding to the right */
+    padding-left: 10px; /* Add some padding to the left */
+    padding-right: 10px; /* Add some padding to the right */
     margin-left: auto;
     margin-right: auto;
-    max-width: 1200px; /* Adjust the max-width as needed */
+    max-width: 1300px; /* Adjust the max-width as needed */
+}
+
+.large-font {
+    font-size: 1.1rem;
+}
+
+.medium-font {
+    font-size: 16px;
+}
+
+.center-select {
+    text-align: center;
+    text-align-last: center; /* For modern browsers */
+    font-size: 14px;
+}
+.center-select option {
+    text-align: center;
+    font-size: 16px;
+}
+
+.title.is-4 {
+    font-size: 2rem; /* Title in landing page */
+}
+.subtitle.is-5 {
+    font-size: 1.5rem; /* Subheadings in landing page */
+}
+.content p {
+    font-size: 1.2rem; /* Paragraph blocks content */
+}
+.content ul {
+    font-size: 1.1rem; /* Size of list items */
+}
+.content li {
+    font-size: 1.1rem; /* Size of list items */
+}
+
+.tabs ul {
+    font-size: 1.2rem; /* Tab text */
+}
+.tabs ul li {
+    font-size: 1.1rem; /* Size of tab list items */
+}
+.tabs ul li a {
+    font-size: 1.1rem; /* Size of tab list items */
 }

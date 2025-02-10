@@ -1,11 +1,11 @@
 <div class="database-record">
     <div class="checkbox-table-container">
     <input type="checkbox" ng-show="!is_page" ng-model="databaseRecord.isChecked" ng-click="selectionChange(databaseRecord)" style="margin-right: 10px;" class="large-checkbox checkbox-top"> <!--Adding a checkbox-->
-    <table class="table is-fullwidth is-bordered is-fixed">
+    <table class="table is-fullwidth is-bordered is-fixed large-font">
         <thead ng-if="!is_page">
             <tr>
                 <th class="width-1">Name:</th>
-                <td class="width-3" colspan="3"><a href="?mdbref={{databaseRecord.immutable_id}}" target="_blank">{{databaseRecord.chemname}}</a></td>
+                <td class="width-3" colspan="3"><a href="?mdbref={{databaseRecord.immutable_id}}" target="_blank" style="font-weight: bold; text-decoration: underline;">{{databaseRecord.chemname}}</a></td>
             </tr>
             <tr>
                 <th class="width-1">Unit cell formula:</th>
@@ -15,13 +15,13 @@
                     </span>
                 </td>
                 <th class="width-1">MRD Number:</th>
-                <td class="width-1"><a href="?mdbref={{databaseRecord.immutable_id}}" target="_blank">{{databaseRecord.immutable_id}}</a></td>
+                <td class="width-1"><a href="?mdbref={{databaseRecord.immutable_id}}" target="_blank" style="font-weight: bold; text-decoration: underline;">{{databaseRecord.immutable_id}}</a></td>
             </tr>
             <tr>
                 <th class="width-1">Submitter:</th>
                 <td class="width-1">{{databaseRecord.user_name? databaseRecord.user_name : "N/A"}}</td>
                 <th class="width-1">ORCID:</th>
-                <td class="width-1"><a href="{{databaseRecord.orcid.uri}}" target="_blank">{{databaseRecord.orcid.path}}</a></td>
+                <td class="width-1"><a href="{{databaseRecord.orcid.uri}}" target="_blank" style="font-weight: bold; text-decoration: underline;">{{databaseRecord.orcid.path}}</a></td>
             </tr>
         </thead>
         <tbody ng-if="is_page">
@@ -59,18 +59,18 @@
             <tr>
                 <th class="width-1">License:</th>
                 <td class="width-3" ng-switch="databaseRecord.version_history[_selected_index].license" colspan="3">
-                    <a class="has-text-weight-bold" href="http://www.opendatacommons.org/licenses/pddl/1.0/" ng-switch-when="pddl" target="_blank">PDDL</a>
-                    <a class="has-text-weight-bold" href="https://opendatacommons.org/licenses/by/1-0/index.html" ng-switch-when="odc-by" target="_blank">ODC-By</a>
-                    <a class="has-text-weight-bold" href="https://creativecommons.org/licenses/by/4.0" ng-switch-when="cc-by" target="_blank">CC-By</a>
+                    <a class="has-text-weight-bold" href="http://www.opendatacommons.org/licenses/pddl/1.0/" ng-switch-when="pddl" target="_blank" style="font-weight: bold; text-decoration: underline;">PDDL</a>
+                    <a class="has-text-weight-bold" href="https://opendatacommons.org/licenses/by/1-0/index.html" ng-switch-when="odc-by" target="_blank" style="font-weight: bold; text-decoration: underline;">ODC-By</a>
+                    <a class="has-text-weight-bold" href="https://creativecommons.org/licenses/by/4.0" ng-switch-when="cc-by" target="_blank" style="font-weight: bold; text-decoration: underline;">CC-By</a>
                 </td>
             </tr>
             <tr ng-if="databaseRecord.version_history[_selected_index].extref_code">
                 <th class="width-1">Database reference:</th>
                 <td class="width-3" ng-switch="databaseRecord.version_history[_selected_index].extref_type" colspan="1">
                     <span ng-if="databaseRecord.version_history[_selected_index].extref_type != 'other'">
-                        <a class="has-text-weight-bold" href="https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/" ng-switch-when="csd" target="_blank">CSD</a>
-                        <a class="has-text-weight-bold" href="https://www.psds.ac.uk/icsd" ng-switch-when="icsd" target="_blank">ICSD</a>
-                        <a class="has-text-weight-bold" href="http://www.crystallography.net/cod/index.php" ng-switch-when="cod" target="_blank">COD</a>
+                        <a class="has-text-weight-bold" href="https://www.ccdc.cam.ac.uk/solutions/csd-system/components/csd/" ng-switch-when="csd" target="_blank" style="font-weight: bold; text-decoration: underline;">CSD</a>
+                        <a class="has-text-weight-bold" href="https://www.psds.ac.uk/icsd" ng-switch-when="icsd" target="_blank" style="font-weight: bold; text-decoration: underline;">ICSD</a>
+                        <a class="has-text-weight-bold" href="http://www.crystallography.net/cod/index.php" ng-switch-when="cod" target="_blank" style="font-weight: bold; text-decoration: underline;">COD</a>
                     </span>
                     <span ng-else>
                         {{databaseRecord.version_history[_selected_index].extref_other}}
@@ -82,7 +82,7 @@
             </tr>
             <tr ng-if="databaseRecord.version_history[_selected_index].doi">
                 <th class="width-1">DOI:</th>
-                <td class="width-3" colspan="3"><a href="https://doi.org/{{databaseRecord.version_history[_selected_index].doi}}" target="_blank">{{databaseRecord.version_history[_selected_index].doi}}</a></td>
+                <td class="width-3" colspan="3"><a href="https://doi.org/{{databaseRecord.version_history[_selected_index].doi}}" target="_blank" style="font-weight: bold; text-decoration: underline;">{{databaseRecord.version_history[_selected_index].doi}}</a></td>
             </tr>
             <tr ng-if="databaseRecord.version_history[_selected_index].doi">
                 <th class="width-1">Authors:</th>
@@ -105,8 +105,8 @@
                         </pre>
                     </div>
                     <span class="separator-p5"></span>
-                    <div style="text-align: center;">
-                        <button class="button is-primary is-normal" ng-if="isExpanded" ng-click="copyToClipboard($event, _selected_index)">Copy calculation details</button>
+                    <div style="text-align: center;" class="large-font">
+                        <button class="button is-primary is-normal large-font" ng-if="isExpanded" ng-click="copyToClipboard($event, _selected_index)">Copy calculation details</button>
                     </div>
                     <span class="separator-p5"></span>
                 </td>
@@ -115,20 +115,20 @@
     </table>
     </div>
     <span class="separator-p5"></span>
-    <a class="button is-primary hseparator" href="get_magres?magres_id={{databaseRecord.version_history[_selected_index].magresFilesID}}" download="{{filename()}}.magres">
+    <a class="button is-primary hseparator large-font" href="get_magres?magres_id={{databaseRecord.version_history[_selected_index].magresFilesID}}" download="{{filename()}}.magres">
         Download&nbsp;<i class="fa fa-download"></i>
     </a>
-    <a class="button is-primary" href="get_csv?oid={{databaseRecord.id}}&amp;v={{_selected_index}}" download="{{filename()}}.csv">
+    <a class="button is-primary large-font" href="get_csv?oid={{databaseRecord.id}}&amp;v={{_selected_index}}" download="{{filename()}}.csv">
         Download metadata (CSV)&nbsp;<i class="fa fa-download"></i>
     </a>
-    <a class="button is-primary" ng-click="jsonRetrieve(databaseRecord,_selected_index)">
+    <a class="button is-primary large-font" ng-click="jsonRetrieve(databaseRecord,_selected_index)">
         Download metadata (JSON)&nbsp;<i class="fa fa-download"></i>
     </a>
     <!-- ADMIN ONLY -->
-    <div class="button is-danger" ng-show="isadmin()" ng-click="hideshow()">
+    <div class="button is-danger large-font" ng-show="isadmin()" ng-click="hideshow()">
         Hide record
     </div>
-    <div class="button is-primary is-pulled-right" ng-click="edit()" ng-show="isown()" download>
+    <div class="button is-primary is-pulled-right large-font" ng-click="edit()" ng-show="isown()" download>
         Edit&nbsp;<i class="fa fa-edit"></i>
     </div>
 
@@ -142,7 +142,7 @@
           <p class="modal-card-title">Confirm Hide operation</p>
           <button class="delete" aria-label="close" ng-click="hideshow()"></button>
         </header>
-        <section class="modal-card-body">
+        <section class="modal-card-body large-font">
             <p>
                 Warning: hiding a record is an admin-only operation that can not be undone 
                 from the web interface. The hidden record will not be returned any more in searches
@@ -155,8 +155,8 @@
             </p>
         </section>
         <footer class="modal-card-foot">
-          <button class="button is-danger" ng-click="hide()">Hide record</button>
-          <button class="button" ng-click="hideshow()">Cancel</button>
+          <button class="button is-danger large-font" ng-click="hide()">Hide record</button>
+          <button class="button large-font" ng-click="hideshow()">Cancel</button>
         </footer>
       </div>
     </div>
