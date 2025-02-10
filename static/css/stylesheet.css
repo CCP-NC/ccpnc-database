@@ -297,6 +297,28 @@ p.faq span {
     background-color: #00b89c;
 }
 
+.unitcell-checkbox { 
+    padding: 0.75%;
+    appearance: none; /* Remove default checkbox styling */
+    border: 2px solid #000; /* Add border to make it visible */
+    border-radius: 4px; /* Optional: rounded corners */
+    display: inline-block; /* Ensure it behaves like a checkbox */
+    position: relative; /* For positioning the checkmark */
+    width: 30px; /* Fixed width */
+    height: 30px; /* Fixed height */
+}
+
+.unitcell-checkbox:checked::after {
+    content: ' ';
+    position: absolute; /* Position relative to the checkbox */
+    top: 10%; /* Adjust to center the checkmark */
+    left: 10%; /* Adjust to center the checkmark */
+    height: 80%; /* Adjust size of the checkmark */
+    width: 80%; /* Adjust size of the checkmark */
+    border-radius: 4px;
+    background-color: #00b89c;
+}
+
 /* .large-checkbox:checked::after {
     content: ' ';
     margin: 0;
