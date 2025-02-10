@@ -68,7 +68,7 @@
                 </div>
             </div>
 
-            <div id="navBarCCPNC" class="navbar-menu is-size-5" ng-class="(menu_display? 'is-active' : '')">
+            <div id="navBarCCPNC" class="navbar-menu is-size-4" ng-class="(menu_display? 'is-active' : '')">
                 <div class="navbar-start">
                     <a class="navbar-item" ng-click="open_tab='home';">
                         Home
@@ -103,7 +103,7 @@
 
                 <!-- Here the important Login logic happens! A dedicated Angular controller -->
                 <div class="navbar-end" ng-controller="LoginController" ng-cloak>
-                    <div class="navbar-item is-size-6" ng-if="logged_in">
+                    <div class="navbar-item is-size-5" ng-if="logged_in">
                         Logged in as&nbsp;
                         <i class="ai ai-orcid orcid-green is-size-4" aria-hidden="true"></i>&nbsp;
                         <a href="https://orcid.org/{{orcid}}" class="has-text-primary" target="_blank">
