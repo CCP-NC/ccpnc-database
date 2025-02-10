@@ -241,7 +241,7 @@
 
                         <table class="table is-fullwidth is-bordered is-fixed search-form large-font">
                             <tr>
-                                <td class="width-1" colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                <td class="width-1" colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                     Search type
                                 </td>
                                 <td class="width-3" colspan="3" rowspan="" headers="">
@@ -250,7 +250,7 @@
                                             <!-- Present long menu for search if 'negate_query' value in search_spec in false -->
                                             <!-- 'negate_query' value is set to false when form loads first time, false can be set by toggle switch for AND search condition -->
                                             <select ng-model="search_spec.type"
-                                                ng-change="reset_search_args(search_spec.type)" ng-show="!search_spec.negate_query" ng-init="search_spec.negate_query = false">
+                                                ng-change="reset_search_args(search_spec.type)" ng-show="!search_spec.negate_query" ng-init="search_spec.negate_query = false" class="center-select">
                                                 <option value="doi">Publication doi</option>
                                                 <option value="msRange">Magnetic Shielding</option>
                                                 <option value="efgRange">Electric Field Gradient V<sub>zz</sub></option>
@@ -265,7 +265,7 @@
                                             <!-- Present restricted menu for search if 'negate_query' value in search_spec in true -->
                                             <!-- 'negate_query' value is set to true by toggle switch for NOT search condition -->
                                             <select ng-model="search_spec.type"
-                                                ng-change="reset_search_args(search_spec.type)" ng-show="search_spec.negate_query">
+                                                ng-change="reset_search_args(search_spec.type)" ng-show="search_spec.negate_query" class="center-select">
                                                 <option value="doi">Publication doi</option>
                                                 <option value="msRange">Magnetic Shielding</option>
                                                 <option value="efgRange">Electric Field Gradient V<sub>zz</sub></option>
@@ -279,7 +279,7 @@
                             </tr>
                             <tbody ng-if="search_spec.type == 'doi'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Publication doi
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -292,7 +292,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'msRange'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Species
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -303,7 +303,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Min. MS value
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
@@ -312,7 +312,7 @@
                                                 ng-model="search_spec.args.minms" ng-init="search_spec.args.minms = 0">
                                         </div>
                                     </td>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Max. MS value
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
@@ -325,7 +325,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'efgRange'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Species
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -336,7 +336,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Min. EFG V<sub>zz</sub> value
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
@@ -345,7 +345,7 @@
                                                 ng-model="search_spec.args.minefg" ng-init="search_spec.args.minefg = 0">                          
                                         </div>
                                     </td>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Max. EFG V<sub>zz</sub> value
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
@@ -358,7 +358,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'chemname'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Search pattern
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -373,7 +373,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'chemform'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Search pattern
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -388,7 +388,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'formula'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Unit cell formula
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -400,7 +400,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Include systems with additional elements
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -413,7 +413,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'molecule'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Molecular formula
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -427,7 +427,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'mdbref'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         MRD Reference
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -441,7 +441,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'extref'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         External reference
                                     </td>
                                     <!-- Database name can be chosen from dropdown list or 'Other' option chosen to enter name manually -->
@@ -487,7 +487,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'license'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         License
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
