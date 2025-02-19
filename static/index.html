@@ -58,7 +58,7 @@
     <div ng-if="!(recordref)">
         <nav class="navbar">
             <div class="navbar-brand">
-                <a class="nabvar-item has-text-centered has-text-info" href="https://www.ccpnc.ac.uk">
+                <a class="navbar-item has-text-centered has-text-info" href="https://www.ccpnc.ac.uk">
                     <span id="ccpnc-logo" class="is-size-1">CCP-NC</span>
                 </a>
                 <div class="navbar-burger burger is-size-2" ng-click="show_menu_mobile();" data-target="#navBarCCPNC">
@@ -68,7 +68,7 @@
                 </div>
             </div>
 
-            <div id="navBarCCPNC" class="navbar-menu is-size-5" ng-class="(menu_display? 'is-active' : '')">
+            <div id="navBarCCPNC" class="navbar-menu is-size-4" ng-class="(menu_display? 'is-active' : '')">
                 <div class="navbar-start">
                     <a class="navbar-item" ng-click="open_tab='home';">
                         Home
@@ -103,7 +103,7 @@
 
                 <!-- Here the important Login logic happens! A dedicated Angular controller -->
                 <div class="navbar-end" ng-controller="LoginController" ng-cloak>
-                    <div class="navbar-item is-size-6" ng-if="logged_in">
+                    <div class="navbar-item is-size-5" ng-if="logged_in">
                         Logged in as&nbsp;
                         <i class="ai ai-orcid orcid-green is-size-4" aria-hidden="true"></i>&nbsp;
                         <a href="https://orcid.org/{{orcid}}" class="has-text-primary" target="_blank">
@@ -132,7 +132,7 @@
                                     and name {{just_logged_in}}.
                                 </p>
                                 <br>
-                                <a class="button is-primary" ng-click="confirm()">Ok</a>
+                                <a class="button is-primary" ng-click="confirm()">OK</a>
                             </div>
                         </div>
                     </div>
@@ -149,7 +149,7 @@
                         Welcome to the CCP-NC Magres Database
                     </p>
                     <p>
-                        The Magres database is a repository of first-principle computational results for solid-state NMR Crystallography, stored in the <a href="https://www.ccpnc.ac.uk/docs/magres/magres-format.pdf">magres</a> format. This resource provides a central platform for researchers to share, explore, and utilise data associated with calculations of NMR parameters in solid-state structures.
+                        The Magres database is a repository of first-principle computational results for solid-state NMR Crystallography, stored in the <a href="https://www.ccpnc.ac.uk/docs/magres/magres-format.pdf" style="font-weight: bold; text-decoration: underline;">Magres (.magres)</a> format. This resource provides a central platform for researchers to share, explore, and utilise data associated with calculations of NMR parameters in solid-state structures.
                     </p>
                     <div style="margin-bottom: 20px;"></div>
                     <p class="subtitle is-5">
@@ -157,7 +157,7 @@
                     </p>
                     <div style="margin-bottom: 5px;"></div>
                     <p>
-                        The <a href="https://www.ccpnc.ac.uk/docs/magres/magres-format.pdf">magres format</a> is a text-based file format developed within CCP-NC to archive the results of ab initio calculations of NMR parameters. It serves as a comprehensive, self-sufficient, archival format, ensuring that all relevant computational details are preserved for future reference. Supported by major computational codes such as <a href="https://www.castep.org/">CASTEP</a> and <a href="https://www.quantum-espresso.org/">Quantum ESPRESSO</a>, the magres format enables seamless data sharing and processing within the NMR Crystallography community.
+                        The Magres format is a text-based file format developed within CCP-NC to archive the results of ab initio calculations of NMR parameters. It serves as a comprehensive, self-sufficient, archival format, ensuring that all relevant computational details are preserved for future reference. Supported by major computational codes such as CASTEP and Quantum ESPRESSO, the Magres format enables seamless data sharing and processing within the NMR Crystallography community.
                     </p>
 
                     <p class="subtitle is-5">
@@ -170,19 +170,19 @@
                             <li>Crystallographers,</li>
                             <li>Materials scientists,</li>
                             <li>Computational modelers.</li>
-                        </ul> 
-                        Deposits require an ORCID ID and must be in the magres format.
+                        </ul>
                     </p>
+                    <p>Deposits require an ORCID ID and must be in the Magres format.</p>
         
                     <p class="subtitle is-5">
                         Supported Tools and Software
                     </p>
                     <ul>
                         <li>
-                            <a href="https://www.castep.org/">CASTEP</a> and <a href="https://www.quantum-espresso.org/">Quantum ESPRESSO</a> for generating magres files
+                            <a href="https://www.castep.org/" style="font-weight: bold; text-decoration: underline;">CASTEP</a> and <a href="https://www.quantum-espresso.org/" style="font-weight: bold; text-decoration: underline;">Quantum ESPRESSO</a> for generating magres files
                         </li>
                         <li>
-                            <a href="https://ccp-nc.github.io/magresview-2/">MagresView</a> and <a href="https://ccp-nc.github.io/soprano/intro.html">Soprano</a> for visualising and processing magres data
+                            <a href="https://ccp-nc.github.io/magresview-2/" style="font-weight: bold; text-decoration: underline;">MagresView</a> and <a href="https://ccp-nc.github.io/soprano/intro.html" style="font-weight: bold; text-decoration: underline;">Soprano</a> for visualising and processing magres data
                         </li>
                     </ul>
 
@@ -191,7 +191,7 @@
                     </p> -->
 
                     <p>
-                        For more information and help on how to use the website, <a href="faqs.html">visit our FAQs page.</a>
+                        For more information and help on how to use the website, <a href="faqs.html" style="font-weight: bold; text-decoration: underline;">visit our FAQs page.</a>
                     </p>
 
                     <!--
@@ -239,9 +239,9 @@
 
                         <button class="delete" ng-click="remove_spec($index)"></button>
 
-                        <table class="table is-fullwidth is-bordered is-fixed search-form">
+                        <table class="table is-fullwidth is-bordered is-fixed search-form large-font">
                             <tr>
-                                <td class="width-1" colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                <td class="width-1" colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                     Search type
                                 </td>
                                 <td class="width-3" colspan="3" rowspan="" headers="">
@@ -250,12 +250,12 @@
                                             <!-- Present long menu for search if 'negate_query' value in search_spec in false -->
                                             <!-- 'negate_query' value is set to false when form loads first time, false can be set by toggle switch for AND search condition -->
                                             <select ng-model="search_spec.type"
-                                                ng-change="reset_search_args(search_spec.type)" ng-show="!search_spec.negate_query" ng-init="search_spec.negate_query = false">
-                                                <option value="doi">doi</option>
+                                                ng-change="reset_search_args(search_spec.type)" ng-show="!search_spec.negate_query" ng-init="search_spec.negate_query = false" class="center-select">
+                                                <option value="doi">Publication doi</option>
                                                 <option value="msRange">Magnetic Shielding</option>
                                                 <option value="efgRange">Electric Field Gradient V<sub>zz</sub></option>
                                                 <option value="chemname">Chemical name</option>
-                                                <option value="chemform">Form</option>
+                                                <option value="chemform">Polymorphic Form</option>
                                                 <option value="formula">Unit cell formula</option>
                                                 <option value="molecule">Molecular formula</option>
                                                 <option value="mdbref">MRD reference number</option>
@@ -265,8 +265,8 @@
                                             <!-- Present restricted menu for search if 'negate_query' value in search_spec in true -->
                                             <!-- 'negate_query' value is set to true by toggle switch for NOT search condition -->
                                             <select ng-model="search_spec.type"
-                                                ng-change="reset_search_args(search_spec.type)" ng-show="search_spec.negate_query">
-                                                <option value="doi">doi</option>
+                                                ng-change="reset_search_args(search_spec.type)" ng-show="search_spec.negate_query" class="center-select">
+                                                <option value="doi">Publication doi</option>
                                                 <option value="msRange">Magnetic Shielding</option>
                                                 <option value="efgRange">Electric Field Gradient V<sub>zz</sub></option>
                                                 <option value="extref">External database reference</option>
@@ -279,8 +279,8 @@
                             </tr>
                             <tbody ng-if="search_spec.type == 'doi'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
-                                        doi
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
+                                        Publication doi
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
                                         <div class="control">
@@ -292,7 +292,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'msRange'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Species
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -303,7 +303,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Min. MS value
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
@@ -312,7 +312,7 @@
                                                 ng-model="search_spec.args.minms" ng-init="search_spec.args.minms = 0">
                                         </div>
                                     </td>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Max. MS value
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
@@ -325,7 +325,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'efgRange'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Species
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -336,7 +336,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Min. EFG V<sub>zz</sub> value
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
@@ -345,7 +345,7 @@
                                                 ng-model="search_spec.args.minefg" ng-init="search_spec.args.minefg = 0">                          
                                         </div>
                                     </td>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Max. EFG V<sub>zz</sub> value
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
@@ -358,7 +358,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'chemname'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Search pattern
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -373,7 +373,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'chemform'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Search pattern
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -388,7 +388,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'formula'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Unit cell formula
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -400,12 +400,12 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Include systems with additional elements
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
                                         <div class="control is-pulled-right">
-                                            <input class="input large-checkbox" type="checkbox"
+                                            <input class="input unitcell-checkbox" type="checkbox"
                                                 ng-model="search_spec.args.subset" ng-init="search_spec.args.subset = false">
                                         </div>
                                     </td>
@@ -413,7 +413,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'molecule'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Molecular formula
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -427,7 +427,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'mdbref'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         MRD Reference
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -441,7 +441,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'extref'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         External reference
                                     </td>
                                     <!-- Database name can be chosen from dropdown list or 'Other' option chosen to enter name manually -->
@@ -487,7 +487,7 @@
                             </tbody>
                             <tbody ng-if="search_spec.type == 'license'">
                                 <tr>
-                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle;">
+                                    <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         License
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
@@ -550,7 +550,7 @@
 
             <div id="div-upload" class="section" ng-switch-when="upload" ng-controller="UploadController" ng-cloak>
 
-                <div class="container has-text-centered">
+                <div class="container has-text-centered large-font">
 
                     <div class="tabs">
                         <ul>
@@ -574,7 +574,7 @@
                             you want to have custom values for some or all files in your archive, you should download <a
                                 href="csvtemplate" download="info.csv">this CSV file</a> and fill in its various fields for
                             the structures you care about, then put it in the archive at the same level as the
-                            <tt>.magres</tt> files. For more details about how to use the CSV file, refer to <a href="faqs.html" target="_blank">the FAQ page</a>.
+                            <tt>.magres</tt> files. For more details about how to use the CSV file, refer to <a href="faqs.html" target="_blank" style="font-weight: bold; text-decoration: underline;">the FAQ page</a>.
                         </p>
                         <span class="separator-1"></span>
                     </div>
@@ -636,10 +636,10 @@
                             The available options are:
                             <ul>
                                 <li><span class="has-text-weight-bold">PDDL:</span> <a
-                                href="http://www.opendatacommons.org/licenses/pddl/1.0/" target="_blank">Public Domain Dedication and License v1.0</a>.</li>
-                                <li><span class="has-text-weight-bold">ODC-By:</span> <a href="https://opendatacommons.org/licenses/by/1-0/index.html" target="_blank">
+                                href="http://www.opendatacommons.org/licenses/pddl/1.0/" target="_blank" style="font-weight: bold; text-decoration: underline;">Public Domain Dedication and License v1.0</a>.</li>
+                                <li><span class="has-text-weight-bold">ODC-By:</span> <a href="https://opendatacommons.org/licenses/by/1-0/index.html" target="_blank" style="font-weight: bold; text-decoration: underline;">
                                     Open Data Commons Attribution License v1.0</a>.</li>
-                                <li><span class="has-text-weight-bold">CC-By:</span> <a href="https://creativecommons.org/licenses/by/4.0" target="_blank">
+                                <li><span class="has-text-weight-bold">CC-By:</span> <a href="https://creativecommons.org/licenses/by/4.0" target="_blank" style="font-weight: bold; text-decoration: underline;">
                                     Creative Commons Attribution v4.0</a>.</li>
                             </ul>
                         </div>
@@ -696,7 +696,7 @@
                     <h2 class="subtitle">
                         <span class="has-text-weight-bold">MRD number</span>: {{record.immutable_id}} &nbsp;
                         <span class="has-text-weight-bold">Uploader:</span> {{record.user_name? record.user_name : "N/A"}} &nbsp;
-                        <span class="has-text-weight-bold">ORCID:</span> <a href="{{record.orcid.uri}}" target="blank">{{record.orcid.path}}</a>
+                        <span class="has-text-weight-bold">ORCID:</span> <a href="{{record.orcid.uri}}" target="blank" style="font-weight: bold; text-decoration: underline;">{{record.orcid.path}}</a>
                     </h2>
                     <databaseRecord database-record="record" make-page></databaseRecord>
                 </div>
@@ -726,17 +726,17 @@
                     <br>
                     The source code is licensed
                     <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
-                    is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC ANS 4.0</a>.
+                    is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" style="font-weight: bold; text-decoration: underline;">CC ANS 4.0</a>.
                     <br>
-                    Uses the <a href="https://orcid.org" target="_blank">
+                    Uses the <a href="https://orcid.org" target="_blank" style="font-weight: bold; text-decoration: underline;">
                         <i class="ai ai-orcid orcid-green is-size-4" aria-hidden="true"></i> ORCID
                     </a>
                     Public API v2.0 for authentication.
                     <br>
-                    For more information about cookies and data retention, see our <a href="cookies">Privacy
+                    For more information about cookies and data retention, see our <a href="cookies" style="font-weight: bold; text-decoration: underline;">Privacy
                         Policy</a>.
                     <br>
-                    For any feedback or questions, <a href="https://www.ccpnc.ac.uk/contact-us">contact us.</a>
+                    For any feedback or questions, <a href="https://www.ccpnc.ac.uk/contact-us" style="font-weight: bold; text-decoration: underline;">contact us.</a>
                 </p>
             </div>
         </div>
