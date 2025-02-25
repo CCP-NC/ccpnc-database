@@ -464,3 +464,63 @@ input:checked + .slider .off
 .tabs ul li a {
     font-size: 1.1rem; /* Size of tab list items */
 }
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 300px;
+    height: 100%;
+    background-color: #f8f8f8;
+    padding: 10px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    overflow-y: auto;
+}
+
+.sidebar .title.is-5 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #3273dc;
+}
+
+.sidebar ul li a:hover {
+    text-decoration: underline;
+}
+
+.faqsection {
+    display: block;
+    padding: 3rem 1.5rem;
+}
+
+@media screen and (min-width: 1024px) {
+    .faqsection.is-medium {
+        padding: 9rem 1.5rem;
+    }
+    .faqsection.is-large {
+        padding: 18rem 1.5rem;
+    }
+}
+
+.faqsection {
+    margin-left: 310px; /* Adjust this value to match the sidebar width + padding */
+}
+
+.custom-hr {
+    border: 0;
+    height: 1px; /* Adjust the height to make it bolder */
+    background-color: #000; /* Change the color as needed */
+    margin: 20px 0; /* Adjust the margin as needed */
+}
