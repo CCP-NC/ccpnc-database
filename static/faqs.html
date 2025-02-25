@@ -57,10 +57,11 @@
             <p class="faq">
                 <span class="has-text-weight-bold">I'm trying to upload a full archive, how do the <code>extref_*</code> entries in the CSV file work?</span> 
 
-                These columns are meant to store external reference codes with which the same structures may appear in different databases. For example, if your structure originates from the Cambridge Structural Database, here is where you would put a reference to it. When uploading a single file this control provides a dropdown to pick the database, but in the CSV this requires three different values:<br>
-                    - <code>extref_type</code> contains the conventional name of the database. The currently accepted codes are <code>csd</code> (Cambridge Structural Database), <code>icsd</code> (Inorganic Crystal Structure Database), <code>COD</code> (Crystallography Open Database) and <code>other</code> for anything else. This field is case-insensitive;<br>
-                    - <code>extref_other</code> contains the name of whatever database you used that doesn't fall within the previous options. It will be ignored if you didn't pick <code>other</code> as your database;<br>
-                    - <code>extref_code</code> contains an actual code (such as a CSD number or refcode) that can be used to identify the structure within the database you're referencing.
+                These columns are meant to store external reference codes with which the same structures may appear in different databases. For example, if your structure originates from the Cambridge Structural Database, here is where you would put a reference to it. When uploading a single file this control provides a dropdown to pick the database, but in the CSV this requires three different values:
+                <ul><li><code>extref_type</code> contains the conventional name of the database. The currently accepted codes are <code>csd</code> (Cambridge Structural Database), <code>icsd</code> (Inorganic Crystal Structure Database), <code>COD</code> (Crystallography Open Database) and <code>other</code> for anything else. This field is case-insensitive;</li>
+                    <li><code>extref_other</code> contains the name of whatever database you used that doesn't fall within the previous options. It will be ignored if you didn't pick <code>other</code> as your database;</li>
+                    <li><code>extref_code</code> contains an actual code (such as a CSD number or refcode) that can be used to identify the structure within the database you're referencing.</li>
+                </ul>
             </p>
 
             <p class="faq">
