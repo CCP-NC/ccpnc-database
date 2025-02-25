@@ -11,9 +11,30 @@
 </head>
 
 <body>
-    <div class="section">
+    <div class="sidebar">
+        <h4 class="title is-5">FAQs Quick Links</h4>
+        <ul>
+            <li><a href="#depositing-data">Depositing Data</a></li>
+            <li><a href="#about-structures">Hypothetical & Incorrect structures</a></li>
+            <li><a href="#metadata-file-formats">Metadata & File Formats</a></li>
+            <li><a href="#managing-updating-data">Managing & Updating Deposited Data</a></li>
+            <li><a href="#boolean-search">Boolean Search Filter</a></li>
+            <li><a href="#accessing-referencing-data">Accessing & Referencing Data</a></li>
+            <li><a href="#licensing-permissions">Licensing & Permissions</a></li>
+            <li><a href="#technical-administrative-support">Technical & Administrative Support</a></li>
+        </ul>
+    </div>
+    <div class="faqsection">
         <div class="container content">
             <h3 class="title is-4">CCP-NC database - Frequently Asked Questions</h3>
+            <div style="margin-bottom: 20px;"></div>
+            <hr class="custom-hr">
+            <h4 class="subtitle is-5" id="depositing-data">DEPOSITING DATA</h4>
+            <p class="faq">
+                <span class="has-text-weight-bold">When should I deposit data?</span> 
+                The database is intended as a convenient means of accessing published magnetic resonance results. One option is to upload the data when a publication DOI is available. You are encouraged, however, to upload data prior to publication, in order to be able to refer to record numbers in the paper, and add the DOI when available (this will create a new version). Note that it is important to add the DOI when available since database users have the option of restricting searches to data associated with a DOI.
+            </p>
+
             <p class="faq">
                 <span class="has-text-weight-bold">Are there standard parameters I should use for my data to be acceptable?</span> 
 
@@ -22,20 +43,14 @@
             </p>
 
             <p class="faq">
-                <span class="has-text-weight-bold">Can I change the metadata associated with a file?</span> 
-                Yes. This is encouraged, for example, to add a publication DOI. Note that any change will create a new version. Changing the metadata of multiple files in block is still not supported, but is planned for a future version.
-            </p>
-
-            <p class="faq">
-
-                <span class="has-text-weight-bold">How do I contact the database administrators?  </span> 
-                    For requests that cannot be met through the user interface, or for any problems that are not addressed in the FAQs, please use the webform <a href="https://www.ccpnc.ac.uk/contact-us" target="_blank">on the CCP-NC website</a>.
+                <span class="has-text-weight-bold">I have a very large number of calculation results. Can this be deposited?</span> 
+                In principle yes. Normal uploads are limited to 999 records, but users can use the webform to discuss larger deposits.
             </p>
 
             <p class="faq">
                 <span class="has-text-weight-bold">Can I deposit a set of results together rather than individually?</span>
 
-                Yes. There is <a href="csvtemplate" download="info.csv">a template CSV spreadsheet</a> that should be completed with the name of each file (first column) and file-specific metadata in the remaining columns; default values for metadata are taken from the submission form. The CSV file must be compressed with the magres files in either a zip or tarball file, and the archive is then submitted via the submission form. Note that the normal limit for bulk uploads is 999 files (see below).                
+                Yes. There is <a href="csvtemplate" style="font-weight: bold; text-decoration: underline;" download="info.csv">a template CSV spreadsheet</a> that should be completed with the name of each file (first column) and file-specific metadata in the remaining columns; default values for metadata are taken from the submission form. The CSV file must be compressed with the magres files in either a zip or tarball file, and the archive is then submitted via the submission form. Note that the normal limit for bulk uploads is 999 files (see below).                
 
             </p>
 
@@ -48,7 +63,6 @@
                     - <code>extref_code</code> contains an actual code (such as a CSD number or refcode) that can be used to identify the structure within the database you're referencing.
             </p>
 
-
             <p class="faq">
 
                 <span class="has-text-weight-bold">Can I deposit unpublished data?</span> 
@@ -57,93 +71,144 @@
 
             <p class="faq">
 
-                <span class="has-text-weight-bold">Can I download a large number of entries?</span> 
-                <!--
-                    If a search returns multiple entries, then these can be downloaded as a single zip file, with the exclusion of entries with an attribution licence (these must be downloaded individually). 
-                -->
-
-                Currently no. The functionality will be added in a future version, with some limitations for files whose license doesn't allow it.
-            </p>            
-
-            <p class="faq">
-
                 <span class="has-text-weight-bold">Does it matter if similar calculations have been deposited already?</span> 
                 No, indeed, new calculations are encouraged.
-            </p>            
-
-
-            <p class="faq">
-                <span class="has-text-weight-bold">How can I refer to a dataset?</span> 
-                Each individual magres file is assigned a unique numerical ID on deposit called the MRD number (for MagRes files Database), which can be used to refer to the dataset. The MRD numbers will generally be sequential if depositing a set of magres files. Note that files downloaded from the database will be named, for example, MRD000001v1.magres, where “v1” indicates version 1 of the deposit.
-           </p>            
-
-
-            <p class="faq">
-                <span class="has-text-weight-bold">How do I obtain the metadata associated with the dataset?</span> 
-                A search for a dataset will produce a landing page containing the metadata (including any version history) and a link to download the original submitted file and/or the metadata as a text file. For bulk downloads, the metadata will be provided as a CSV file in the archive.
-           </p>
-
-
-            <p class="faq">
-                <span class="has-text-weight-bold">I have a very large number of calculation results. Can this be deposited?</span> 
-                In principle yes. Normal uploads are limited to 999 records, but users can use the webform to discuss larger deposits.
-           </p>
-
-
-            <p class="faq">
-                <span class="has-text-weight-bold">I have discovered a problem with the data I deposited. Can I change it?</span> 
-                Yes. Entries cannot be changed once submitted, but you create a new version of a data set. A search will always return the most recent version of a dataset.
-           </p>
-
-            <p class="faq">
-                <span class="has-text-weight-bold">Is the submitted file altered on deposit?</span> 
-                Is the submitted file altered on deposit?  No. The file contents are fixed, although the name used for the downloaded data will use the record number e.g. MRD0001256.magres. 
-           </p>
- 
-            <p class="faq">
-                <span class="has-text-weight-bold">How long does my login last?</span> 
-                Login (using ORCID id) stores a cookie and should be persistent, but may be canceled after extended periods of time. If that happens, simply log out and log sign back in.
-           </p>
-
-
+            </p>
+            <hr class="custom-hr">
+            <h4 class="subtitle is-5" id="about-structures">HYPOTHETICAL & INCORRECT STRUCTURES</h4>
             <p class="faq">
                 <span class="has-text-weight-bold">My calculations are of hypothetical structures. Can these be included?  </span> 
                 These are perfectly fine as they may be valuable, e.g., for machine learning applications. See query about bulk uploads.
-           </p>
+            </p>
 
             <p class="faq">
                 <span class="has-text-weight-bold">My calculations involve results from incorrect structures. Can these be included?  </span> 
                 Yes, any valid calculation is acceptable, but do use the Notes field to highlight the fact that the structure is thought to be incorrect. 
-           </p>
+            </p>
+            <hr class="custom-hr">
+            <h4 class="subtitle is-5" id="metadata-file-formats">METADATA & FILE FORMATS</h4>
+            <p class="faq">
+                <span class="has-text-weight-bold">What metadata needs to be supplied when uploading a file?</span> 
+                The following metadata can be supplied for each file:
+                <ul>
+                    <li><b>Name:</b> This is the primary search text. It is recommended to keep this simple and use the structural keywords for qualifiers, such as polymorph. Hence use “alanine” as the name and “beta” as a structural qualifier for “alanine form beta”. Note that the database will only accept simple alphanumeric characters in text. Users are encouraged to use IUPAC naming for consistency.</li>
+                    <li><b>Keywords:</b> An optional list of structural qualifiers.Please use alphanumeric characters rather than symbols wherever possible, e.g. “beta” instead of &beta;. More than one keyword can be supplied where this would help users to find a specific entry.</li>
+                    <li><b>Database number:</b> Optional reference code for starting structure, e.g. Cambridge Structural Database, or ICSD reference code.</li>
+                    <li><b>DOI:</b> Optional DOI to publication associated with record. This should be an actual DOI (generally text beginning 10.XXX) rather than a link. Use the Notes field instead if you need to refer to a different type of reference, e.g. a link to a PhD thesis.</li>
+                    <li><b>Notes:</b> Free text information. This should be used to provide any information that might be helpful to users, e.g. requested attribution text. Note this text is not directly searchable.</li>
+                </ul>
+            </p>
 
             <p class="faq">
                 <span class="has-text-weight-bold">What data formats are accepted?</span> 
                 Only magres files using the CCP-NC-developed magres format are accepted. These are produced by both the major DFT codes which calculate NMR parameters for periodic solids (CASTEP and Quantum ESPRESSO). 
            </p>
+           <hr class="custom-hr">
+            <h4 class="subtitle is-5" id="managing-updating-data">MANAGING & UPDATING DEPOSITED DATA</h4>
+            <p class="faq">
+                <span class="has-text-weight-bold">Can I change the metadata associated with a file?</span> 
+                Yes. This is encouraged, for example, to add a publication DOI. Note that any change will create a new version. Changing the metadata of multiple files in block is still not supported, but is planned for a future version.
+            </p>
 
+            <p class="faq">
+                <span class="has-text-weight-bold">I have discovered a problem with the data I deposited. Can I change it?</span> 
+                Yes. Entries cannot be changed once submitted, but you create a new version of a data set. A search will always return the most recent version of a dataset.
+            </p>
+
+            <p class="faq">
+                <span class="has-text-weight-bold">Is the submitted file altered on deposit?</span> 
+                No. The file contents are fixed, although the name used for the downloaded data will use the record number e.g. MRD0001256.magres. 
+            </p>
+            <hr class="custom-hr">
+            <h4 class="subtitle is-5" id="boolean-search">BOOLEAN SEARCH FILTER</h4>
+            <p class="faq">
+                <span class="has-text-weight-bold">How does the Boolean search filter work?</span>
+                The basic search applies a Boolean AND condition by default. This means that when you add multiple search criteria using the <button class="button is-primary"><i class="fa fa-plus"></i></button> button, the results will include only those entries that match all the specified conditions. Additionally, you can use the Boolean filter switch to toggle between an AND condition (default) and a NOT condition, which excludes results matching certain criteria where applicable.
+            </p>
+
+            <p class="faq">
+                <span class="has-text-weight-bold">How do I use the Boolean filter switch?</span>
+                Try clicking on the slider button below
+                <div class="control">
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round">
+                            <span class="on">NOT</span>
+                            <span class="off">AND</span>
+                        </span>
+                    </label>
+                </div>
+                <ul>
+                    <li><b>AND condition (default):</b> When the slider is pushed left to display <b>AND</b>, the search condition is by default marked to be matched as specified.</li>
+                    <li><b>NOT condition:</b> When the slider is pushed right to display <b>NOT</b>, the results that match the search condition are excluded.</li>
+                </ul>
+            </p>
+            <p class="faq">
+                <b>Note:</b> The <b>NOT</b> condition is applicable to exclude results based on a few search criteria only such as records with a specific associated <b>publication doi</b>, or to exclude certain data ranges of <b>magnetic shielding</b> and <b>electric field gradient</b> values, or to exclude results on materials using their <b>external database reference code</b>, or to exclude records with a particular data distribution <b>license</b>.
+            </p>
+
+            <p class="faq">
+                <span class="has-text-weight-bold">Can I mix AND and NOT conditions in a single search?</span>
+                Yes. You can use an AND condition to include multiple criteria while simultaneously applying a NOT condition to exclude specific entries. For example, you can search for entries that match a specific <b>Chemical name</b> and <b>Publication doi</b>, while excluding entries with a specific <b>External database reference</b> code.
+            </p>
+            <p>
+                An example search to try:<br>
+                Search for entries with <b>Chemical name (AND default)</b> as <b>ethanol</b> and <b>Publication doi (AND)</b> as <b>10.1038/s41467-018-06972-x</b>, while excluding entries with <b>External database reference (NOT)</b> choosing <b>CSD</b> from the <b>Database name</b> menu and entering <b>BAYPAT</b> in the <b>Database code</b> field.
+            </p>
+            <p>
+                <b>Note:</b>
+                Feel free to change the AND and NOT conditions on the various search criteria to see how the search results change.
+            </p>
+
+            <p class="faq">
+                <span class="has-text-weight-bold">What happens if I don't use the Boolean filter switch?</span>
+                If you leave the Boolean filter switch in its default position, the search will combine all criteria using the AND condition. This ensures you only see results that match <b>all</b> of your specified search terms. Use of the Boolean filter switch is optional and does not have to be used if you don't need to exclude any results.
+            </p>
+            <hr class="custom-hr">
+            <h4 class="subtitle is-5" id="accessing-referencing-data">ACCESSING & REFERENCING DATA</h4>
+            <p class="faq">
+                <span class="has-text-weight-bold">Can I download a large number of entries?</span> 
+                If a search returns multiple entries, then these can be downloaded as a single zip file. Users can either manually select results that are of interest to them and bulk download the "selection" or simply download the entire search results as a zip archive.<br>
+                <b>Note:</b> We do not restrict file downloads based on the associated attribution licences. It is, therefore, the responsibility of the downloader to ensure that the datasets with slightly restrictive licenses such as ODC-By and CC-By (see section on Licensing & Permissions) are correctly attributed when used as references in their work.
+            </p>
+
+            <p class="faq">
+                <span class="has-text-weight-bold">How can I refer to a dataset?</span> 
+                Each individual magres file is assigned a unique numerical ID on deposit called the MRD number (for MagRes files Database), which can be used to refer to the dataset. The MRD numbers will generally be sequential if depositing a set of magres files. Note that files downloaded from the database will be named, for example, MRD000001v1.magres, where “v1” indicates version 1 of the deposit.
+            </p>
+
+            <p class="faq">
+                <span class="has-text-weight-bold">How do I obtain the metadata associated with the dataset?</span> 
+                A search for a dataset will produce a landing page containing the metadata (including any version history) and a link to download the original submitted file and/or the metadata in a CSV or JSON format. For bulk downloads, the metadata will automatically be included both as a collated CSV file and as a single nested JSON file in the archive.
+            </p>
+            <hr class="custom-hr">
+            <h4 class="subtitle is-5" id="licensing-permissions">LICENSING & PERMISSIONS</h4>
             <p class="faq">
                 <span class="has-text-weight-bold">What licence is used for database entries?</span> 
-                Users have the option of three licences when submitting database entries:<br>
-                    - PDDL (Public Domain Dedication and License) v 1.0 (default)<br>
-                    - ODC-By (Open Data Commons Attribution License) v 1.0<br>
-                    - CC-By (Creative Commons Attribution License) v 4.0<br>
-                The default, and strongly preferred, PDDL licence essentially puts the data in the public domain. Users who prefer (or are required) to use a more restrictive licence can use one of the other two licences, which means that the data licensed cannot be used without attribution, e.g. by citing the reference paper and original author. Users requesting an attribution licence are strongly encouraged to provide suitable attribution text in the Notes field. Database entries that have an attribution licence can only be downloaded individually and will not be available through bulk downloads. Note that data that has been bulk downloaded can be used freely, e.g. for machine learning training, without needing attribution. We cannot accept data which requires more restrictive licences than the ones offered.
-           </p>
-
+                Users have the option of three licences when submitting database entries:
+                <ul>
+                    <li>PDDL (Public Domain Dedication and License) v 1.0 (default)</li>
+                    <li>ODC-By (Open Data Commons Attribution License) v 1.0</li>
+                    <li>CC-By (Creative Commons Attribution License) v 4.0</li>
+                </ul>
+            </p>
+            <p>
+                The default, and strongly preferred, PDDL licence essentially puts the data in the public domain. Users who prefer (or are required) to use a more restrictive licence can use one of the other two licences, which means that the data licensed cannot be used without attribution, e.g. by citing the reference paper and original author. Users requesting an attribution licence are strongly encouraged to provide suitable attribution text in the Notes field and to choose the appropriate license in the upload form's drop-down menu when uploading.<br><br>
+                Database entries that have an attribution licence can still be downloaded in bulk. Note that data that has been bulk downloaded can still be used for purposes such as machine learning training, as long as the appropriate attribution is provided to the original creators/owners of the datasets. We cannot accept data which requires more restrictive licences than the ones offered.
+            </p>
+            <hr class="custom-hr">
+            <h4 class="subtitle is-5" id="technical-administrative-support">TECHNICAL & ADMINISTRATIVE SUPPORT</h4>
             <p class="faq">
-                <span class="has-text-weight-bold">What metadata needs to be supplied when uploading a file?</span> 
-                The following metadata can be supplied for each file: <br>
-                - Name. This is the primary search text. It is recommended to keep this simple and use the structural keywords for qualifiers, such as polymorph. Hence use “alanine” as the name and “beta” as a structural qualifier for “alanine form beta”. Note that the database will only accept simple alphanumeric characters in text. Users are encouraged to use IUPAC naming for consistency. <br>
-                - Keywords: An optional list of structural qualifiers.Please use alphanumeric characters rather than symbols wherever possible, e.g. “beta” instead of &beta;. More than one keyword can be supplied where this would help users to find a specific entry. <br>
-                - Database number: Optional reference code for starting structure, e.g. Cambridge Structural Database, or ICSD reference code. <br>
-                - DOI: Optional DOI to publication associated with record. This should be an actual DOI (generally text beginning 10.XXX) rather than a link. Use the Notes field instead if you need to refer to a different type of reference, e.g. a link to a PhD thesis. <br>
-                - Notes: Free text information. This should be used to provide any information that might be helpful to users, e.g. requested attribution text. Note this text is not directly searchable.
-           </p>
 
+                <span class="has-text-weight-bold">How do I contact the database administrators?  </span> 
+                    For requests that cannot be met through the user interface, or for any problems that are not addressed in the FAQs, please use the webform <a href="https://www.ccpnc.ac.uk/contact-us" target="_blank">on the CCP-NC website</a>.
+            </p>
+            
             <p class="faq">
-                <span class="has-text-weight-bold">When should I deposit data?</span> 
-                The database is intended as a convenient means of accessing published magnetic resonance results. One option is to upload the data when a publication DOI is available. You are encouraged, however, to upload data prior to publication, in order to be able to refer to record numbers in the paper, and add the DOI when available (this will create a new version). Note that it is important to add the DOI when available since database users have the option of restricting searches to data associated with a DOI.
+                <span class="has-text-weight-bold">How long does my login last?</span> 
+                Login (using ORCID id) stores a cookie and should be persistent, but may be canceled after extended periods of time. If that happens, simply log out and log sign back in.
            </p>
+           <hr class="custom-hr">
 
             <span class="separator-2"></span>
             <a class="button is-primary" href="."> <i class="fas fa-arrow-left"></i> &nbsp; Go Back</a>
