@@ -524,3 +524,93 @@ input:checked + .slider .off
     background-color: #000; /* Change the color as needed */
     margin: 20px 0; /* Adjust the margin as needed */
 }
+
+
+/* Tooltip styles */
+.has-tooltip-arrow[data-tooltip] {
+    position: relative; /* Ensure the parent element is positioned relative */
+}
+
+.has-tooltip-arrow[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    z-index: 1000;
+    padding: 0.5em 1em;
+    white-space: pre-wrap;
+    background:#34495e;
+    color: #FFF;
+    border-radius: 3px;
+    font-size: 0.75em;
+    line-height: 1.25;
+    box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1);
+    opacity: 0;
+    transition: opacity 1s;
+    width: 350px; /* Adjust the width as needed */
+    overflow: visible; /* Ensure content does not overflow */
+    pointer-events: none; /* Prevent the tooltip from capturing mouse events */
+}
+
+.has-tooltip-arrow[data-tooltip]:hover::after,
+.has-tooltip-arrow[data-tooltip]:focus::after {
+    opacity: 1;
+}
+
+/* Tooltip arrow pointing to the left */
+.tooltip-left[data-tooltip]::after {
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #34495e transparent transparent;
+}
+
+/* Tooltip arrow pointing to the right */
+.tooltip-right[data-tooltip]::after {
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent #34495e;
+}
+ 
+/* Custom tooltip font size */
+.custom-tooltip[data-tooltip]::after {
+    font-size: 1em; /* Adjust the font size as needed */
+    font-weight: 400; /* Adjust the font weight as needed */
+}
+ 
+/* Icon styles */
+.icon.has-tooltip-arrow .fa-question-circle {
+    position: relative;
+    color: #34495e; /* Colour for the circle */
+    display: inline-flex; /* Align icon with text */
+    align-items: center; /* Center icon vertically */
+    justify-content: center; /* Center icon horizontally */
+    width: 1.2em;
+    height: 1.2em;
+    background: #fff; /* Background for the circle */
+    border-radius: 50%;
+}
+ 
+.icon.has-tooltip-arrow .fa-question-circle::before {
+    content: '\f059'; /* Unicode for question mark in Font Awesome */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 600;
+    position: relative;
+    color: #34495e; /* Colour for the question mark */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em; /* Adjust font size to scale with the circle */
+}
+
+.align-center {
+    display: flex;
+    align-items: center; /* Vertically center the items */
+}
+
+.switch {
+    margin-left: 5px; /* Add space between the tooltip and the BOOLEAN filter switch */
+}
