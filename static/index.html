@@ -243,6 +243,9 @@
                             <tr>
                                 <td class="width-1" colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                     Search type
+                                    <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Select your search criteria from the dropdown list."  style="margin-left: 5px;">
+                                        <i class="fas fa-question-circle"></i>
+                                    </span>
                                 </td>
                                 <td class="width-3" colspan="3" rowspan="" headers="">
                                     <div class="control is-pulled-right">
@@ -281,10 +284,13 @@
                                 <tr>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Publication doi
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Enter a complete DOI for a publication where the structure was published e.g., 10.1016/j.ssnmr.2017.11.002.  &#10; &#10; Try using partial DOI with wildcards such as 10.1016* or *2017* to broaden search." style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
                                         <div class="control">
-                                            <input class="input" type="text" placeholder="doi"
+                                            <input class="input" type="text" placeholder="Enter publication doi"
                                                 ng-model="search_spec.args.doi" ng-init="search_spec.args.doi = null">                        
                                         </div>
                                     </td>
@@ -294,6 +300,9 @@
                                 <tr>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Species
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Enter an element symbol (e.g., H) to search for magnetic shielding values for that element."  style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
                                         <div class="control">
@@ -305,6 +314,9 @@
                                 <tr>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Min. MS value
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Specify an integer value. If left blank, the default value is 0." style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
                                         <div class="control">                                        
@@ -314,6 +326,9 @@
                                     </td>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Max. MS value
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Specify an integer value. If left blank, the default value is 0." style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
                                         <div class="control">                                        
@@ -327,6 +342,9 @@
                                 <tr>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Species
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Enter an element symbol (e.g., H) to search for electric field gradient values for that element."  style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
                                         <div class="control">
@@ -338,6 +356,9 @@
                                 <tr>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Min. EFG V<sub>zz</sub> value
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Specify an integer value. If left blank, the default value is 0."  style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
                                         <div class="control">
@@ -347,6 +368,9 @@
                                     </td>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Max. EFG V<sub>zz</sub> value
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Specify an integer value. If left blank, the default value is 0."  style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <td colspan="1" rowspan="" headers="">
                                         <div class="control">
@@ -360,6 +384,9 @@
                                 <tr>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Search pattern
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Try a simple free-text search (e.g., benzamide) to return both partial and exact chemical name matches to available compounds.  &#10; &#10;For exact matches, enter the full IUPAC name (e.g., 4-amino-N-(2-(dimethylamino)ethyl)benzamide).  &#10; &#10;Filter results using wilcards in &quot;&quot; (e.g., &quot;*benzamide&quot;)." style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
                                         <div class="control">
@@ -375,6 +402,9 @@
                                 <tr>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Search pattern
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Search for a specific polymorph using Roman or Arabic numbering (e.g., Form I or Form 1) &#10; &#10; Try broadening search using wildcards (e.g., Form*)." style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
                                         <div class="control">
@@ -390,6 +420,9 @@
                                 <tr>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Unit cell formula
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Enter the alphabetised chemical formula of the unit cell (e.g., O4Sn2, C6H6). &#10; &#10; Use standard element symbols with appropropriate capitalisation (e.g., Sn for Tin, not SN) followed by numeric subscripts." style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
                                         <div class="control">
@@ -402,6 +435,9 @@
                                 <tr>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Include systems with additional elements
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Check this box to find structures that contain your specified formula as a subset, even if additional elements not specified in the unit cell are present." style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
                                         <div class="control is-pulled-right">
@@ -415,6 +451,9 @@
                                 <tr>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         Molecular formula
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Enter the alphabetised formula of a molecular fragment to search subsets of a structure (e.g., Searching for C6H12O6 glucose would return alpha-D-Galactose and Beta-D-Fructopyranose both of which contain this molecular fragment). &#10; &#10; Use standard element symbols with appropropriate capitalisation (e.g., Sn for Tin, not SN) followed by numeric subscripts." style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
                                         <div class="control">
@@ -429,6 +468,9 @@
                                 <tr>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         MRD Reference
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Unique 7-digit Magres database reference number. Pad with leading zeros as applicable, for example, 0000001 or 0005210." style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
                                         <div class="control">
@@ -443,6 +485,9 @@
                                 <tr>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         External reference
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Choose the external database name from the dropdown list. If the database is not listed, select 'Other' and enter the database name manually. &#10; &#10;Enter the reference code in the 'Database code' field. Wildcards are permitted. For example, try QATMON for specific search or QATMON* for all polymorphic variations of the material." style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <!-- Database name can be chosen from dropdown list or 'Other' option chosen to enter name manually -->
                                     <td colspan="1" rowspan="" headers="">
@@ -489,6 +534,9 @@
                                 <tr>
                                     <td colspan="1" rowspan="" headers="" style="vertical-align: middle; text-align: center;">
                                         License
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-right" data-tooltip="Choose a data attribution license from the dropdown list." style="margin-left: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                     </td>
                                     <td colspan="3" rowspan="" headers="">
                                         <div class="control is-pulled-right">
@@ -510,7 +558,10 @@
                                 <td colspan="4">
                                     <!--Add a toggle switch to allow the user to switch between AND and NOT search-->
                                     <!-- Default search is AND with toggle switch 'off', NOT corresponds to toggle 'on' -->
-                                    <div class="control is-pulled-right">
+                                    <div class="control is-pulled-right align-center">
+                                        <span class="icon has-tooltip-arrow has-tooltip-info has-tooltip-multiline custom-tooltip tooltip-left" data-tooltip="BOOLEAN Filter. See FAQs section for usage instructions." style="margin-right: 5px;">
+                                            <i class="fas fa-question-circle"></i>
+                                        </span>
                                         <label class="switch">
                                             <input type="checkbox" ng-model="search_spec.negate_query">
                                             <span class="slider round">
